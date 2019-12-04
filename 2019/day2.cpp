@@ -33,9 +33,9 @@ struct data {
 
 void print(data x)
 {
-	std::cout << "status  : " << x.status << std::endl;
-	std::cout << "position: " << x.position << std::endl;
-	std::cout << "length  : " << (int) x.op.size() << std::endl;
+	std::cout << "# status  : " << x.status << std::endl;
+	std::cout << "# position: " << x.position << std::endl;
+	std::cout << "# length  : " << (int) x.op.size() << std::endl;
 	for (uint i = 0; i < x.op.size()-1; ++i) {
 		std::cout << x.op[i] << ',';
 	}
@@ -109,10 +109,8 @@ int main(int argc, char *argv[])
 	}
 	if (ops.size() < 1) return 1;
 
-	if (ops.size() > 100) {
-		ops[1] = 12;
-		ops[2] = 2;
-	}
+	if (argc > 1) ops[1] = std::stoi(argv[1], &sz);
+	if (argc > 2) ops[2] = std::stoi(argv[2], &sz);
 
 	data x;
 	x.op = ops;
