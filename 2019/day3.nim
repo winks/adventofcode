@@ -58,6 +58,35 @@ proc manhattan(a: Point, b: Point) : int =
     w = -1 * w
   return q + w
 
+proc cnt(zero: Point, h: Line, v: Line) : tuple[m: int, c: int] =
+  var x : int
+  var y : int
+  var cost = 0
+  var manh = 0
+  if min(h.a.x, h.b.x) <= v.a.x and max(h.a.x, h.b.x) >= v.a.x and min(v.a.y, v.b.y) <= h.a.y and max(v.a.y, v.b.y) >= h.a.y:
+    x = v.a.x
+    y = h.a.y
+    echo "match ", h, v, " ", x, " ", y
+    var t1 : int
+    var t2 : int
+
+    if h.a.x < h.b.x:
+      t1 = abs( max(h.a.x, h.b.x) - x)
+    else:
+      t1 = abs( x - min(h.a.x, h.b.x) )
+    if v.a.y < v.b.y:
+      t2 = abs( max(v.a.y, v.b.y) - y )
+    else:
+      t2 = abs( y - min(v.a.y, v.b.y) )
+
+    #echo "#t1 ", t1
+    #echo "#t2 ", t2
+    cost = h.cost + v.cost - t1 - t2
+    manh = manhattan(zero, (x, y))
+    #echo "#tC ", cost
+    #echo "#tm ", manh
+  return (manh, cost)
+
 proc runit =
   let f = open("3input")
   defer: f.close()
@@ -73,74 +102,26 @@ proc runit =
   let p2 = paths(zero, line2)
   
   var manh = 0
-  var tmpMan = 0
-  var x : int
-  var y : int
   var cost = 0
-  var tmpCost = 0
-  var newp : Point
+
   for h in p1.h:
    for v in p2.v:
-     if min(h.a.x, h.b.x) <= v.a.x and max(h.a.x, h.b.x) >= v.a.x and min(v.a.y, v.b.y) <= h.a.y and max(v.a.y, v.b.y) >= h.a.y:
-       x = v.a.x
-       y = h.a.y
-       echo "match1 ", h, v, " ", x, " ", y
-       var t1 : int
-       var t2 : int
+     let mc = cnt(zero, h, v)
+     if mc.m > 0 and (mc.m < manh or manh == 0):
+       manh = mc.m
+       echo mc
+     if mc.c > 0 and (mc.c < cost or cost == 0):
+       cost = mc.c
 
-       if h.a.x < h.b.x:
-         t1 = abs( max(h.a.x, h.b.x) - x)
-       else:
-         t1 = abs( x - min(h.a.x, h.b.x) )
-       if v.a.y < v.b.y:
-         t2 = abs( max(v.a.y, v.b.y) - y )
-       else:
-         t2 = abs( y - min(v.a.y, v.b.y) )
-
-       echo "#t1 ", t1
-       echo "#t2 ", t2
-       tmpCost = h.cost + v.cost - t1 - t2
-       echo "#tC ", tmpCost
-     #echo x," ",y
-     if x != 0 and y != 0:
-       newP = (x, y)
-       tmpMan = manhattan(zero, newP)
-       #echo tmpMan
-       if tmpMan > 0 and (tmpMan < manh or manh == 0):
-         manh = tmpMan
-         tmpMan = 0
-       if tmpCost > 0 and (tmpCost < cost or cost == 0):
-         cost = tmpCost
   for h in p2.h:
    for v in p1.v:
-     if min(h.a.x, h.b.x) <= v.a.x and max(h.a.x, h.b.x) >= v.a.x and min(v.a.y, v.b.y) <= h.a.y and max(v.a.y, v.b.y) >= h.a.y:
-       x = v.a.x
-       y = h.a.y
-       echo "match2 ", h, v, " ", x, " ", y
-       var t1 : int
-       var t2 : int
-       if h.a.x < h.b.x:
-         t1 = abs( max(h.a.x, h.b.x) - x)
-       else:
-         t1 = abs( x - min(h.a.x, h.b.x) )
-       if v.a.y < v.b.y:
-         t2 = abs( max(v.a.y, v.b.y) - y )
-       else:
-         t2 = abs( y - min(v.a.y, v.b.y) )
-       echo "#t1 ", t1
-       echo "#t2 ", t2
-       tmpCost = h.cost + v.cost - t1 - t2
-       echo "#tC ", tmpCost
-     #echo x," ",y
-     if x != 0 and y != 0:
-       newP = (x, y)
-       tmpMan = manhattan(zero, newP)
-       #echo tmpMan
-       if tmpMan > 0 and (tmpMan < manh or manh == 0):
-         manh = tmpMan
-         tmpMan = 0
-       if tmpCost > 0 and (tmpCost < cost or cost == 0):
-         cost = tmpCost
+     let mc = cnt(zero, h, v)
+     if mc.m > 0 and (mc.m < manh or manh == 0):
+       manh = mc.m
+       echo mc
+     if mc.c > 0 and (mc.c < cost or cost == 0):
+       cost = mc.c
+
   echo "manh: ", manh
   echo "cost: ", cost
 
