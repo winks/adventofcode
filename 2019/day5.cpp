@@ -7,10 +7,19 @@
 const int STEP_DEFAULT = 4;
 const int STEP_IN      = 2;
 const int STEP_OUT     = 2;
+const int STEP_JMT     = 3;
+const int STEP_JMF     = 3;
+const int STEP_LT      = 4;
+const int STEP_EQ      = 4;
+
 const int OP_ADD = 1;
 const int OP_MUL = 2;
 const int OP_IN  = 3;
 const int OP_OUT = 4;
+const int OP_JMT = 5;
+const int OP_JMF = 6;
+const int OP_LT  = 7;
+const int OP_EQ  = 8;
 const int OP_FIN = 99;
 
 struct data {
@@ -26,9 +35,9 @@ struct instruction {
 
 void print(data x)
 {
-	std::cout << "# status  : " << x.status << std::endl;
-	std::cout << "# position: " << x.position << std::endl;
+	std::cout << "# position: " << x.position << " val: " << x.op[x.position] << std::endl;
 	std::cout << "# length  : " << (int) x.op.size() << std::endl;
+	std::cout << "# status  : " << x.status << std::endl;
 	for (uint i = 0; i < x.op.size()-1; ++i) {
 		std::cout << x.op[i] << ',';
 	}
@@ -63,8 +72,8 @@ instruction parseop(int op)
 
 void pins(instruction ins)
 {
-	std::cout << "## opcode: " << ins.opcode << std::endl;
-	std::cout << "## params: ";
+	std::cout << "### opcode: " << ins.opcode << std::endl;
+	std::cout << "### params: ";
 	for (auto it = ins.params.begin(); it != ins.params.end(); ++it) {
 		std:: cout << *it << ",";
 	}
@@ -87,7 +96,7 @@ data calc(data v)
 		v.status = 10;
 	} else if (ix.opcode == OP_ADD) {
 		if (v.position + 3 > v.op.size()) {
-			v.status = 20;
+			v.status = 100 + OP_ADD;
 			return v;
 		}
 		std::vector<int> params;
@@ -109,7 +118,7 @@ data calc(data v)
 		v.position += STEP_DEFAULT;
 	} else if (ix.opcode == OP_MUL) {
 		if (v.position + 3 > v.op.size()) {
-			v.status = 30;
+			v.status = 100 + OP_MUL;
 			return v;
 		}
 		std::vector<int> params;
@@ -131,28 +140,103 @@ data calc(data v)
 		v.position += STEP_DEFAULT;
 	} else if (ix.opcode == OP_IN) {
 		if (v.position + 1 > v.op.size()) {
-			v.status = 40;
+			v.status = 100 + OP_IN;
 			return v;
 		}
-		int z = v.op[v.position+1];
+		uint pos = v.position+1;
+		int z = v.op[pos];
 		int n;
 		std::cin >> n;
-		std::cout << "# IN " << n << " to " << z << " pos " << v.position+1 << std::endl;
+		std::cout << "# IN val: " << n << " address: pos " << pos << " val: " << z << " => " << n << std::endl;
+
 		v.op[(uint)z] = n;
 		v.position += STEP_IN;
 	} else if (ix.opcode == OP_OUT) {
 		if (v.position + 1 > v.op.size()) {
-			v.status = 50;
+			v.status = 100 + OP_OUT;
 			return v;
 		}
-		int a = v.op[v.position+1];
-		int z = v.op[(uint)a];
-		std::cout << "# OUT " << a << " from pos " << v.position+1 << std::endl;
+		uint pos = v.position+1;
+		int a = v.op[pos];
+		int z = isimmediate(ix, 0) ? v.op[pos] : v.op[(uint)a];
+		std::cout << "# OUT " << z << " from pos " << pos << " = " << z << std::endl;
+
 		write(z);
 		v.position += STEP_OUT;
+	} else if (ix.opcode == OP_JMT) {
+		if (v.position + 2 > v.op.size()) {
+			v.status = 100 + OP_JMT;
+			return v;
+		}
+		std::vector<int> params;
+		params.push_back(v.op[v.position+1]);
+		params.push_back(v.op[v.position+2]);
+
+		int a = isimmediate(ix, 0) ? params[0] : v.op[(uint)params[0]];
+		int b = isimmediate(ix, 1) ? params[1] : v.op[(uint)params[1]];
+		std::cout << "# JMT a " << params[0] << "=" << a << " b " << params[1] << "=" << b << " :: " << (bool)(a != 0) << std::endl;
+
+		if (a != 0) {
+			v.position = (uint)b;
+		} else {
+			v.position += STEP_JMT;
+		}
+	} else if (ix.opcode == OP_JMF) {
+		if (v.position + 2 > v.op.size()) {
+			v.status = 100 + OP_JMF;
+			return v;
+		}
+		std::vector<int> params;
+		params.push_back(v.op[v.position+1]);
+		params.push_back(v.op[v.position+2]);
+
+		int a = isimmediate(ix, 0) ? params[0] : v.op[(uint)params[0]];
+		int b = isimmediate(ix, 1) ? params[1] : v.op[(uint)params[1]];
+		std::cout << "# JMF a *" << params[0] << "=" << a << " b *" << params[1] << "=" << b << " :: " << (bool)(a == 0) << std::endl;
+
+		if (a == 0) {
+			std::cout << "# JMF *" << v.position << "=" << v.op[v.position] << " => *" << b << "=" << v.op[(uint)b] << std::endl;
+			v.position = (uint)b;
+		} else {
+			v.position += STEP_JMF;
+		}
+	} else if (ix.opcode == OP_LT) {
+		if (v.position + 3 > v.op.size()) {
+			v.status = 100 + OP_LT;
+			return v;
+		}
+		std::vector<int> params;
+		params.push_back(v.op[v.position+1]);
+		params.push_back(v.op[v.position+2]);
+		params.push_back(v.op[v.position+3]);
+
+		int a = isimmediate(ix, 0) ? params[0] : v.op[(uint)params[0]];
+		int b = isimmediate(ix, 1) ? params[1] : v.op[(uint)params[1]];
+		int pos = params[2];
+		std::cout << "# LT a " << a << " b " << b << " from pos " << pos << std::endl;
+
+		v.op[(uint)pos] = (a < b) ? 1 : 0;
+		v.position += STEP_LT;
+	} else if (ix.opcode == OP_EQ) {
+		if (v.position + 3 > v.op.size()) {
+			v.status = 100 + OP_EQ;
+			return v;
+		}
+		std::vector<int> params;
+		params.push_back(v.op[v.position+1]);
+		params.push_back(v.op[v.position+2]);
+		params.push_back(v.op[v.position+3]);
+
+		int a = isimmediate(ix, 0) ? params[0] : v.op[(uint)params[0]];
+		int b = isimmediate(ix, 1) ? params[1] : v.op[(uint)params[1]];
+		int z = params[2];
+
+		v.op[(uint)z] = (a == b) ? 1 : 0;
+		v.position += STEP_EQ;
 	} else {
 		v.status = 1;
 	}
+	std::cout << std::endl;
 
 	return v;
 }
@@ -213,6 +297,6 @@ int main(int argc, char *argv[])
 	do {
 		x = calc(x);
 		print(x);
-	} while (x.position < x.op.size()-1 && x.status != 10);
+	} while (x.position < x.op.size()-1 && x.status != 10 && x.status != 1);
 
 }
