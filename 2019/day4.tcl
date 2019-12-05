@@ -1,5 +1,5 @@
 #!/usr/bin/tclsh
-
+# Tcl 8.6
 proc check1 {num} {
   if { $num < 100000 } {
     return 0
@@ -35,7 +35,7 @@ proc check1 {num} {
 proc run1 {name} {
   set fp [open $name r]
   set i 0
-  
+
   while { [gets $fp data] >= 0 } {
     #puts $i
     #puts $data
@@ -44,15 +44,15 @@ proc run1 {name} {
     #puts $i
   }
   close $fp
-  
+
   set len [array size numbers]
   puts [format "Read %d" $len]
-  
+
   set first $numbers(0)
   set last $numbers(1)
-  
+
   set good 0
-  
+
   for { set i $first }  { $i <= $last } { incr i } {
     if { [check1 $i] > 0 } {
       #puts [format "%d" $i]
@@ -61,7 +61,7 @@ proc run1 {name} {
       #puts [format "## NO %d" $i]
     }
   }
-  
+
   puts [format "Good %d" $good]
 }
 
