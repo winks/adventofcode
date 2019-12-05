@@ -20,7 +20,7 @@ For example, if your Intcode computer encounters 1,10,20,30, it should read the 
 Opcode 2 works exactly like opcode 1, except it multiplies the two inputs instead of adding them. Again, the three integers after the opcode indicate where the inputs and outputs are, not their values.
 */
 
-const int STEP = 4;
+const int STEP_DEFAULT = 4;
 const int OP_ADD = 1;
 const int OP_MUL = 2;
 const int OP_FIN = 99;
@@ -58,7 +58,7 @@ data calc(data v)
 		//	v.status = 21;
 		//} else {
 			v.op[z] = v.op[a] + v.op[b];
-			v.position += STEP;
+			v.position += STEP_DEFAULT;
 		//}
 	} else if (v.op[v.position] == OP_MUL) {
 		if (v.position + 3 > v.op.size()) {
@@ -72,7 +72,7 @@ data calc(data v)
 		//	v.status = 31;
 		//} else {
 			v.op[z] = v.op[a] * v.op[b];
-			v.position += STEP;
+			v.position += STEP_DEFAULT;
 		//}
 	} else {
 		v.status = 1;
