@@ -73,7 +73,7 @@ def cmp(a1, a2):
       x = tmp.pop(0)
       cm.append(x)
   result = (len(a1) + len(a2) - len(cm) -len(cm) -2)
-  print("HOPS",result)
+  print("num_hops",result)
 
 def main():
   if len(sys.argv) < 2:
@@ -87,11 +87,13 @@ def main():
   print("")
   lookup = revmap(parsed)
   s = sortit(parsed, lookup)
-  print("sss", s)
+  print("paths:", s)
+  print("num_paths:", len(s))
   print("")
-  print(cnt(s))
+  print("num_orbits:", cnt(s))
   x = filtr(s)
-  cmp(x[0],x[1])
+  if len(x) == 2:
+    cmp(x[0],x[1])
 
 if __name__ == '__main__':
   main()
