@@ -1,3 +1,5 @@
+import sys
+
 def equalify(n):
     s = str(n)
     for i in range(0, len(s)):
@@ -128,5 +130,13 @@ def f2(a, b):
     print("i     :", i)
     print("result:", counter)
 
-f1(206938,679128)
-f2(206938,679128)
+if __name__ == "__main__":
+  if len(sys.argv) < 2:
+    name = "../input/day04/part1"
+  else:
+    name = sys.argv[1]
+  with open(name, "r") as fh:
+    p = fh.readlines()[0].strip().split("-")
+
+  f1(int(p[0]), int(p[1]))
+  f2(int(p[0]), int(p[1]))

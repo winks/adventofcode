@@ -1,4 +1,4 @@
-# crystal-lang
+# crystal-lang 0.31.1-1
 
 class Calc
   def initialize()
@@ -38,7 +38,7 @@ class Calc
   end
 end
 
-name = "input/day5"
+name = "../input/day01/part1"
 c = Calc.new
 c.read(name)
 c.run()

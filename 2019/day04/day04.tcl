@@ -65,5 +65,5 @@ proc run1 {name} {
   puts [format "Good %d" $good]
 }
 
-run1 "4input"
+run1 "../input/day04/part1"
 

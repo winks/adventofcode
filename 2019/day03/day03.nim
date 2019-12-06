@@ -1,3 +1,5 @@
+# Nim 1.0.4 // nim c -r day03.nim
+
 import parseUtils
 import strutils
 
@@ -17,7 +19,7 @@ proc splitit(s: string) : seq[string]  =
   return s.split(',')
 
 proc paths(zero: tuple[x: int, y: int], s: string) : tuple[h: seq[Line], v: seq[Line]] =
-  var rv : tuple[ h: seq[Line], v: seq[Line] ]  
+  var rv : tuple[ h: seq[Line], v: seq[Line] ]
   var sp = splitit(s)
   var lastStop = zero
   var cost = 0
@@ -88,9 +90,9 @@ proc cnt(zero: Point, h: Line, v: Line) : tuple[m: int, c: int] =
   return (manh, cost)
 
 proc runit =
-  let f = open("3input")
+  let f = open("../input/day03/part1")
   defer: f.close()
-  
+
   let line1 = f.readLine()
   echo line1
   let line2 = f.readLine()
@@ -100,7 +102,7 @@ proc runit =
   #echo zero
   let p1 = paths(zero, line1)
   let p2 = paths(zero, line2)
-  
+
   var manh = 0
   var cost = 0
 
