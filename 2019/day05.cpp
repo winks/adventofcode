@@ -298,5 +298,4 @@ int main(int argc, char *argv[])
 		x = calc(x);
 		print(x);
 	} while (x.position < x.op.size()-1 && x.status != 10 && x.status != 1);
-
 }

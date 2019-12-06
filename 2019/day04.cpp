@@ -4,9 +4,6 @@
 #include <tuple>
 #include <vector>
 
-/*
-*/
-
 void pprint(std::vector<std::tuple<int,int>> v, std::string prefix = "")
 {
 	return;
