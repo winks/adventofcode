@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -354,6 +355,19 @@ data runEngine(data x, std::vector<int> inputs, int num)
 	return x;
 }
 
+std::vector<std::vector<int>> get_perms()
+{
+	int myints[] = {0,1,2,3,4};
+
+	std::vector<std::vector<int>> rv;
+	do {
+		std::vector<int> r;
+		for (int i=0; i<5; ++i) r.push_back(myints[i]);
+		rv.push_back(r);
+	} while (std::next_permutation(myints, myints+5));
+	return rv;
+}
+
 int main(int argc, char *argv[])
 {
 	std::string allops;
@@ -367,25 +381,25 @@ int main(int argc, char *argv[])
 	std::vector<int> ops = getops(allops);
 	if (ops.size() < 1) return 1;
 
+	std::vector<std::vector<int>> all_sets;
+	std::vector<int> set1;
 	int runOnlySet = -1;
-	int loopFirst = 0;
-	int loopLast = 99999;
 	if (argc > 2) {
 		runOnlySet = std::stoi(argv[2]);
 		if (runOnlySet >= 0 && runOnlySet <= 99999) {
-			loopFirst = runOnlySet;
-			loopLast  = runOnlySet;
+			set1 = convert(runOnlySet);
+			all_sets.push_back(set1);
 		}
+	} else {
+		all_sets = get_perms();
 	}
 
 	data x;
-	x.op = ops;
-	x.position = 0;
-	x.status = 0;
 
-	for (int i=loopFirst; i<=loopLast; ++i) {
-		std::vector<int> set1 = convert(i);
-		std::cout << "SET " << i << " = ";
+	int i = 0;
+	for (auto sit = all_sets.begin(); sit != all_sets.end(); ++sit) {
+		set1 = *sit;
+		std::cout << "SET " << i++ << " = ";
 		for (auto it = set1.begin(); it != set1.end(); ++it) {
 			std:: cout << *it << ",";
 		}
@@ -398,6 +412,10 @@ int main(int argc, char *argv[])
 		Also the first input signal is always 0.
 		*/
 
+		x.inputs.clear();
+		x.outputs.clear();
+		x.output = 0;
+
 		for (int num = 0; num<5; ++num) {
 			x.op = ops;
 			x.position = 0;
@@ -407,6 +425,6 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
-
+		std::cout << "FINAL " << x.output << std::endl;
 	}
 }
