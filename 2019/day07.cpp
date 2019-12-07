@@ -164,7 +164,9 @@ data calc(data v)
             n = v.inputs.back();
 			v.inputs.pop_back();
 		} else {
-			std::cin >> n;
+			v.status = 10;
+			return v;
+			//std::cin >> n;
 		}
 		std::cout << "# IN val: " << n << " address: pos " << pos << " val: " << z << " => " << n << std::endl;
 
@@ -299,6 +301,7 @@ data step(data v)
 		print(v);
 	} while (v.position < v.op.size()-1 && v.status != 10 && v.status != 1);
 
+	v.status = 0;
 	print(v, "#END# ");
 
 	return v;
@@ -349,15 +352,21 @@ data runEngine(data x, std::vector<int> inputs, int num)
 		x.output = 0;
 	} else {
 		x.output = x.outputs.front();
+		x.status = 0;
 	}
 	x.outputs.clear();
 
 	return x;
 }
 
-std::vector<std::vector<int>> get_perms()
+std::vector<std::vector<int>> get_perms(bool part1 = true)
 {
-	int myints[] = {0,1,2,3,4};
+	int myints[5];
+	if (part1) {
+		for (int i=0; i<5; ++i) myints[i] = i;
+	} else {
+		for (int i=0; i<5; ++i) myints[i] = i+5;
+	}
 
 	std::vector<std::vector<int>> rv;
 	do {
@@ -374,6 +383,8 @@ int main(int argc, char *argv[])
 	if (argc > 1) {
 		std::ifstream infile(argv[1]);
 		infile >> allops;
+	} else {
+		return 1;
 	}
 
 	std::cout << allops << std::endl << "###" << std::endl;
@@ -381,20 +392,24 @@ int main(int argc, char *argv[])
 	std::vector<int> ops = getops(allops);
 	if (ops.size() < 1) return 1;
 
+	bool part1 = true;
+	if (argc > 2) {
+		std::string testMode(argv[2]);
+		if (testMode == "2") part1 = false;
+	}
+
 	std::vector<std::vector<int>> all_sets;
 	std::vector<int> set1;
 	int runOnlySet = -1;
-	if (argc > 2) {
-		runOnlySet = std::stoi(argv[2]);
+	if (argc > 3) {
+		runOnlySet = std::stoi(argv[3]);
 		if (runOnlySet >= 0 && runOnlySet <= 99999) {
 			set1 = convert(runOnlySet);
 			all_sets.push_back(set1);
 		}
 	} else {
-		all_sets = get_perms();
+		all_sets = get_perms(part1);
 	}
-
-	data x;
 
 	int i = 0;
 	for (auto sit = all_sets.begin(); sit != all_sets.end(); ++sit) {
@@ -405,26 +420,58 @@ int main(int argc, char *argv[])
 		}
 		std::cout << std::endl;
 
-		/*
-		At its first input instruction, provide it the amplifier's phase setting, [3].
-		At its second input instruction, provide it the input signal, [0]
-		My inputs are reversed, so this would be 0,3 and not 3,0
-		Also the first input signal is always 0.
-		*/
+		if (part1) {
+			/*
+			At its first input instruction, provide it the amplifier's phase setting, [3].
+			At its second input instruction, provide it the input signal, [0]
+			My inputs are reversed, so this would be 0,3 and not 3,0
+			Also the first input signal is always 0.
+			*/
+			data mx;
+			mx.inputs.clear();
+			mx.outputs.clear();
+			mx.output = 0;
 
-		x.inputs.clear();
-		x.outputs.clear();
-		x.output = 0;
-
-		for (int num = 0; num<5; ++num) {
-			x.op = ops;
-			x.position = 0;
-			x.status = 0;
-			x = runEngine(x, {x.output, set1[num]}, num);
-			if (x.status >= 200) {
-				break;
+			for (int num = 0; num<5; ++num) {
+				mx.op = ops;
+				mx.position = 0;
+				mx.status = 0;
+				mx = runEngine(mx, {mx.output, set1[num]}, num);
+				if (mx.status >= 200) {
+					break;
+				}
 			}
+			std::cout << "FINAL " << mx.output << std::endl;
+		} else {
+			data buffer;
+			buffer.output = 0;
+			data mxs[5];
+			for (int im=0; im<5; ++im) {
+				data tmpd;
+				tmpd.op = ops;
+				mxs[im] = tmpd;
+			}
+
+			bool running = true;
+			int initial = 5;
+			while (running) {
+				for (int num = 0; num<5; ++num) {
+					std::cout << "INITIAL " << initial << std::endl;
+					if (initial > 0) {
+						mxs[num] = runEngine(mxs[num], {buffer.output, set1[num]}, num);
+						--initial;
+					} else {
+						mxs[num] = runEngine(mxs[num], {buffer.output}, num);
+					}
+					if (mxs[num].status >= 200) {
+						running = false;
+						break;
+					}
+					buffer = mxs[num];
+				}
+				std::cout << "FINAL? " << buffer.output << std::endl;
+			}
+			std::cout << "FINAL " << buffer.output << std::endl;
 		}
-		std::cout << "FINAL " << x.output << std::endl;
 	}
 }
