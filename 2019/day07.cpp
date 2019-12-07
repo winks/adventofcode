@@ -28,6 +28,7 @@ struct data {
 	int status = 0;
 	std::vector<int> inputs;
 	std::vector<int> outputs;
+	int output = 0;
 };
 
 struct instruction {
@@ -41,7 +42,7 @@ void print(data x, std::string prefix = "# ")
 	std::cout << prefix << "length  : " << (int) x.op.size() << std::endl;
 	std::cout << prefix << "status  : " << x.status << std::endl;
 	std::cout << prefix << "inputs  : ";
-	for (auto it = x.inputs.rbegin(); it != x.inputs.rend(); ++it) {
+	for (auto it = x.inputs.begin(); it != x.inputs.end(); ++it) {
 		std::cout << *it << ",";
 	}
 	std::cout << std::endl;
@@ -288,35 +289,124 @@ std::string getin()
 	return allops;
 }
 
+data step(data v)
+{
+	print(v, "#GO## ");
+
+	do {
+		v = calc(v);
+		print(v);
+	} while (v.position < v.op.size()-1 && v.status != 10 && v.status != 1);
+
+	print(v, "#END# ");
+
+	return v;
+}
+
+std::vector<int> convert(int i)
+{
+	std::vector<int> rv;
+	auto it = rv.begin();
+	int v = i % 10;
+	it = rv.begin();
+	rv.insert(it, v);
+
+	i -= v;
+	i /= 10;
+	v = i % 10;
+	it = rv.begin();
+	rv.insert(it, v);
+
+	i -= v;
+	i /= 10;
+	v = i % 10;
+	it = rv.begin();
+	rv.insert(it, v);
+
+	i -= v;
+	i /= 10;
+	v = i % 10;
+	it = rv.begin();
+	rv.insert(it, v);
+
+	i -= v;
+	i /= 10;
+	it = rv.begin();
+	rv.insert(it, i);
+
+	return rv;
+}
+
+data runEngine(data x, std::vector<int> inputs, int num)
+{
+	std::cout << "# Starting engine " << num << std::endl;
+	x.inputs = inputs;
+	x = step(x);
+	if (x.outputs.size() < 1) {
+		std::cout << "NO OUTPUT! " << num << std::endl;
+		x.status = 200 + num;
+		x.output = 0;
+	} else {
+		x.output = x.outputs.front();
+	}
+	x.outputs.clear();
+
+	return x;
+}
+
 int main(int argc, char *argv[])
 {
-	std::string::size_type sz;
 	std::string allops;
 	if (argc > 1) {
 		std::ifstream infile(argv[1]);
 		infile >> allops;
 	}
 
-	//std::string allops = getin();
 	std::cout << allops << std::endl << "###" << std::endl;
 
 	std::vector<int> ops = getops(allops);
 	if (ops.size() < 1) return 1;
 
-	if (argc > 2) ops[1] = std::stoi(argv[2], &sz);
-	if (argc > 3) ops[2] = std::stoi(argv[3], &sz);
+	int runOnlySet = -1;
+	int loopFirst = 0;
+	int loopLast = 99999;
+	if (argc > 2) {
+		runOnlySet = std::stoi(argv[2]);
+		if (runOnlySet >= 0 && runOnlySet <= 99999) {
+			loopFirst = runOnlySet;
+			loopLast  = runOnlySet;
+		}
+	}
 
 	data x;
 	x.op = ops;
 	x.position = 0;
-	x.inputs = {0,0};
+	x.status = 0;
 
-	print(x);
+	for (int i=loopFirst; i<=loopLast; ++i) {
+		std::vector<int> set1 = convert(i);
+		std::cout << "SET " << i << " = ";
+		for (auto it = set1.begin(); it != set1.end(); ++it) {
+			std:: cout << *it << ",";
+		}
+		std::cout << std::endl;
 
-	do {
-		x = calc(x);
-		print(x);
-	} while (x.position < x.op.size()-1 && x.status != 10 && x.status != 1);
+		/*
+		At its first input instruction, provide it the amplifier's phase setting, [3].
+		At its second input instruction, provide it the input signal, [0]
+		My inputs are reversed, so this would be 0,3 and not 3,0
+		Also the first input signal is always 0.
+		*/
 
-	print(x, "### ");
+		for (int num = 0; num<5; ++num) {
+			x.op = ops;
+			x.position = 0;
+			x.status = 0;
+			x = runEngine(x, {x.output, set1[num]}, num);
+			if (x.status >= 200) {
+				break;
+			}
+		}
+
+	}
 }
