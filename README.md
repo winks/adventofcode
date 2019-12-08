@@ -21,3 +21,5 @@
     * **Clojure**: `day06/clojure/` - 1
   * day07 - *Amplification Circuit*
     * **C++** - 1+2
+  * day08 - *Space Image Format*
+    * **C++** - 1+2
