@@ -6,7 +6,7 @@
     * **C++** - 1+2
     * **Crystal**: `day01/day01.cr` - 1+2
   * day02 - *1202 Program Alarm*
-   * **C++** - 1+2
+    * **C++** - 1+2
   * day3 - *Crossed Wires*
     * **Nim**: `day03/day03.nim` - 1+2
   * day04 - *Secure Container*
