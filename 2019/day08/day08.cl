@@ -1,13 +1,6 @@
 ; sbcl 1.4.5
 ; sbcl --load day08.cl
 ; creates ./day08
-(defun fread (fname)
-  (let ((in (open fname :if-does-not-exist nil)))
-    (when in
-      (loop for line = (read-line in nil)
-          while line do (format t "~a~%" line))
-      (close in))))
-
 (defun file-string (path)
   (with-open-file (stream path)
    (let ((data (make-string (file-length stream))))
@@ -31,12 +24,12 @@
 	(r2 (if r r '(9999 9999 9999))))
     (if (< (first l2) (first r2)) l2 r2)))
 
-(defun parse (s acc dim)
+(defun parse1 (s acc dim)
   ;(print "pin")
   ;(print (length s))
   ;(print acc)
   (if (= 0 (length s))
-    (return-from parse (* (nth 1 acc) (nth 2 acc))))
+    (return-from parse1 (* (nth 1 acc) (nth 2 acc))))
   (let ((head (subseq s 0 dim))
 	(rest (subseq s dim)))
     ;(print "end")
@@ -47,8 +40,28 @@
     (let ((cnh (cnt head)))
       ;(print acc)
       ;(print cnh)
-      (return-from parse (parse rest (get-min acc cnh) dim)))))
+      (return-from parse1 (parse1 rest (get-min acc cnh) dim)))))
 
+(defun ow (lower upper x)
+  (if (= 0 (length lower))
+    x
+    (let ((a (if (string= "2" (subseq upper 0 1)) (subseq lower 0 1) (subseq upper 0 1))))
+      (ow (subseq lower 1) (subseq upper 1) (concatenate 'string x a)))))
+
+(defun parse2 (s acc dim)
+  (if (= 0 (length s))
+    (return-from parse2 acc))
+  (let ((s1 (- (length s) dim)))
+    (let ((tail (subseq s s1 (length s)))
+	  (rest (subseq s 0 s1)))
+    (return-from parse2 (parse2 rest (ow (if acc acc tail) tail "") dim)))))
+
+(defun conv (s w acc)
+  (if (= 0 (length s))
+    (concatenate 'string '(#\linefeed) acc)
+    (let ((x (if (string= "0" (subseq s 0 1)) "." "░"))
+	  (y (if (or (= (- w 1) (length acc)) (and (> (length acc) 1) (= 1 (mod (length s) w)))) '(#\f #\linefeed) "")))
+      (conv (subseq s 1) w (concatenate 'string acc x y)))))
 
 (defun cli-args ()
   (or
@@ -69,8 +82,12 @@
   (print "------------------------------")
   (print data)
   (print "------------------------------")
-  (print (parse data () dim))
-  (print "")))))
+  (print (parse1 data () dim))
+  (print "------------------------------")
+  (let ((r2 (parse2 data () dim)))
+    (print r2 )
+    (print (conv r2 iw ""))
+    (print ""))))))
 
 (sb-ext:save-lisp-and-die "day08"
 			  :executable t

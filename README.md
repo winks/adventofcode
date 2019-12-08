@@ -23,3 +23,4 @@
     * **C++** - 1+2
   * day08 - *Space Image Format*
     * **C++** - 1+2
+    * **Common Lisp**: `day08/day08.cl` - 1+2
