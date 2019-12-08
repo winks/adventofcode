@@ -19,13 +19,7 @@
   (let [p (str/split s #"\)")
         lx (first p)
         rx (second p)]
-    (if (get-in m [rx])
-      (do
-        (println "y"))
-;        (into m )
-      (do
-       (println "n" lx rx)
-       (into m [[rx lx]])))))
+       (into m [[rx lx]])))
 
 (defn organize [lst]
   (println "##" lst (type lst) (count lst))
@@ -43,17 +37,8 @@
 ;      (println "W2" outer (type outer) s)
       (cons outer (walk s all acc)))))
 
-(defn counter [n v cs]
-;(println "#" cs "::" n "::" v "::" )
-(println "#" cs "::" (count n) "::" (count v) "::" )
-;(println "#" (rest n) "::" (flatten (into [] (first n))) )
-; v is not updated
-  (if (empty? n)
-    cs
-    (let [sf (set (first n))
-          nc (cset/difference sf (set v))]
-      (counter (rest n) (flatten (into [] (first n))) (+ cs 1 (count sf) (count nc))))))
-
+(defn counter [leaves revdata]
+  (reduce + (map #(dec (count %)) (map #(walk (last %) revdata []) leaves))))
 
 (defn -main [& args]
   (let [opt (:options (parse-opts args cli-options))
@@ -62,7 +47,7 @@
         revdata (organize lines)
         leaves (map second (filter #(isleaf? (second %) revdata) data))
         paths (map reverse (map #(walk % revdata []) leaves))
-        cnt (counter paths [] 0)
+        cnt (counter (keys revdata) revdata)
         st (first (first revdata))]
     (println "### " opt)
     ;(println "### " lines)
