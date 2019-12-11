@@ -37,3 +37,14 @@ echo "### v RUN  ### $CMD"
 $CMD | grep "^FINAL " | sort -k2 -n | tail -n1 | sed 's/FINAL //'
 cat $DIR/../input/day09/expect1
 echo "### ^ EXP ###################################################################"
+echo
+
+echo "### PART 1 ###################################################################"
+echo
+
+CMD="$BIN $DIR/../input/day09/part1 1 22222 1"
+echo "### v RUN  ### $CMD"
+$CMD | grep "^FINAL " | sort -k2 -n | tail -n1 | sed 's/FINAL //'
+cat $DIR/../input/day09/expect2
+echo "### ^ EXP ###################################################################"
+echo

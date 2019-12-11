@@ -24,3 +24,9 @@
   * day08 - *Space Image Format*
     * **C++** - 1+2
     * **Common Lisp**: `day08/day08.cl` - 1+2
+  * day09 - *Sensor Boost*
+    * **C++** - 1+2
+  * day10 - *Monitoring Station*
+    * missing
+  * day11 - *Space Police*
+    * TBD

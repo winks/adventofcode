@@ -6,6 +6,7 @@
 #include <sstream>
 #include <vector>
 
+const uint64_t RESIZE = 2;
 const uint64_t STEP_DEFAULT = 4;
 
 const int64_t OP_NUL = 0;
@@ -176,11 +177,11 @@ int64_t getbymode2(data & v, instruction ix)
 	int64_t rv = 0;
 	if (isrelative(ix, ain(ix.opcode)+num-1)) {
 		asdf = v.position + ain(ix.opcode) + 1;
-		if (asdf > v.op.size()) v.op.resize(asdf+10);
+		if (asdf > v.op.size()) v.op.resize(asdf+RESIZE);
 		rv = v.relbase + v.op[asdf];
 	} else if (!isimmediate(ix, ain(ix.opcode)+num-1)) {
 		asdf = v.position + ain(ix.opcode) + 1;
-		if (asdf > v.op.size()) v.op.resize(asdf+10);
+		if (asdf > v.op.size()) v.op.resize(asdf+RESIZE);
 		rv = v.op[asdf];
 	}
 	std::cout << "# gbm2 " << asdf << " " << rv << "[] " << v.op.size() << std::endl;
@@ -198,14 +199,14 @@ OpList getbymode(data & v, instruction ix)
 		std::cout << "##gba *" << asdf << "="<< cur << " isr: " << isrelative(ix, i) << " isi: " << isimmediate(ix, i) << std::endl;
 		if (isrelative(ix, i)) {
 			uint64_t nx = (uint64_t)(cur + v.relbase);
-			if (v.op.size() < nx) v.op.resize(nx+10);
+			if (v.op.size() < nx) v.op.resize(nx+RESIZE);
 			cur = v.op[nx];
 			std::cout << "##gbr " << cur << " " << nx << " " << v.relbase << std::endl;
 		} else if (isimmediate(ix, i)) {
 			std::cout << "##gbi " << cur << std::endl;
 		} else {
 			uint64_t nx = (uint64_t)cur;
-			if (v.op.size() < nx) v.op.resize(nx+10);
+			if (v.op.size() < nx) v.op.resize(nx+RESIZE);
 			cur = v.op[nx];
 			std::cout << "##gbn " << cur << std::endl;
 		}
@@ -229,6 +230,7 @@ data calc(data v)
 	instruction ix = parseop(op);
 	pins(ix);
 
+	std::cout << "@#pos " << v.position << " rel " << v.relbase << " op " << ix.opcode << std::endl;
 	if (ix.opcode == OP_FIN) {
 		v.status = 10;
 	} else if (ix.opcode == OP_ADD) {
@@ -240,9 +242,10 @@ data calc(data v)
 		ppl(params, "# ADD ");
 
 		int64_t z = params[0] + params[1];
-		if ((uint64_t) pos > v.op.size()) v.op.resize((uint64_t)pos+10);
+		if ((uint64_t) pos > v.op.size()) v.op.resize((uint64_t)pos+RESIZE);
 		v.op[pos] = z;
 		std::cout << "# ADD " << pos << " = " << v.op[pos] << " []" << v.op.size() << std::endl;
+		std::cout << "@#op1 " << pos << " " << v.op[pos] << std::endl;
 		v.position += STEP_DEFAULT;
 	} else if (ix.opcode == OP_MUL) {
 		v = check(ix.opcode, v);
@@ -253,9 +256,10 @@ data calc(data v)
 		ppl(params, "# MUL ");
 
 		int64_t z = params[0] * params[1];
-		if ((uint64_t) pos > v.op.size()) v.op.resize((uint64_t)pos+10);
+		if ((uint64_t) pos > v.op.size()) v.op.resize((uint64_t)pos+RESIZE);
 		v.op[pos] = z;
 		std::cout << "# MUL " << pos << " = " << v.op[pos] << " []" << v.op.size() << std::endl;
+		std::cout << "@#op2 " << pos << " " << v.op[pos] << std::endl;
 		v.position += STEP_DEFAULT;
 	} else if (ix.opcode == OP_IN) {
 		v = check(ix.opcode, v);
@@ -263,6 +267,7 @@ data calc(data v)
 
 		uint64_t pos = (uint64_t) getbymode2(v, ix);
 		int64_t n;
+		std::cout << "@#op3 " << v.inputs.size() << std::endl;
 		if (v.inputs.size() > 0) {
 			n = v.inputs.back();
 			v.inputs.pop_back();
@@ -271,9 +276,10 @@ data calc(data v)
 			return v;
 		}
 
-		if ((uint64_t) pos > v.op.size()) v.op.resize((uint64_t)pos+10);
+		if ((uint64_t) pos > v.op.size()) v.op.resize((uint64_t)pos+RESIZE);
 		v.op[pos] = n;
 		std::cout << "# IN val:" << n << " pos " << pos << " = " << v.op[pos] << std::endl;
+		std::cout << "@#op3 " << pos << " " << v.op[pos] << std::endl;
 		v.position += stp(ix.opcode);
 	} else if (ix.opcode == OP_OUT) {
 		v = check(ix.opcode, v);
@@ -282,6 +288,7 @@ data calc(data v)
 		OpList params = getbymode(v, ix);
 		int64_t z = params[0];
 		std::cout << "# OUT " << z <<  std::endl;
+		std::cout << "@OUT " << z << std::endl;
 
 		v.outputs.push_back(z);
 		write(z);
@@ -292,6 +299,7 @@ data calc(data v)
 
 		OpList params = getbymode(v, ix);
 		std::cout << "# JMT a " << params[0] << " b " << params[1] << " :: " << (bool)(params[0] != 0) << std::endl;
+		std::cout << "@#op5 " << params[0] << " " << params[1] << std::endl;
 
 		if (params[0] != 0) {
 			v.position = (uint64_t) params[1];
@@ -304,6 +312,7 @@ data calc(data v)
 
 		OpList params = getbymode(v, ix);
 		std::cout << "# JMF a " << params[0] << " b " << params[1] << " :: " << (bool)(params[0] == 0) << std::endl;
+		std::cout << "@#op6 " << params[0] << " " << params[1] << std::endl;
 
 		if (params[0] == 0) {
 			v.position = (uint64_t) params[1];
@@ -320,6 +329,7 @@ data calc(data v)
 
 		v.op[pos] = (params[0] < params[1]) ? 1 : 0;
 		std::cout << "# LT " << pos << " = " << v.op[pos] << std::endl;
+		std::cout << "@#op7 " << pos << " " << v.op[pos] << std::endl;
 		v.position += stp(ix.opcode);
 	} else if (ix.opcode == OP_EQ) {
 		v = check(ix.opcode, v);
@@ -331,6 +341,7 @@ data calc(data v)
 
 		v.op[pos] = (params[0] == params[1]) ? 1 : 0;
 		std::cout << "# EQ " << pos << " = " << v.op[pos] << std::endl;
+		std::cout << "@#op8 " << pos << " " << v.op[pos] << std::endl;
 		v.position += stp(ix.opcode);
 	} else if (ix.opcode == OP_REL) {
 		v = check(ix.opcode, v);
@@ -340,10 +351,13 @@ data calc(data v)
 		std::cout <<"# REL " << params[0] << std::endl;
 
 		v.relbase += params[0];
+		std::cout << "@#op9 " << v.relbase-params[0] << " " << v.relbase << std::endl;
 		v.position += stp(ix.opcode);
 	} else {
 		v.status = 1;
 	}
+
+	std::cout << "@#sz " << v.op.size() << std::endl;
 	std::cout << std::endl;
 
 	return v;
@@ -473,7 +487,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	std::cout << allops << std::endl << "###" << std::endl;
+	//std::cout << allops << std::endl << "###" << std::endl;
 
 	OpList ops = getops(allops);
 	if (ops.size() < 1) return 1;
