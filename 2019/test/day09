@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+DIR=$(dirname $0)
+
+if [ -z "$1" ]; then
+  BIN="$DIR/../bin/day09"
+else
+  BIN="$DIR/../bin/$1"
+fi
+
+echo "### PART 1 ###################################################################"
+echo
+
+CMD="$BIN $DIR/../input/day09/test1_1 1 0 1"
+echo "### v TEST ### $CMD"
+$CMD | grep OUTPUT
+cat $DIR/../input/day09/expect1_1
+echo "### ^ EXP ###################################################################"
+echo
+
+CMD="$BIN $DIR/../input/day09/test1_2 1 0 1"
+echo "### v TEST ### $CMD"
+$CMD | tail -n1 | sed 's/FINAL //'
+cat $DIR/../input/day09/expect1_2
+echo "### ^ EXP ###################################################################"
+echo
+
+CMD="$BIN $DIR/../input/day09/test1_3 1 0 1"
+echo "### v TEST ### $CMD"
+$CMD | tail -n1 | sed 's/FINAL //'
+cat $DIR/../input/day09/expect1_3
+echo "### ^ EXP ###################################################################"
+echo
+
+CMD="$BIN $DIR/../input/day09/part1 1 11111 1"
+echo "### v RUN  ### $CMD"
+$CMD | grep "^FINAL " | sort -k2 -n | tail -n1 | sed 's/FINAL //'
+cat $DIR/../input/day09/expect1
+echo "### ^ EXP ###################################################################"

@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+DIR=$(dirname $0)
+
+if [ -z "$1" ]; then
+  BIN="$DIR/../bin/day07"
+else
+  BIN="$DIR/../bin/$1"
+fi
+
+echo "### PART 1 ###################################################################"
+echo
+
+CMD="$BIN $DIR/../input/day07/test1_01_43210 1 43210"
+echo "### v TEST ### $CMD"
+$CMD | tail -n1 | sed 's/FINAL //'
+cat $DIR/../input/day07/expect1_01
+echo "### ^ EXP ###################################################################"
+echo
+
+CMD="$BIN $DIR/../input/day07/test1_02_01234 1 1234"
+echo "### v TEST ### $CMD"
+$CMD | tail -n1 | sed 's/FINAL //'
+cat $DIR/../input/day07/expect1_02
+echo "### ^ EXP ###################################################################"
+echo
+
+CMD="$BIN $DIR/../input/day07/test1_03_10432 1 10432"
+echo "### v TEST ### $CMD"
+$CMD | tail -n1 | sed 's/FINAL //'
+cat $DIR/../input/day07/expect1_03
+echo "### ^ EXP ###################################################################"
+echo
+
+CMD="$BIN $DIR/../input/day07/part1 1"
+echo "### v RUN  ### $CMD"
+$CMD | grep "^FINAL " | sort -k2 -n | tail -n1 | sed 's/FINAL //'
+cat $DIR/../input/day07/expect1
+echo "### ^ EXP ###################################################################"
+
+echo
+echo "### PART 2 ###################################################################"
+echo
+
+CMD="$BIN $DIR/../input/day07/test2_01_98765 2 98765"
+echo "### v TEST ### $CMD"
+$CMD | tail -n1 | sed 's/FINAL //'
+cat $DIR/../input/day07/expect2_01
+echo "### ^ EXP ###################################################################"
+echo
+
+CMD="$BIN $DIR/../input/day07/test2_02_97856 2 97856"
+echo "### v TEST ### $CMD"
+$CMD | tail -n1 | sed 's/FINAL //'
+cat $DIR/../input/day07/expect2_02
+echo "### ^ EXP ###################################################################"
+echo
+
+CMD="$BIN $DIR/../input/day07/part1 2"
+echo "### v RUN  ### $CMD"
+$CMD | grep "^FINAL " | sort -k2 -n | tail -n1 | sed 's/FINAL //'
+cat $DIR/../input/day07/expect2
+echo "### ^ EXP ###################################################################"
+echo

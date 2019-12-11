@@ -2,89 +2,150 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <map>
 #include <sstream>
 #include <vector>
 
-const int STEP_DEFAULT = 4;
-const int STEP_IN      = 2;
-const int STEP_OUT     = 2;
-const int STEP_JMT     = 3;
-const int STEP_JMF     = 3;
-const int STEP_LT      = 4;
-const int STEP_EQ      = 4;
-const int STEP_REL     = 2;
+const uint64_t STEP_DEFAULT = 4;
 
-const int OP_ADD = 1;
-const int OP_MUL = 2;
-const int OP_IN  = 3;
-const int OP_OUT = 4;
-const int OP_JMT = 5;
-const int OP_JMF = 6;
-const int OP_LT  = 7;
-const int OP_EQ  = 8;
-const int OP_REL = 9;
-const int OP_FIN = 99;
+const int64_t OP_NUL = 0;
+const int64_t OP_ADD = 1;
+const int64_t OP_MUL = 2;
+const int64_t OP_IN  = 3;
+const int64_t OP_OUT = 4;
+const int64_t OP_JMT = 5;
+const int64_t OP_JMF = 6;
+const int64_t OP_LT  = 7;
+const int64_t OP_EQ  = 8;
+const int64_t OP_REL = 9;
+const int64_t OP_FIN = 99;
+
+typedef std::vector<int64_t> OpList;
 
 struct data {
-	std::vector<int> op;
-	uint position = 0;
-	int status = 0;
-	std::vector<int> inputs;
-	std::vector<int> outputs;
-	int output = 0;
-	int relbase = 0;
+	OpList op;
+	uint64_t position = 0;
+	int64_t status = 0;
+	OpList inputs;
+	OpList outputs;
+	int64_t output = 0;
+	int64_t relbase = 0;
 };
 
 struct instruction {
-	int opcode = 0;
-	std::vector<int> params;
+	int64_t opcode = 0;
+	OpList params;
 };
+
+void ppl(OpList params, std::string prefix, std::string sep = " ")
+{
+	std::cout << prefix;
+	if (params.size() < 1) {
+		std::cout << std::endl;
+		return;
+	}
+	if (params.size() < 2) {
+		std::cout << params.front() << std::endl;
+		return;
+	}
+	for (auto it = params.begin(); it != params.end()-1; ++it) {
+		std::cout << *it << sep;
+	}
+	std::cout << params.back() << std::endl;
+}
 
 void print(data x, std::string prefix = "# ")
 {
 	std::cout << prefix << "position: " << x.position << " val: " << x.op[x.position] << std::endl;
-	std::cout << prefix << "relbase  : " << x.relbase << std::endl;
+	std::cout << prefix << "relbase : " << x.relbase << std::endl;
 	std::cout << prefix << "status  : " << x.status << std::endl;
-	std::cout << prefix << "inputs  : ";
-	for (auto it = x.inputs.begin(); it != x.inputs.end(); ++it) {
-		std::cout << *it << ",";
+	std::string tmp(prefix); tmp.append("inputs  : ");
+	ppl(x.inputs, tmp);
+	tmp = prefix; tmp.append("outputs : ");
+	ppl(x.inputs, tmp);
+	if (x.op.size() < 33) {
+		ppl(x.op, "", ",");
 	}
-	std::cout << std::endl;
-	std::cout << prefix << "outputs : ";
-	for (auto it = x.outputs.begin(); it != x.outputs.end(); ++it) {
-		std::cout << *it << ",";
-	}
-	std::cout << std::endl;
-	for (uint i = 0; i < x.op.size()-1; ++i) {
-		std::cout << x.op[i] << ',';
-	}
-	std::cout << x.op[x.op.size()-1] << std::endl << std::endl;
 }
 
-void write(int x)
+void write(int64_t x)
 {
 	std::cout << "OUTPUT: " << x << std::endl;
 }
 
-instruction parseop(int op)
+uint64_t stp(int64_t op)
+{
+	switch (op) {
+		case OP_NUL: return 4;
+		case OP_ADD: return 4;
+		case OP_MUL: return 4;
+		case OP_IN : return 2;
+		case OP_OUT: return 2;
+		case OP_JMT: return 3;
+		case OP_JMF: return 3;
+		case OP_LT : return 4;
+		case OP_EQ : return 4;
+		case OP_REL: return 2;
+		case OP_FIN: return 0;
+		default: return 4;
+	}
+}
+
+uint64_t ain(int64_t op)
+{
+	switch (op) {
+		case OP_NUL: return 0;
+		case OP_ADD: return 2;
+		case OP_MUL: return 2;
+		case OP_IN : return 0;
+		case OP_OUT: return 1;
+		case OP_JMT: return 2;
+		case OP_JMF: return 2;
+		case OP_LT : return 2;
+		case OP_EQ : return 2;
+		case OP_REL: return 1;
+		case OP_FIN: return 0;
+		default: return 0;
+	}
+}
+
+uint64_t aout(int64_t op)
+{
+	switch (op) {
+		case OP_NUL: return 0;
+		case OP_ADD: return 1;
+		case OP_MUL: return 1;
+		case OP_IN : return 1;
+		case OP_OUT: return 0;
+		case OP_JMT: return 0;
+		case OP_JMF: return 0;
+		case OP_LT : return 1;
+		case OP_EQ : return 1;
+		case OP_REL: return 0;
+		case OP_FIN: return 0;
+		default: return 0;
+	}
+}
+
+
+instruction parseop(int64_t op)
 {
 	instruction rv;
 	if (op < 100) {
 		rv.opcode = op;
 	} else {
 		rv.opcode = op % 100;
-		int tmp = (op - rv.opcode) / 100;
+		int64_t tmp = (op - rv.opcode) / 100;
 		do {
-			int p = tmp % 10;
-			rv.params.insert(rv.params.begin(), p);
-		std::cout << "### lp " <<  p << std::endl;
+			int64_t p = tmp % 10;
+			rv.params.push_back(p);
+			//rv.params.insert(rv.params.begin(), p);
 			tmp -= p;
 			tmp = tmp / 10;
 		} while (tmp > 0);
 	}
 	while (rv.params.size() < STEP_DEFAULT-1) {
 		rv.params.push_back(0);
-		std::cout << "### lp " <<  0 << std::endl;
 	}
 	return rv;
 }
@@ -92,207 +153,194 @@ instruction parseop(int op)
 void pins(instruction ins)
 {
 	std::cout << "### opcode: " << ins.opcode << std::endl;
-	std::cout << "### params: ";
-	for (auto it = ins.params.begin(); it != ins.params.end(); ++it) {
-		std:: cout << *it << ",";
-	}
-	std::cout << std::endl;
+	ppl(ins.params, "### params: ");
 }
 
-bool isimmediate(instruction ix, uint pos)
+static bool isimmediate(const instruction & ix, uint64_t pos)
 {
 	if (ix.params.size() <= pos) return false;
 	return ix.params[pos] == 1 ? true : false;
 }
 
-bool isrelative(instruction ix, uint pos)
+static bool isrelative(const instruction & ix, uint64_t pos)
 {
 	if (ix.params.size() <= pos) return false;
 	return ix.params[pos] == 2 ? true : false;
 }
 
-std::vector<int> getbymode(data v, instruction ix, uint len)
+int64_t getbymode2(data & v, instruction ix)
 {
-	std::vector<int> params;
-	for (uint i=1; i<=len; ++i) {
-		// immediate by default
-		int cur = v.op[v.position+i];
-		std::cout << "##gb " << cur << std::endl;
+	uint64_t num = aout(ix.opcode);
+	if (num < 1) return 0;
+	uint64_t asdf = v.position + ain(ix.opcode) + num;
+	int64_t rv = 0;
+	if (isrelative(ix, ain(ix.opcode)+num-1)) {
+		asdf = v.position + ain(ix.opcode) + 1;
+		if (asdf > v.op.size()) v.op.resize(asdf+10);
+		rv = v.relbase + v.op[asdf];
+	} else if (!isimmediate(ix, ain(ix.opcode)+num-1)) {
+		asdf = v.position + ain(ix.opcode) + 1;
+		if (asdf > v.op.size()) v.op.resize(asdf+10);
+		rv = v.op[asdf];
+	}
+	std::cout << "# gbm2 " << asdf << " " << rv << "[] " << v.op.size() << std::endl;
+	return rv;
+}
 
-		if (isrelative(ix, i-1)) {
-			cur = v.op[(uint)(v.relbase+cur)];
-		} else if (!isimmediate(ix, i-1)) {
-			cur = v.op[(uint)cur];
+OpList getbymode(data & v, instruction ix)
+{
+	OpList params;
+	for (uint64_t i=0; i<ain(ix.opcode); ++i) {
+		// immediate by default
+		uint64_t asdf = v.position + i + 1;
+		int64_t cur = v.op[asdf];
+
+		std::cout << "##gba *" << asdf << "="<< cur << " isr: " << isrelative(ix, i) << " isi: " << isimmediate(ix, i) << std::endl;
+		if (isrelative(ix, i)) {
+			uint64_t nx = (uint64_t)(cur + v.relbase);
+			if (v.op.size() < nx) v.op.resize(nx+10);
+			cur = v.op[nx];
+			std::cout << "##gbr " << cur << " " << nx << " " << v.relbase << std::endl;
+		} else if (isimmediate(ix, i)) {
+			std::cout << "##gbi " << cur << std::endl;
+		} else {
+			uint64_t nx = (uint64_t)cur;
+			if (v.op.size() < nx) v.op.resize(nx+10);
+			cur = v.op[nx];
+			std::cout << "##gbn " << cur << std::endl;
 		}
-		std::cout << "##gb " << cur << std::endl;
 		params.push_back(cur);
 	}
 	return params;
 }
 
+data check(int64_t opcode, data v)
+{
+	uint64_t steps = stp(opcode);
+	if (v.position + steps - 1 > v.op.size()) {
+		v.status = 100 + opcode;
+	}
+	return v;
+}
+
 data calc(data v)
 {
-	int op = v.op[v.position];
+	int64_t op = v.op[v.position];
 	instruction ix = parseop(op);
 	pins(ix);
 
 	if (ix.opcode == OP_FIN) {
 		v.status = 10;
 	} else if (ix.opcode == OP_ADD) {
-		if (v.position + 3 > v.op.size()) {
-			v.status = 100 + OP_ADD;
-			return v;
-		}
-		std::vector<int> params;
-		params.push_back(v.op[v.position+1]);
-		params.push_back(v.op[v.position+2]);
-		params.push_back(v.op[v.position+3]);
+		v = check(ix.opcode, v);
+		if (v.status >= 100 && v.status < 200) return v;
 
-		std::cout << "# ADD ";
-		for (auto it = params.begin(); it != params.end(); ++it) {
-			std::cout << *it << " ";
-		}
-		std::cout << std::endl;
+		OpList params = getbymode(v, ix);
+		uint64_t pos = (uint64_t)getbymode2(v, ix);
+		ppl(params, "# ADD ");
 
-		int a = isimmediate(ix, 0) ? params[0] : v.op[(uint)params[0]];
-		int b = isimmediate(ix, 1) ? params[1] : v.op[(uint)params[1]];
-		int z = a + b;
-
-		v.op[(uint)params[2]] = z;
+		int64_t z = params[0] + params[1];
+		if ((uint64_t) pos > v.op.size()) v.op.resize((uint64_t)pos+10);
+		v.op[pos] = z;
+		std::cout << "# ADD " << pos << " = " << v.op[pos] << " []" << v.op.size() << std::endl;
 		v.position += STEP_DEFAULT;
 	} else if (ix.opcode == OP_MUL) {
-		if (v.position + 3 > v.op.size()) {
-			v.status = 100 + OP_MUL;
-			return v;
-		}
-		std::vector<int> params;
-		params.push_back(v.op[v.position+1]);
-		params.push_back(v.op[v.position+2]);
-		params.push_back(v.op[v.position+3]);
+		v = check(ix.opcode, v);
+		if (v.status >= 100 && v.status < 200) return v;
 
-		std::cout << "# MUL ";
-		for (auto it = params.begin(); it != params.end(); ++it) {
-			std::cout << *it << " ";
-		}
-		std::cout << std::endl;
+		OpList params = getbymode(v, ix);
+		uint64_t pos = (uint64_t)getbymode2(v, ix);
+		ppl(params, "# MUL ");
 
-		int a = isimmediate(ix, 0) ? params[0] : v.op[(uint)params[0]];
-		int b = isimmediate(ix, 1) ? params[1] : v.op[(uint)params[1]];
-		int z = a * b;
-
-		v.op[(uint)params[2]] = z;
+		int64_t z = params[0] * params[1];
+		if ((uint64_t) pos > v.op.size()) v.op.resize((uint64_t)pos+10);
+		v.op[pos] = z;
+		std::cout << "# MUL " << pos << " = " << v.op[pos] << " []" << v.op.size() << std::endl;
 		v.position += STEP_DEFAULT;
 	} else if (ix.opcode == OP_IN) {
-		if (v.position + 1 > v.op.size()) {
-			v.status = 100 + OP_IN;
-			return v;
-		}
-		uint pos = v.position+1;
-		int z = v.op[pos];
-		int n;
+		v = check(ix.opcode, v);
+		if (v.status >= 100 && v.status < 200) return v;
+
+		uint64_t pos = (uint64_t) getbymode2(v, ix);
+		int64_t n;
 		if (v.inputs.size() > 0) {
 			n = v.inputs.back();
 			v.inputs.pop_back();
 		} else {
 			v.status = 10;
 			return v;
-			//std::cin >> n;
 		}
-		std::cout << "# IN val: " << n << " address: pos " << pos << " val: " << z << " => " << n << std::endl;
 
-		v.op[(uint)z] = n;
-		v.position += STEP_IN;
+		if ((uint64_t) pos > v.op.size()) v.op.resize((uint64_t)pos+10);
+		v.op[pos] = n;
+		std::cout << "# IN val:" << n << " pos " << pos << " = " << v.op[pos] << std::endl;
+		v.position += stp(ix.opcode);
 	} else if (ix.opcode == OP_OUT) {
-		if (v.position + 1 > v.op.size()) {
-			v.status = 100 + OP_OUT;
-			return v;
-		}
-		std::vector<int> params = getbymode(v, ix, 1);
+		v = check(ix.opcode, v);
+		if (v.status >= 100 && v.status < 200) return v;
 
-		int z = params[0];
-		std::cout << "# OUT " << z << " from pos " << " = " << z << std::endl;
+		OpList params = getbymode(v, ix);
+		int64_t z = params[0];
+		std::cout << "# OUT " << z <<  std::endl;
 
 		v.outputs.push_back(z);
 		write(z);
-		v.position += STEP_OUT;
+		v.position += stp(ix.opcode);
 	} else if (ix.opcode == OP_JMT) {
-		if (v.position + 2 > v.op.size()) {
-			v.status = 100 + OP_JMT;
-			return v;
-		}
-		std::vector<int> params;
-		params.push_back(v.op[v.position+1]);
-		params.push_back(v.op[v.position+2]);
+		v = check(ix.opcode, v);
+		if (v.status >= 100 && v.status < 200) return v;
 
-		int a = isimmediate(ix, 0) ? params[0] : v.op[(uint)params[0]];
-		int b = isimmediate(ix, 1) ? params[1] : v.op[(uint)params[1]];
-		std::cout << "# JMT a " << params[0] << "=" << a << " b " << params[1] << "=" << b << " :: " << (bool)(a != 0) << std::endl;
+		OpList params = getbymode(v, ix);
+		std::cout << "# JMT a " << params[0] << " b " << params[1] << " :: " << (bool)(params[0] != 0) << std::endl;
 
-		if (a != 0) {
-			v.position = (uint)b;
+		if (params[0] != 0) {
+			v.position = (uint64_t) params[1];
 		} else {
-			v.position += STEP_JMT;
+			v.position += stp(ix.opcode);
 		}
 	} else if (ix.opcode == OP_JMF) {
-		if (v.position + 2 > v.op.size()) {
-			v.status = 100 + OP_JMF;
-			return v;
-		}
-		std::vector<int> params;
-		params.push_back(v.op[v.position+1]);
-		params.push_back(v.op[v.position+2]);
+		v = check(ix.opcode, v);
+		if (v.status >= 100 && v.status < 200) return v;
 
-		int a = isimmediate(ix, 0) ? params[0] : v.op[(uint)params[0]];
-		int b = isimmediate(ix, 1) ? params[1] : v.op[(uint)params[1]];
-		std::cout << "# JMF a *" << params[0] << "=" << a << " b *" << params[1] << "=" << b << " :: " << (bool)(a == 0) << std::endl;
+		OpList params = getbymode(v, ix);
+		std::cout << "# JMF a " << params[0] << " b " << params[1] << " :: " << (bool)(params[0] == 0) << std::endl;
 
-		if (a == 0) {
-			std::cout << "# JMF *" << v.position << "=" << v.op[v.position] << " => *" << b << "=" << v.op[(uint)b] << std::endl;
-			v.position = (uint)b;
+		if (params[0] == 0) {
+			v.position = (uint64_t) params[1];
 		} else {
-			v.position += STEP_JMF;
+			v.position += stp(ix.opcode);
 		}
 	} else if (ix.opcode == OP_LT) {
-		if (v.position + 3 > v.op.size()) {
-			v.status = 100 + OP_LT;
-			return v;
-		}
-		std::vector<int> params;
-		params.push_back(v.op[v.position+1]);
-		params.push_back(v.op[v.position+2]);
-		params.push_back(v.op[v.position+3]);
+		v = check(ix.opcode, v);
+		if (v.status >= 100 && v.status < 200) return v;
 
-		int a = isimmediate(ix, 0) ? params[0] : v.op[(uint)params[0]];
-		int b = isimmediate(ix, 1) ? params[1] : v.op[(uint)params[1]];
-		int pos = params[2];
-		std::cout << "# LT a " << a << " b " << b << " from pos " << pos << std::endl;
+		OpList params = getbymode(v, ix);
+		uint64_t pos = (uint64_t) getbymode2(v, ix);
+		std::cout << "# LT a " << params[0] << " b " << params[1] << " from pos " << pos << "|" << (params[0]<params[1]) << std::endl;
 
-		v.op[(uint)pos] = (a < b) ? 1 : 0;
-		v.position += STEP_LT;
+		v.op[pos] = (params[0] < params[1]) ? 1 : 0;
+		std::cout << "# LT " << pos << " = " << v.op[pos] << std::endl;
+		v.position += stp(ix.opcode);
 	} else if (ix.opcode == OP_EQ) {
-		if (v.position + 3 > v.op.size()) {
-			v.status = 100 + OP_EQ;
-			return v;
-		}
-		std::vector<int> params;
-		params.push_back(v.op[v.position+1]);
-		params.push_back(v.op[v.position+2]);
-		params.push_back(v.op[v.position+3]);
+		v = check(ix.opcode, v);
+		if (v.status >= 100 && v.status < 200) return v;
 
-		int a = isimmediate(ix, 0) ? params[0] : v.op[(uint)params[0]];
-		int b = isimmediate(ix, 1) ? params[1] : v.op[(uint)params[1]];
-		int z = params[2];
+		OpList params = getbymode(v, ix);
+		uint64_t pos = (uint64_t) getbymode2(v, ix);
+		std::cout << "# EQ a " << params[0] << " b " << params[1] << " from pos " << pos << "|" << (params[0]==params[1]) << std::endl;
 
-		v.op[(uint)z] = (a == b) ? 1 : 0;
-		v.position += STEP_EQ;
+		v.op[pos] = (params[0] == params[1]) ? 1 : 0;
+		std::cout << "# EQ " << pos << " = " << v.op[pos] << std::endl;
+		v.position += stp(ix.opcode);
 	} else if (ix.opcode == OP_REL) {
-		if (v.position + 1 > v.op.size()) {
-			v.status = 100 + OP_REL;
-			return v;
-		}
-		std::vector<int> params = getbymode(v, ix, 1);
+		v = check(ix.opcode, v);
+		if (v.status >= 100 && v.status < 200) return v;
+
+		OpList params = getbymode(v, ix);
+		std::cout <<"# REL " << params[0] << std::endl;
+
 		v.relbase += params[0];
-		v.position += STEP_REL;
+		v.position += stp(ix.opcode);
 	} else {
 		v.status = 1;
 	}
@@ -301,16 +349,16 @@ data calc(data v)
 	return v;
 }
 
-std::vector<int> getops(std::string allops)
+OpList getops(std::string allops)
 {
-	std::vector<int> ops;
+	OpList ops;
 
 	std::stringstream ss(allops);
 	std::string token;
 	std::string::size_type sz;
 
 	while (std::getline(ss, token, ',')) {
-		int num = std::stoi(token, &sz);
+		int64_t num = std::stoll(token, &sz);
 		ops.push_back(num);
 	}
 
@@ -345,11 +393,11 @@ data step(data v)
 	return v;
 }
 
-std::vector<int> convert(int i)
+OpList convert(int64_t i)
 {
-	std::vector<int> rv;
+	OpList rv;
 	auto it = rv.begin();
-	int v = i % 10;
+	int64_t v = i % 10;
 	it = rv.begin();
 	rv.insert(it, v);
 
@@ -379,7 +427,7 @@ std::vector<int> convert(int i)
 	return rv;
 }
 
-data runEngine(data x, std::vector<int> inputs, int num)
+data runEngine(data x, OpList inputs, int num)
 {
 	std::cout << "# Starting engine " << num << std::endl;
 	x.inputs = inputs;
@@ -397,7 +445,7 @@ data runEngine(data x, std::vector<int> inputs, int num)
 	return x;
 }
 
-std::vector<std::vector<int>> get_perms(bool part1 = true)
+std::vector<OpList> get_perms(bool part1 = true)
 {
 	int myints[5];
 	if (part1) {
@@ -406,9 +454,9 @@ std::vector<std::vector<int>> get_perms(bool part1 = true)
 		for (int i=0; i<5; ++i) myints[i] = i+5;
 	}
 
-	std::vector<std::vector<int>> rv;
+	std::vector<OpList> rv;
 	do {
-		std::vector<int> r;
+		OpList r;
 		for (int i=0; i<5; ++i) r.push_back(myints[i]);
 		rv.push_back(r);
 	} while (std::next_permutation(myints, myints+5));
@@ -427,24 +475,27 @@ int main(int argc, char *argv[])
 
 	std::cout << allops << std::endl << "###" << std::endl;
 
-	std::vector<int> ops = getops(allops);
+	OpList ops = getops(allops);
 	if (ops.size() < 1) return 1;
 
-	std::cout << "total: " << ops.size() << " ops" << std::endl;
-
 	bool part1 = true;
-	/*
+	int runOnlySet = -1;
+	int numRuns = 5;
+
 	if (argc > 2) {
 		std::string testMode(argv[2]);
 		if (testMode == "2") part1 = false;
 	}
-	*/
 
-	std::vector<std::vector<int>> all_sets;
-	std::vector<int> set1;
-	int runOnlySet = -1;
+	std::vector<OpList> all_sets;
+	OpList set1;
 	if (argc > 3) {
 		runOnlySet = std::stoi(argv[3]);
+	}
+	if (argc > 4) {
+		numRuns = std::stoi(argv[4]);
+	}
+	if (runOnlySet > -1) {
 		if (runOnlySet >= 0 && runOnlySet <= 99999) {
 			set1 = convert(runOnlySet);
 			all_sets.push_back(set1);
@@ -474,11 +525,11 @@ int main(int argc, char *argv[])
 			mx.outputs.clear();
 			mx.output = 0;
 
-			for (int num = 0; num<1; ++num) {
+			for (int num = 0; num<numRuns; ++num) {
 				mx.op = ops;
 				mx.position = 0;
 				mx.status = 0;
-				mx = runEngine(mx, {mx.output, set1[num]}, num);
+				mx = runEngine(mx, {set1[num]}, num);
 				if (mx.status >= 200) {
 					break;
 				}
