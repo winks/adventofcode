@@ -31,3 +31,5 @@
     * missing
   * day11 - *Space Police* - IntCode
     * TBD
+  * day12 - *The N-Body Problem*
+    * **Lua 5.2** - 1
