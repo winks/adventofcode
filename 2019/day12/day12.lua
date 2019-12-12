@@ -1,24 +1,34 @@
 function getl(file)
-  lines = {}
-  for line in io.lines(file) do
-    lines[#lines+1] = line
-  end
-  return lines
+	lines = {}
+	for line in io.lines(file) do
+		lines[#lines+1] = line
+	end
+	return lines
 end
 
-function deepcopy(orig)
-    local orig_type = type(orig)
-    local copy
-    if orig_type == 'table' then
-        copy = {}
-        for orig_key, orig_value in next, orig, nil do
-            copy[deepcopy(orig_key)] = deepcopy(orig_value)
-        end
-        setmetatable(copy, deepcopy(getmetatable(orig)))
-    else -- number, string, boolean, etc
-        copy = orig
-    end
-    return copy
+function gcd( m, n )
+	while n ~= 0 do
+		local q = m
+		m = n
+		n = q % n
+	end
+	return m
+end
+
+function lcm( m, n )
+	return ( m ~= 0 and n ~= 0 ) and m * n / gcd( m, n ) or 0
+end
+
+function deepcopy2(t)
+	local t2 = {};
+	for k,v in pairs(t) do
+		if type(v) == "table" then
+			t2[k] = deepcopy2(v);
+		else
+			t2[k] = v;
+		end
+	end
+	return t2;
 end
 
 function rpad(s,l,c)
@@ -37,14 +47,6 @@ function strx(v)
 			' / vz: '  .. rpad(''..v.vz,sz)
 end
 
-function world(t)
-	local rv = '=== WORLD\n'
-	for k,v in ipairs(t) do
-		rv = rv .. strx(v) .. "\n"
-	end
-	return rv .. 'WORLD ==='
-end
-
 function ppm(t)
 	for k,v in ipairs(t) do
 		print(strx(v))
@@ -61,30 +63,6 @@ function calcvelo(moons)
 		moons[k].x = moons[k].x + moons[k].vx
 		moons[k].y = moons[k].y + moons[k].vy
 		moons[k].z = moons[k].z + moons[k].vz
-	end
-	return moons
-end
-
-function calcvelo2(moons, what, vel)
-	for k,_ in ipairs(moons) do
-		moons[k][what] = moons[k][what] + moons[k][vel]
-	end
-	return moons
-end
-
-function calcgrav2(moons, what, vel)
-	for k1,_ in ipairs(moons) do
-		for k2,_ in ipairs(moons) do
-			if k2 <= k1 then goto continue end
-			if moons[k1][what] < moons[k2][what] then
-				moons[k1][vel] = moons[k1][vel] + 1
-				moons[k2][vel] = moons[k2][vel] - 1
-			elseif moons[k1][what] > moons[k2][what] then
-				moons[k1][vel] = moons[k1][vel] - 1
-				moons[k2][vel] = moons[k2][vel] + 1
-			end
-			::continue::
-		end
 	end
 	return moons
 end
@@ -135,18 +113,85 @@ function calcenergy(moons)
 	return total
 end
 
+function rpart1(moons)
+	print('---------------- part1')
+	local len = 1000
+	local steps = 0
+	for i=1,len,1 do
+		moons = calcgrav2(moons, 'x', 'vx')
+		moons = calcgrav2(moons, 'y', 'vy')
+		moons = calcgrav2(moons, 'z', 'vz')
+
+		moons = calcvelo2(moons, 'x', 'vx')
+		moons = calcvelo2(moons, 'y', 'vy')
+		moons = calcvelo2(moons, 'z', 'vz')
+		steps = i
+	end
+	print('----------------' .. steps .. ' steps done')
+	ppm(moons)
+	local e = calcenergy(moons)
+	print(e)
+	print('---------------- part1')
+end
+
+function rpart2(moons, what)
+	print('---------------- part2')
+	local state0 = deepcopy2(moons)
+	local szt = #state0
+	ppm(state0)
+	print(szt .. " moons")
+	local len = 0
+	len = 4686774924 + 10
+
+	----- .  .  .
+	local ok = 0
+	print('---------------- part2 loop: ' .. len .. " " .. what)
+	local what2 = 'v' .. what
+	for i=1,len,1 do
+		moons = calcgrav(moons)
+		moons = calcvelo(moons)
+
+		local m = 0
+		for xk,_ in ipairs(state0) do
+			if moons[xk][what] == state0[xk][what] and
+				moons[xk][what2] == 0 and
+				moons[xk][what2] == 0 and
+				moons[xk][what2] == 0 then
+				m = m + 1
+			else
+				goto continue
+			end
+
+		end
+		if m == szt then
+			ok = i
+			goto breaks
+		end
+		::continue::
+		if math.fmod(i,10000000) == 0 then print(':: ' .. i) end
+	end
+	::breaks::
+	print(what .. ' : ' .. ok)
+	print('---------------- part2')
+	return ok
+end
+
 function main()
 	if #arg < 1 then
 		return 1
 	end
 	local fname = arg[1]
 	local part2 = nil
+	local what = nil
 	if #arg > 1 then
 		part2 = arg[2]
 	end
+	if #arg > 2 then
+		what = arg[3]
+	end
 
-	lines = getl(fname)
-	moons = {}
+	local lines = getl(fname)
+	local moons = {}
 	moons[#moons+1] = { name = 'Io' }
 	moons[#moons+1] = { name = 'Europa' }
 	moons[#moons+1] = { name = 'Ganymede' }
@@ -169,90 +214,19 @@ function main()
 
 
 	if not part2 then
-		print('---------------- part1')
-		local len = 1000
-		local steps = 0
-		for i=1,len,1 do
-			moons = calcgrav2(moons, 'x', 'vx')
-			moons = calcgrav2(moons, 'y', 'vy')
-			moons = calcgrav2(moons, 'z', 'vz')
-
-			moons = calcvelo2(moons, 'x', 'vx')
-			moons = calcvelo2(moons, 'y', 'vy')
-			moons = calcvelo2(moons, 'z', 'vz')
-			steps = i
-		end
-		print('----------------' .. steps .. ' steps done')
-		ppm(moons)
-		e = calcenergy(moons)
-		print(e)
-		print('---------------- part1')
+		rpart1(moons)
 	else
-		print('---------------- part2')
-		state0 = deepcopy(moons)
-		ppm(state0)
-		local history = {}
-		len = 100000
-		len = 4686774924 + 10
-		len = 5000000000
-		----- .  .  .
-		local okx = {}
-		local oky = {}
-		local okz = {}
-		print('---------------- part2 loop: ' .. len)
-		local szt = #state0
-		for i=1,len,1 do
-			moons = calcgrav2(moons, 'x', 'vx')
-			moons = calcvelo2(moons, 'x', 'vx')
-			local m = 0
-			for xk,_ in ipairs(state0) do
-				if moons[xk].x ~= state0[xk].x then
-					goto cont1
-				else
-					m = m + 1
-				end
-				:: cont1 ::
-			end
-			if m == szt then okx[#okx+1] = i end
+		if what then
+			local xxx = rpart2(deepcopy2(moons), what)
+			print(xxx)
+		else
+			local x2 = 	rpart2(deepcopy2(moons), "x")
+			local y2 = 	rpart2(deepcopy2(moons), "y")
+			local z2 = 	rpart2(deepcopy2(moons), "z")
+			local pp1 = lcm(x2,y2)
+			local pp2 = lcm(pp1, z2)
+			print(string.format("%18.0f",pp2))
 		end
-		for _,i in ipairs(okx) do
-			moons = calcgrav2(moons, 'y', 'vy')
-			moons = calcvelo2(moons, 'y', 'vy')
-			local m = 0
-			for xk,_ in ipairs(state0) do
-				if moons[xk].y ~= state0[xk].y then
-					goto cont2
-				else
-					m = m + 1
-				end
-				:: cont2 ::
-			end
-			if m == szt then oky[#oky+1] = i end
-		end
-		for _,i in ipairs(oky) do
-			moons = calcgrav2(moons, 'z', 'vz')
-			moons = calcvelo2(moons, 'z', 'vz')
-			local m = 0
-			for xk,_ in ipairs(state0) do
-				if moons[xk].z ~= state0[xk].z then
-					goto cont3
-				else
-					m = m + 1
-				end
-				:: cont3 ::
-			end
-			if m == szt then okz[#okz+1] = i end
-		end
-		--[[
-			if math.fmod(i,1000) == 0 then print(':: ' .. i) end
-		]]--
-		print('len: ' .. #okx)
-		print('len: ' .. #oky)
-		print('len: ' .. #okz)
-		for k,x in ipairs(okz) do
-			print(x)
-		end
-		print('---------------- part2')
 	end
 end
 

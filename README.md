@@ -32,4 +32,4 @@
   * day11 - *Space Police* - IntCode
     * TBD
   * day12 - *The N-Body Problem*
-    * **Lua 5.2** - 1
+    * **Lua 5.2** - 1 + 2
