@@ -268,8 +268,9 @@ data calc(data v)
 			n = v.inputs.back();
 			v.inputs.pop_back();
 		} else {
-			v.status = 10;
-			return v;
+			//v.status = 10;
+			//return v;
+			n = 0;
 		}
 
 		if ((uint64_t) pos >= v.op.size()) v.op.resize((uint64_t)pos+RESIZE);
@@ -493,6 +494,68 @@ std::string getTile(int64_t type)
     4 is a ball tile. The ball moves diagonally and bounces off objects.
 */
 
+void show(int64_t image[100][100], int64_t score)
+{
+	std::cout << std::endl;
+	int countblocks = 0;
+	for (auto j = 0; j < 24; ++j) {
+		std::cout << "|" << ((j<10) ?" ":"") << j << "| ";
+		for (auto i = 0; i < 44; ++i) {
+			std::cout << getTile(image[i][j]);
+			if (image[i][j] == 2) ++countblocks;
+		}
+		std::cout << std::endl;
+	}
+	std::cout << "|    ";
+	for (auto i = 0; i < 44; ++i) {
+		if (i % 2 ==  0) {
+			if (i < 10) std::cout << i;
+			else std::cout << (i % 10);
+		} else std::cout << " ";
+	}
+	std::cout << std::endl;
+	std::cout << std::endl;
+	std::cout << "Blocks: " << countblocks << std::endl;
+	std::cout << "Score : " << score << std::endl;
+}
+
+void showp(int64_t x, int64_t y, const Point  & lastpaddle, const Point & lastball,
+	int64_t goingLeft, int64_t goingDown, int64_t paddleMove, std::string d = "")
+{
+	std::string paddleMove2("m");
+	if (paddleMove == -1) paddleMove2 = "<<";
+	if (paddleMove ==  1) paddleMove2 = ">>";
+
+	std::string gls("o");
+	if (goingLeft > 0) gls = "<<";
+	if (goingLeft < 0) gls = ">>";
+
+	std::cout << "ball ("
+	<< lastball.x
+	<< "/"
+	<< lastball.y
+	<< ")->("
+	<< x
+	<< "/"
+	<< y
+	<< ") "
+	//<< goingLeft
+	//<< " "
+	<< gls
+	//<< " "
+	//<< goingDown
+	<< " "
+	<< (goingDown > 0 ? "v" : "^")
+	<< "   paddle ("
+	<< lastpaddle.x
+	<< "/"
+	<< lastpaddle.y
+	<< ")  "
+	<< paddleMove2
+	<< d
+	<< std::endl;
+}
+
 int paint(OpList code, OpList inputs)
 {
 	data mx;
@@ -505,8 +568,8 @@ int paint(OpList code, OpList inputs)
 	mx.status = 0;
 	mx.inputs = inputs;
 
-	std::map<Point,int> image;
-	int64_t image2[100][100] = {};
+	std::map<Point,int> image3;
+	int64_t image[100][100] = {};
 	Point cur;
 	int64_t x = 0;
 	int64_t y = 0;
@@ -517,6 +580,8 @@ int paint(OpList code, OpList inputs)
 	//image.insert(std::make_pair(cur, 0));
 	uint64_t opos = 0;
 	uint64_t lastpos = 1;
+	Point lastball;
+	Point lastpaddle;
 
 	do {
 		mx = calc(mx);
@@ -533,13 +598,75 @@ int paint(OpList code, OpList inputs)
 			z = mx.outputs[opos-1];
 			if (x == -1 && y == 0) {
 				score = z;
+				std::cout << "SCORE " << score << std::endl;
 			} else {
 				cur.x = x;
 				cur.y = y;
 				tileType = z;
+				image[cur.x][cur.y] = tileType;
+				// analyze the ball and paddle
+				if (tileType == 3) {
+					if (lastpaddle.x != x || lastpaddle.y != y) show(image, score);
+					lastpaddle.x = x;
+					lastpaddle.y = y;
+				} else if (tileType == 4) {
+					int64_t goingLeft = lastball.x - x;
+					int64_t goingDown = y - lastball.y;
+					int64_t paddleMove = 2;
+					// ball is right of paddle
+					if (x > lastpaddle.x) {
+						//int64_t hdiff = x - lastpaddle.x;
+						int64_t wdiff = y - lastball.y;
 
-				image.insert(std::make_pair(cur, tileType));
-				image2[cur.x][cur.y] = tileType;
+						//if (goingDown > 0  && lastpaddle.x != 0 && lastpaddle.y != 0) {
+						if (goingLeft > 0) {
+							if (lastpaddle.x - x > lastpaddle.y - 2 - y) {
+								paddleMove = -1;
+								mx.inputs.push_back(paddleMove);
+							} else {
+								paddleMove = 0;
+								//mx.inputs.push_back(paddleMove);
+							}
+						} else if (goingLeft < 0){
+							paddleMove = 1;
+							mx.inputs.push_back(paddleMove);
+						}/* else {
+							paddleMove = 0;
+							//mx.inputs.push_back(paddleMove);
+						}
+						} else {
+							paddleMove = 0;
+							//mx.inputs.push_back(paddleMove);
+						}*/
+					} else if (x < lastpaddle.x) {
+						// ball is left of paddle
+						if (goingDown > 0 && lastpaddle.x != 0 && lastpaddle.y != 0) {
+						if (goingLeft > 0) {
+							paddleMove = -1;
+							mx.inputs.push_back(paddleMove);
+						} else if (goingLeft < 0){
+							if (lastpaddle.x - x > lastpaddle.y + 2 - y) {
+								paddleMove = 1;
+								mx.inputs.push_back(paddleMove);
+							} else {
+								paddleMove = 0;
+								//mx.inputs.push_back(paddleMove);
+							}
+						} else {
+							paddleMove = 0;
+							//mx.inputs.push_back(paddleMove);
+						}
+						} else {
+							paddleMove = 0;
+							//mx.inputs.push_back(paddleMove);
+						}
+					}
+
+					if (lastball.x != x || lastball.y != y) showp(x, y, lastpaddle, lastball, goingLeft, goingDown, paddleMove);
+					if (lastball.x != x || lastball.y != y) show(image, score);
+					lastball.x = x;
+					lastball.y = y;
+				}
 				std::cout << "XXX (" << cur.x << "/" << cur.y << ") = " << tileType << std::endl;
 			}
 			lastpos = opos-1;
@@ -548,18 +675,7 @@ int paint(OpList code, OpList inputs)
 		++i;
 	} while(mx.position < mx.op.size()-1 && mx.status != 10 && mx.status != 1);
 
-	std::cout << std::endl;
-	int countblocks = 0;
-	for (auto j = 0; j < 24; ++j) {
-		for (auto i = 0; i < 44; ++i) {
-			std::cout << getTile(image2[i][j]);
-			if (image2[i][j] == 2) ++countblocks;
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout << "Blocks: " << countblocks << std::endl;
-	std::cout << "Score : " << score << std::endl;
+	show(image, score);
 
 	return 0;
 }
@@ -585,7 +701,7 @@ int main(int argc, char *argv[])
 		ops[0] = 2;
 	}
 
-	OpList inputs;
+	OpList inputs = {0};
 	if (argc > 3) {
 		infile = std::ifstream(argv[3]);
 		infile >> allops;
