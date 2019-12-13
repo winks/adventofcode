@@ -2,8 +2,6 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
-#include <map>
-#include <set>
 #include <sstream>
 #include <vector>
 
@@ -136,7 +134,6 @@ instruction parseop(int64_t op)
 		do {
 			int64_t p = tmp % 10;
 			rv.params.push_back(p);
-			//rv.params.insert(rv.params.begin(), p);
 			tmp -= p;
 			tmp = tmp / 10;
 		} while (tmp > 0);
@@ -539,11 +536,7 @@ void showp(int64_t x, int64_t y, const Point  & lastpaddle, const Point & lastba
 	<< "/"
 	<< y
 	<< ") "
-	//<< goingLeft
-	//<< " "
 	<< gls
-	//<< " "
-	//<< goingDown
 	<< " "
 	<< (goingDown > 0 ? "v" : "^")
 	<< "   paddle ("
@@ -568,7 +561,6 @@ int paint(OpList code, OpList inputs)
 	mx.status = 0;
 	mx.inputs = inputs;
 
-	std::map<Point,int> image3;
 	int64_t image[100][100] = {};
 	Point cur;
 	int64_t x = 0;
@@ -577,7 +569,6 @@ int paint(OpList code, OpList inputs)
 	int64_t score = 0;
 	int i = 0;
 	int64_t tileType = 0;
-	//image.insert(std::make_pair(cur, 0));
 	uint64_t opos = 0;
 	uint64_t lastpos = 1;
 	Point lastball;
@@ -605,6 +596,7 @@ int paint(OpList code, OpList inputs)
 				tileType = z;
 				image[cur.x][cur.y] = tileType;
 				// analyze the ball and paddle
+
 				if (tileType == 3) {
 					if (lastpaddle.x != x || lastpaddle.y != y) show(image, score);
 					lastpaddle.x = x;
@@ -613,34 +605,20 @@ int paint(OpList code, OpList inputs)
 					int64_t goingLeft = lastball.x - x;
 					int64_t goingDown = y - lastball.y;
 					int64_t paddleMove = 2;
-					// ball is right of paddle
-					if (x > lastpaddle.x) {
-						//int64_t hdiff = x - lastpaddle.x;
-						int64_t wdiff = y - lastball.y;
 
-						//if (goingDown > 0  && lastpaddle.x != 0 && lastpaddle.y != 0) {
+					if (x > lastpaddle.x) {
+						// ball is right of paddle
 						if (goingLeft > 0) {
 							if (lastpaddle.x - x > lastpaddle.y - 2 - y) {
 								paddleMove = -1;
 								mx.inputs.push_back(paddleMove);
-							} else {
-								paddleMove = 0;
-								//mx.inputs.push_back(paddleMove);
 							}
 						} else if (goingLeft < 0){
 							paddleMove = 1;
 							mx.inputs.push_back(paddleMove);
-						}/* else {
-							paddleMove = 0;
-							//mx.inputs.push_back(paddleMove);
 						}
-						} else {
-							paddleMove = 0;
-							//mx.inputs.push_back(paddleMove);
-						}*/
 					} else if (x < lastpaddle.x) {
 						// ball is left of paddle
-						if (goingDown > 0 && lastpaddle.x != 0 && lastpaddle.y != 0) {
 						if (goingLeft > 0) {
 							paddleMove = -1;
 							mx.inputs.push_back(paddleMove);
@@ -648,17 +626,7 @@ int paint(OpList code, OpList inputs)
 							if (lastpaddle.x - x > lastpaddle.y + 2 - y) {
 								paddleMove = 1;
 								mx.inputs.push_back(paddleMove);
-							} else {
-								paddleMove = 0;
-								//mx.inputs.push_back(paddleMove);
 							}
-						} else {
-							paddleMove = 0;
-							//mx.inputs.push_back(paddleMove);
-						}
-						} else {
-							paddleMove = 0;
-							//mx.inputs.push_back(paddleMove);
 						}
 					}
 
@@ -691,8 +659,6 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	//std::cout << allops << std::endl << "###" << std::endl;
-
 	OpList ops = getops(allops);
 	if (ops.size() < 1) return 1;
 
@@ -710,7 +676,4 @@ int main(int argc, char *argv[])
 
 	// part 1
 	paint(ops, inputs);
-
-
-
 }
