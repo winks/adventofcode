@@ -28,7 +28,7 @@
   * day09 - *Sensor Boost* - IntCode
     * **C++** - 1+2
   * day10 - *Monitoring Station*
-    * missing
+    * **Python3** - 1+2
   * day11 - *Space Police* - IntCode
     * TBD
   * day12 - *The N-Body Problem*

@@ -42,26 +42,38 @@ def crossp(a, b):
 def angle2(a, b):
   return math.atan2(b[1] - a[1], b[0] - a[0])
 
-def uni4(a, pairs):
+def part1(a, pairs):
   lookup = []
   for t in pairs:
     u1 = sub(t[1], a)
     x = angle2([0,0], u1)
     md = math.degrees(x)
     md = round(md,10)
-    print(a,t[0],t[1], md)
+    #print(a,t[0],t[1], md)
     if not md in lookup:
       lookup.append(md)
   return lookup
 
+def part2(a, pairs):
+  lookup = []
+  for t in pairs:
+    u1 = sub(t[1], a)
+    x = angle2([0,0], u1)
+    x = angle2(a, t[1])
+    md = math.degrees(x)
+    md = round(md,10)
+    #print(a,t[0],t[1], md)
+    lookup.append([t[1][0],t[1][1],md])
+  return lookup
+
 def los(m):
-  rv = {}
+  rv = []
   for x in range(0, len(m[0])):
     for y in range(0, len(m)):
       if m[y][x] == ".":
         continue
-      print("-------------------")
-      print("#POINT",x,y)
+      #print("-------------------")
+      #print("#POINT",x,y)
       ck = []
       for x1 in range(0, len(m[0])):
         for y1 in range(0, len(m)):
@@ -70,23 +82,50 @@ def los(m):
           if x == x1 and y == y1:
             continue
           ck.append([[x,y],[x1,y1]])
-      pts = [b for [a,b] in ck]
-      pts.insert(0, ck[0][0])
-      print("--",len(pts),"points",pts)
-      print("--",len(ck),"pairs",ck)
-      angles = uni4([x,y], ck)
-      print(sorted(angles))
-      print("")
-      rv[str([x,y])] = len(angles)
+      angles = part1([x,y], ck)
+      #print(sorted(angles))
+      #print("")
+      rv.append([x,y,len(angles)])
   mx = 0
   bs = ''
-  for k in rv.keys():
-    print(k,":",rv[k])
-    if rv[k] > mx:
-      bs = k
-      mx = rv[k]
+  for r in rv:
+    #print("[",r[0],",",r[1],"]:",r[2])
+    if r[2] > mx:
+      bs = r[:2]
+      mx = r[2]
   print("")
-  print(bs,rv[bs])
+  print("best",bs,mx)
+
+  #part2
+  ck = []
+  for x1 in range(0, len(m[0])):
+    for y1 in range(0, len(m)):
+      if m[y1][x1] == ".":
+        continue
+      if x == x1 and y == y1:
+        continue
+      ck.append([[x,y],[x1,y1]])
+  aa = part2(bs, ck)
+  for i in range(0, len(aa)):
+     aa[i] = [aa[i][0],aa[i][1],(aa[i][2]+90+360)%360]
+  for a in aa:
+    print(a, (a[2] * 10000 + dist(bs,a)))
+  print("-----")
+  shot = []
+  lang = 0
+  print("aa:",len(aa),"shot:",len(shot))
+  print("-----")
+
+  while aa:
+    def m(x):
+      return ((x[2] - lang)%360) * 100000 + dist(bs, x)
+    tgt = min(aa, key=m)
+    print(tgt, m(tgt))
+    shot.append(tgt)
+    aa.remove(tgt)
+    lang = (tgt[2] + 0.001)%360
+    print("aa:",len(aa),"shot:",len(shot),"last:",tgt,"lang:",lang)
+    print("")
 
 if __name__ == "__main__":
   if len(sys.argv) < 2:
