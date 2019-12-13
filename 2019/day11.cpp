@@ -2,7 +2,6 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
-#include <map>
 #include <sstream>
 #include <vector>
 
@@ -36,6 +35,16 @@ struct data {
 struct instruction {
 	int64_t opcode = 0;
 	OpList params;
+};
+
+struct Point {
+	int64_t x = 0;
+	int64_t y = 0;
+};
+
+struct Image {
+	int64_t image[100][100];
+	int done = 0;
 };
 
 void ppl(OpList params, std::string prefix, std::string sep = " ")
@@ -126,7 +135,6 @@ instruction parseop(int64_t op)
 		do {
 			int64_t p = tmp % 10;
 			rv.params.push_back(p);
-			//rv.params.insert(rv.params.begin(), p);
 			tmp -= p;
 			tmp = tmp / 10;
 		} while (tmp > 0);
@@ -228,7 +236,7 @@ data calc(data v)
 		ppl(params, "# ADD ");
 
 		int64_t z = params[0] + params[1];
-		if ((uint64_t) pos > v.op.size()) v.op.resize((uint64_t)pos+RESIZE);
+		if ((uint64_t) pos >= v.op.size()) v.op.resize((uint64_t)pos+RESIZE);
 		v.op[pos] = z;
 		std::cout << "# ADD " << pos << " = " << v.op[pos] << " []" << v.op.size() << std::endl;
 		std::cout << "@#op1 " << pos << " " << v.op[pos] << std::endl;
@@ -242,7 +250,7 @@ data calc(data v)
 		ppl(params, "# MUL ");
 
 		int64_t z = params[0] * params[1];
-		if ((uint64_t) pos > v.op.size()) v.op.resize((uint64_t)pos+RESIZE);
+		if ((uint64_t) pos >= v.op.size()) v.op.resize((uint64_t)pos+RESIZE);
 		v.op[pos] = z;
 		std::cout << "# MUL " << pos << " = " << v.op[pos] << " []" << v.op.size() << std::endl;
 		std::cout << "@#op2 " << pos << " " << v.op[pos] << std::endl;
@@ -262,7 +270,7 @@ data calc(data v)
 			return v;
 		}
 
-		if ((uint64_t) pos > v.op.size()) v.op.resize((uint64_t)pos+RESIZE);
+		if ((uint64_t) pos >= v.op.size()) v.op.resize((uint64_t)pos+RESIZE);
 		v.op[pos] = n;
 		std::cout << "# IN val:" << n << " pos " << pos << " = " << v.op[pos] << std::endl;
 		std::cout << "@#op3 " << pos << " " << v.op[pos] << std::endl;
@@ -463,9 +471,102 @@ std::vector<OpList> get_perms(bool part1 = true)
 	return rv;
 }
 
-void paint(uint64_t code, uint64_t start)
+Image paint(OpList code, int64_t start)
 {
+	data mx;
+	mx.inputs.clear();
+	mx.outputs.clear();
+	mx.output = 0;
 
+	mx.op = code;
+	mx.position = 0;
+	mx.status = 0;
+	mx.inputs.push_back(start);
+
+	int64_t image[100][100] = {};
+	int64_t done[100][100] = {};
+	char dir = '^';
+	Point cur;
+	cur.x = 50;
+	cur.y = 50;
+	int i = 0;
+	// 0 = black
+	// 1 = white
+	image[cur.x][cur.y] = 0;
+
+	do {
+		mx = calc(mx);
+		print(mx);
+		if (mx.outputs.size() > 1) {
+			int64_t color = mx.outputs.front();
+			image[cur.x][cur.y] = color;
+			done[cur.x][cur.y] = 1;
+			std::cout << "XCM (" << cur.x << "/" << cur.y << ")=" << image[cur.x][cur.y] << std::endl;
+			int64_t turn = mx.outputs.back();
+			mx.outputs.clear();
+			std::cout << "XMM1 (" << cur.x << "/" << cur.y << ") " << dir << " " << turn << std::endl;
+
+			if (turn == 0) {
+				switch (dir) {
+					case '^':
+						dir = '<';
+						cur.x -= 1;
+						break;
+					case '<':
+						dir = 'v';
+						cur.y -= 1;
+						break;
+					case 'v':
+						dir = '>';
+						cur.x += 1;
+						break;
+					case '>':
+						dir = '^';
+						cur.y += 1;
+						break;
+					default:
+					break;
+				}
+			} else {
+				switch (dir) {
+					case '^':
+						dir = '>';
+						cur.x += 1;
+						break;
+					case '>':
+						dir = 'v';
+						cur.y -= 1;
+						break;
+					case 'v':
+						dir = '<';
+						cur.x -= 1;
+						break;
+					case '<':
+						dir = '^';
+						cur.y += 1;
+						break;
+					default:
+					break;
+				}
+			}
+			std::cout << "XMM2 (" << cur.x << "/" << cur.y << ") " << dir << std::endl;
+			mx.inputs.push_back(image[cur.x][cur.y]);
+		}
+
+		++i;
+	} while(mx.position < mx.op.size()-1 && mx.status != 10 && mx.status != 1);
+
+	Image im;
+	int rv = 0;
+	for (int i=0; i<100;++i) {
+		for (int j=0; j<100;++j) {
+			rv += done[i][j];
+			im.image[i][j] = image[i][j];
+		}
+	}
+
+	im.done = rv;
+	return im;
 }
 
 int main(int argc, char *argv[])
@@ -484,14 +585,31 @@ int main(int argc, char *argv[])
 	if (ops.size() < 1) return 1;
 
 	// part 1
-	data mx;
-	mx.inputs.clear();
-	mx.outputs.clear();
-	mx.output = 0;
+	Image image = paint(ops, 0);
+	std::cout << "XP1: " << image.done << std::endl;
 
-	mx.op = ops;
-	mx.position = 0;
-	mx.status = 0;
-	mx = runEngine(mx, {0}, 0);
-	print(mx);
+	// part 2
+	image = paint(ops, 1);
+
+	int minx = 100;
+	int maxx = 0;
+	int miny = 100;
+	int maxy = 0;
+	for (int i=0; i<100; ++i) {
+		for (int j=0; j<100; ++j) {
+			if (image.image[i][j] == 0) continue;
+			if (i > maxx) maxx = i;
+			if (j > maxy) maxy = j;
+			if (i < minx) minx = i;
+			if (j < miny) miny = j;
+		}
+	}
+	for (int i=maxy; i>=miny; --i) {
+		for (int j=minx; j<=maxx; ++j) {
+			if (image.image[j][i] == 1) std::cout << "\u2588";
+			else std::cout<< " ";
+		}
+		std::cout<< std::endl;
+	}
+	return 0;
 }
