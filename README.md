@@ -30,8 +30,12 @@
   * day10 - *Monitoring Station*
     * **Python3** - 1+2
   * day11 - *Space Police* - IntCode
-    * *C++** - 1+2
+    * **C++** - 1+2
   * day12 - *The N-Body Problem*
     * **Lua 5.2** - 1 + 2
   * day13 - *Care Package* - IntCode
     * **C++** - 1+2
+  * day14 - *Space Stoichiometry*
+    * **Python** - 1+2
+  * day15 - *Oxygen System* - IntCode
+    * **C++** - 1
