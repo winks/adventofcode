@@ -1,18 +1,5 @@
 #!/usr/bin/env bash
 
-function dline {
-	local line=$1
-	local comm=$2
-	local laststop=${line[0]}
-	local stop=${line[1]}
-	local cost=${line[2]}
-	echo " DD line $comm"
-	echo " DD len  : ${#line[@]}"
-	echo " DD lstop: ${laststop[*]}"
-	echo " DD stop : ${stop[*]}"
-	echo " DD cost : ${cost}"
-}
-
 function dp {
 	local x1=$1
 	local y1=$2
@@ -125,6 +112,7 @@ function cnt2 () {
 		return 1
 	fi
 	local max1=$((hax > hbx ? hax : hbx))
+	# fixme might be not needed
 	local min12=$((vax < vbx ? vax : vbx))
 	echo "DD max1 $max1 $min12 ~ $hax $hay $hbx $hby // $vax $vbx"
 	if [ $max1 -lt $min12 ]; then
@@ -136,6 +124,7 @@ function cnt2 () {
 		return 1
 	fi
 	local max2=$((vay > vby ? vay : vby))
+	# fixme might be not needed
 	local min22=$((hay < hby ? hay : hby))
 	echo "DD max2 $max2 $min22 ~ $vay $vby // $hay $hby"
 	if [ $max2 -lt $min22 ]; then
@@ -276,7 +265,7 @@ function main () {
 				echo "    TMP2 $rv_dir , $rv_len , $rv_x , $rv_y :: ${#tmp2[@]} :: ${tmp2[@]}"
 				let "cost2v = $cost2v + ${tmp2[1]}"
 				local line2=($lastx2v $lasty2v ${tmp2[2]} ${tmp2[3]} $cost2v)
-				# ignore horizontal in inner loop
+				# ignore vertical in inner loop
 				if [ "${tmp2[0]}" == "R" -o ${tmp2[0]} == "L" ]; then
 			        echo "P1 - vertical"
 					echo "P2 - horizontal"
@@ -313,48 +302,6 @@ function main () {
 
 	echo "TOTAL M $total_manh"
 	echo "TOTAL C $total_cost"
-
-	return
-
-	for h in ${hv[@]}; do
-		for v in ${vv2[@]}; do
-			cnt $ZERO $h $v
-			mc=$?
-			if [ ${mc[0]} -gt 0 ]; then
-				if [ ${mc[0]} -lt $manh -o $manh -eq 0 ]; then
-					manh=${mc[0]}
-					echo $mc
-				fi
-			fi
-			if [ ${mc[1]} -gt 0 ]; then
-				if [ ${mc[1]} -lt $cost -o $cost -eq 0 ]; then
-					cost=${mc[1]}
-					echo $cost
-				fi
-			fi
-		done
-	done
-	for h in ${hv2[@]}; do
-		for v in ${vv[@]}; do
-			cnt $ZERO $h $v
-			mc=$?
-			if [ ${mc[0]} -gt 0 ]; then
-				if [ ${mc[0]} -lt $manh -o $manh -eq 0 ]; then
-					manh=${mc[0]}
-					echo $mc
-				fi
-			fi
-			if [ ${mc[1]} -gt 0 ]; then
-				if [ ${mc[1]} -lt $cost -o $cost -eq 0 ]; then
-					cost=${mc[1]}
-					echo $cost
-				fi
-			fi
-		done
-	done
-
-	echo "manh: $manh"
-	echo "cost: $cost"
 }
 
 
