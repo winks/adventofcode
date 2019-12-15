@@ -10,6 +10,7 @@
 	* **TypeScript** - 1
   * day3 - *Crossed Wires*
     * **Nim**: `day03/day03.nim` - 1+2
+    * **Nim**: `day03/day03.sh` - 1+2
   * day04 - *Secure Container*
     * **C++** - 1
     * **Python3**: `day04/day04.py` - 1+2
@@ -28,14 +29,14 @@
   * day09 - *Sensor Boost* - IntCode
     * **C++** - 1+2
   * day10 - *Monitoring Station*
-    * **Python3** - 1+2
+    * **Python3**: `day10/day10.py` - 1+2
   * day11 - *Space Police* - IntCode
     * **C++** - 1+2
   * day12 - *The N-Body Problem*
-    * **Lua 5.2** - 1 + 2
+    * **Lua 5.2**: `day12/day12.lua` - 1 + 2
   * day13 - *Care Package* - IntCode
     * **C++** - 1+2
   * day14 - *Space Stoichiometry*
-    * **Python** - 1+2
+    * **Python**: `day14/day14.py` - 1+2
   * day15 - *Oxygen System* - IntCode
     * **C++** - 1
