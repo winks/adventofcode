@@ -10,7 +10,7 @@
 	* **TypeScript** - 1
   * day3 - *Crossed Wires*
     * **Nim**: `day03/day03.nim` - 1+2
-    * **Nim**: `day03/day03.sh` - 1+2
+    * **BASH**: `day03/day03.sh` - 1+2
   * day04 - *Secure Container*
     * **C++** - 1
     * **Python3**: `day04/day04.py` - 1+2
@@ -37,6 +37,7 @@
   * day13 - *Care Package* - IntCode
     * **C++** - 1+2
   * day14 - *Space Stoichiometry*
-    * **Python**: `day14/day14.py` - 1+2
+    * **Python**: `day14/day14.py` - 1
+    * **Perl**: `day14/day14.pl` - 1
   * day15 - *Oxygen System* - IntCode
     * **C++** - 1
