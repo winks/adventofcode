@@ -41,3 +41,5 @@
     * **Perl**: `day14/day14.pl` - 1
   * day15 - *Oxygen System* - IntCode
     * **C++** - 1
+  * day16 - *Flawed Frequency Transmission*
+    * **Ruby** - 1
