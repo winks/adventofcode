@@ -507,8 +507,6 @@ std::vector<OpList> get_perms(bool part1 = true)
 std::string getTile(int64_t type)
 {
 	char aChar = type;
-	//std::ostringstream oss;
-	//oss << type;
 	std::string rv(" ");
 	rv[0] = aChar;
 	if (type == 0) rv[0] = '|';
@@ -522,20 +520,6 @@ bool isCrossing(int64_t i, int64_t j, int64_t image[100][100], int minw = 0, int
 		&& j>minh+1
 		&& j < maxh
 		&& image[i][j-1] == 35
-		&& image[i-1][j] == 35
-		&& image[i+1][j] == 35
-		&& image[i][j+1] == 35
-	) {
-	return true;
-	}
-	return false;
-}
-
-bool isCrossing2(Point a, int64_t image[100][100])
-{
-	int i = a.x;
-	int j = a.y;
-	if (image[i][j-1] == 35
 		&& image[i-1][j] == 35
 		&& image[i+1][j] == 35
 		&& image[i][j+1] == 35
@@ -563,25 +547,13 @@ void show(int64_t image[100][100])
 	std::string line("");
 	std::string tile;
 	for (auto j = minh; j < maxh; ++j) {
-		//std::cout << "|" << ((j<10) ?" ":"") << j << "| ";
 		for (auto i = minw; i < maxw; ++i) {
 			type = image[i][j];
 			p2.push_back(type);
-	//if(type == 60 || type == 62 || type == 118 || type == 94) {
-	//	std::cout << std::endl << i << "/" << j << std::endl;
-	//}
 			tile = getTile(image[i][j]);
 			if (image[i][j] != 10) {
 				if (image[i][j] == 35) {
 					++countblocks;
-					//if (i > minw + 1
-					//	&& i < maxw -1
-					//	&& j>minh+1
-					//	&& j < maxh
-					//	&& image[i][j-1] == 35
-					//	&& image[i-1][j] == 35
-					//	&& image[i+1][j] == 35
-					//	&& image[i][j+1] == 35
 					if (isCrossing(i, j, image, minw, maxw, minh, maxh)
 					) {
 							tile = "O";
@@ -639,18 +611,6 @@ Point nextStep(Point cur, int64_t dir)
 	return next;
 }
 
-int nextDirR(int64_t dir)
-{
-	if (dir == DIR_UP) {
-		return DIR_RIGHT;
-	} else if (dir == DIR_RIGHT) {
-		return DIR_DOWN;
-	} else if (dir == DIR_DOWN) {
-		return DIR_LEFT;
-	} else {
-		return DIR_UP;
-	}
-}
 char pd(int64_t dir)
 {
 	if (dir == DIR_UP) {
@@ -734,13 +694,6 @@ Point fdir(Point cur, Point last, int64_t dir, int64_t image[100][100], int minw
 		next.ppp("Found next ");
 		return next;
 	}
-	//} while (!isOut(next, minw, maxw, minh, maxh) && isValid(next, image) && next != last);
-
-	//if (valid) {
-	//	next.ppp("Found OK ");
-	//	std::cout << std::endl;
-	//	return next;
-	//}
 	return cur;
 }
 
@@ -825,17 +778,17 @@ int paint(OpList code, OpList inputs)
 	sp.second = DIR_UP;
 	path.push_back(sp);
 	do {
-	//for (int i = 0; i < 15; ++i) {
 		next  = fdir(startPos, lastPos, startDir, image);
 		int64_t adjust = pdiff(startPos, next);
 		startDir = next.dir;
 		sp.first = next;
-	sp.second = adjust;
+		sp.second = adjust;
 		path.push_back(sp);
 		lastPos = startPos;
 		startPos = next;
 	} while (next.x != 39);
 
+/*
 	next.y = 27;
 	sp.first = next;
 	sp.second = DIR_DOWN;
@@ -880,7 +833,7 @@ int paint(OpList code, OpList inputs)
 	sp.first = next;
 	sp.second = DIR_UP;
 	path.push_back(sp);
-
+*/
 
 	for (auto it = path.begin(); it != path.end(); ++it) {
 		Point p = it->first;
@@ -980,11 +933,6 @@ int paint(OpList code, OpList inputs)
 	ppl(mx2.inputs, "");
 	//return 2;
 
-a = 'R,4,L,10,L,10'
-b = 'L,8,R,12,R,10,R,4'
-c = 'L,8,L,8,R,10,R,4'
-main = 'A,B,A,B,A,C,B,C,A,C'
-
 */
 
 	mx2.inputs.clear();
@@ -1014,49 +962,6 @@ main = 'A,B,A,B,A,C,B,C,A,C'
 	std::reverse(mx2.inputs.begin(), mx2.inputs.end());
 	ppl(mx2.inputs, "FOO");
 
-
-	/*
-	23 42
-	23 32
-	13 32
-	13 40
-	0  40
-	0  30
-	5  30
-	5  34
-	15 34
-	15 24
-	 7 24
-	*/
-
-	/*
-	do {
-		mx2 = calc(mx2);
-		print(mx2);
-		if (mx2.outputs.size() > 0) {
-			std::cout << "XX " << mx2.outputs.size() << std::endl;
-		}
-		if (mx2.outputs.size() > 0) {
-			lastOut = mx2.outputs.back();
-			mx2.outputs.pop_back();
-			if (lastOut != 10) {
-				image[curPos.x][curPos.y] = lastOut;
-				if(lastOut == 60 || lastOut == 62 || lastOut == 118 || lastOut == 94) {
-					startPos.x = curPos.x;
-					startPos.y = curPos.y;
-				}
-				curPos.x += 1;
-			} else {
-				image[curPos.x+1][curPos.y] = lastOut;
-				curPos.x = 0;
-				curPos.y += 1;
-			}
-			image[curPos.x][curPos.y] = lastOut;
-		}
-
-		++i;
-	} while(mx2.position < mx2.op.size()-1 && mx2.status != 10 && mx2.status != 1);
-	*/
 	do {
 		mx2 = calc(mx2);
 		print(mx2);
