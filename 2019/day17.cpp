@@ -25,6 +25,11 @@ const int64_t DIR_RIGHT =  62;
 const int64_t DIR_DOWN  = 118;
 const int64_t DIR_LEFT  =  60;
 
+const int MINW = 0;
+const int MAXW = 51;
+const int MINH = 0;
+const int MAXH = 42;
+
 typedef std::vector<int64_t> OpList;
 
 struct data {
@@ -513,12 +518,12 @@ std::string getTile(int64_t type)
 	return rv;
 }
 
-bool isCrossing(int64_t i, int64_t j, int64_t image[100][100], int minw = 0, int maxw = 41, int minh = 0, int maxh = 43)
+bool isCrossing(int64_t i, int64_t j, int64_t image[100][100], int minw, int maxw, int minh, int maxh)
 {
-	if (i > minw + 1
-		&& i < maxw -1
-		&& j>minh+1
-		&& j < maxh
+	if (   i > minw + 1
+		&& i < maxw - 1
+		&& j > minh + 1
+		&& j < maxh - 1
 		&& image[i][j-1] == 35
 		&& image[i-1][j] == 35
 		&& image[i+1][j] == 35
@@ -531,10 +536,10 @@ bool isCrossing(int64_t i, int64_t j, int64_t image[100][100], int minw = 0, int
 
 void show(int64_t image[100][100])
 {
-	int minw = 0;
-	int maxw = 41;
-	int minh = 0;
-	int maxh = 43;
+	int minw = MINW;
+	int maxw = MAXW;
+	int minh = MINH;
+	int maxh = MAXH;
 
 	std::cout << std::endl;
 	int countblocks = 0;
@@ -546,8 +551,8 @@ void show(int64_t image[100][100])
 	std::vector<int64_t> p2;
 	std::string line("");
 	std::string tile;
-	for (auto j = minh; j < maxh; ++j) {
-		for (auto i = minw; i < maxw; ++i) {
+	for (auto j = minh; j <= maxh; ++j) {
+		for (auto i = minw; i <= maxw; ++i) {
 			type = image[i][j];
 			p2.push_back(type);
 			tile = getTile(image[i][j]);
@@ -589,7 +594,7 @@ void show(int64_t image[100][100])
 
 bool isOut(Point a, int minw, int maxw, int minh, int maxh)
 {
-	return (a.x < minw || a.x > maxw-1 || a.y < minh || a.y > maxh-1);
+	return (a.x < minw || a.x > maxw || a.y < minh || a.y > maxh );
 }
 
 Point nextStep(Point cur, int64_t dir)
@@ -660,7 +665,7 @@ std::vector<Point> getallne(const Point & cur, int64_t image[100][100], int64_t 
 	return neighbors;
 }
 
-Point fdir(Point cur, Point last, int64_t dir, int64_t image[100][100], int minw = 0, int maxw = 41, int minh = 0, int maxh = 43)
+Point fdir(Point cur, Point last, int64_t dir, int64_t image[100][100], int minw, int maxw, int minh, int maxh)
 {
 	std::string rv;
 	std::vector<int64_t> dirs;
@@ -733,15 +738,13 @@ int paint(OpList code, OpList inputs)
 					startPos.y = curPos.y;
 					startDir = lastOut;
 					startPos.dir = startDir;
-				std::cout << "XXX" << curPos.x << startPos.x << std::endl;
 				}
 				curPos.x += 1;
 			} else {
-				image[curPos.x+1][curPos.y] = lastOut;
+				image[curPos.x][curPos.y] = lastOut;
 				curPos.x = 0;
 				curPos.y += 1;
 			}
-			image[curPos.x][curPos.y] = lastOut;
 		}
 
 		++i;
@@ -778,7 +781,7 @@ int paint(OpList code, OpList inputs)
 	sp.second = DIR_UP;
 	path.push_back(sp);
 	do {
-		next  = fdir(startPos, lastPos, startDir, image);
+		next  = fdir(startPos, lastPos, startDir, image, MINW, MAXW, MINH, MAXH);
 		int64_t adjust = pdiff(startPos, next);
 		startDir = next.dir;
 		sp.first = next;
@@ -786,54 +789,14 @@ int paint(OpList code, OpList inputs)
 		path.push_back(sp);
 		lastPos = startPos;
 		startPos = next;
-	} while (next.x != 39);
-
-/*
-	next.y = 27;
-	sp.first = next;
-	sp.second = DIR_DOWN;
-	path.push_back(sp);
-
-	next.y = 28;
-	sp.first = next;
-	sp.second = DIR_DOWN;
-	path.push_back(sp);
-
-	next.y = 29;
-	sp.first = next;
-	sp.second = DIR_DOWN;
-	path.push_back(sp);
-
-	next.y = 30;
-	sp.first = next;
-	sp.second = DIR_DOWN;
-	path.push_back(sp);
-
-	next.x = 40;
-	sp.first = next;
-	sp.second = DIR_RIGHT;
-	path.push_back(sp);
-
-	next.y = 29;
-	sp.first = next;
-	sp.second = DIR_UP;
-	path.push_back(sp);
-
-	next.y = 28;
-	sp.first = next;
-	sp.second = DIR_UP;
-	path.push_back(sp);
-
-	next.y = 27;
-	sp.first = next;
-	sp.second = DIR_UP;
-	path.push_back(sp);
-
-	next.y = 26;
-	sp.first = next;
-	sp.second = DIR_UP;
-	path.push_back(sp);
-*/
+		// @TODO FIXME hardcoded endpoint
+		if (next.x == 38 && next.y == 30) {
+			sp.first = next;
+			sp.second = adjust;
+			path.push_back(sp);
+			break;
+		}
+	} while (true);
 
 	for (auto it = path.begin(); it != path.end(); ++it) {
 		Point p = it->first;
@@ -846,21 +809,12 @@ int paint(OpList code, OpList inputs)
 	std::pair<Point, int64_t> b;
 	int forward = 0;
 
-	uint linelen = 14;
-
 	int pos = -1;
 	for (auto it = path.begin()+1; ;) {
 		++pos;
-		if (rinput.length() > linelen) {
-			rinputs.push_back(rinput);
-			rinput = "";
-		}
 		if (it == path.end()-1) {
-			++forward;
-			rinput.append(std::to_string(forward));
-			rinputs.push_back(rinput);
-			// @TODO a
-			std::cout << "early" << std::endl;
+			rinputs.push_back(std::to_string(forward));
+			std::cout << "end" << std::endl;
 			break;
 		}
 		b = *it;
@@ -871,38 +825,27 @@ int paint(OpList code, OpList inputs)
 		if (a.second != pdiff(a.first, b.first)) {
 			std::cout << " dirchange" << std::endl;
 			if (forward > 0) {
-				rinput.append(std::to_string(forward));
-				rinput.append(",");
+				rinputs.push_back(std::to_string(forward));
 				std::cout << " fwd ended:"<< rinput << std::endl;
 				forward = 0;
 			}
 			if (pdiff(a.first, b.first) == DIR_RIGHT) {
-				tmp = (a.second == DIR_UP) ? "R,": "L,";
+				tmp = (a.second == DIR_UP) ? "R": "L";
 			} else if (pdiff(a.first, b.first) == DIR_LEFT) {
-				tmp = (a.second == DIR_UP) ? "L,": "R,";
+				tmp = (a.second == DIR_UP) ? "L": "R";
 			} else if (pdiff(a.first, b.first) == DIR_UP) {
-				tmp = (a.second == DIR_RIGHT) ? "L,": "R,";
+				tmp = (a.second == DIR_RIGHT) ? "L": "R";
 			} else if (pdiff(a.first, b.first) == DIR_DOWN) {
-				tmp = (a.second == DIR_RIGHT) ? "R,": "L,";
+				tmp = (a.second == DIR_RIGHT) ? "R": "L";
 			} else {
 				std::cout << "ERROR" << std::endl;
 			}
 			++forward;
-			if (rinput.size() <= linelen) {
-				rinput.append(tmp);
-				std::cout << " dc: cmd not done:"<< rinput << std::endl;
-				tmp = "";
-				a = b;
-				++it;
-				continue;
-			} else {
-				std::cout << "dc: cmd done:"<< rinput << std::endl;
-				rinputs.push_back(rinput);
-				rinput = tmp;
-				a = b;
-				++it;
-				continue;
-			}
+			std::cout << "dc: cmd done:"<< rinput << std::endl;
+			rinputs.push_back(tmp);
+			a = b;
+			++it;
+			continue;
 		} else {
 			// go forward
 			++forward;
@@ -916,27 +859,28 @@ int paint(OpList code, OpList inputs)
 	uint ASCII_y = 121;
 	uint ASCII_n = 110;
 
-/*
-	std::string::size_type sz;
 	for (auto it = rinputs.begin(); it != rinputs.end(); ++it) {
-		std::cout << *it << std::endl;
+		std::cout << "LINE " << *it << std::endl;
 		for (uint i = 0; i < (*it).size(); ++i) {
 			char c = (*it).at(i);
 			//std::cout << c << std::endl;
 			mx2.inputs.push_back(c);
 		}
-		mx2.inputs.push_back(10);
+		//mx2.inputs.push_back(10);
 	}
-	mx2.inputs.push_back(ASCII_y);
-	mx2.inputs.push_back(10);
+	//mx2.inputs.push_back(ASCII_n);
+	//mx2.inputs.push_back(10);
 	std::reverse(mx2.inputs.begin(), mx2.inputs.end());
 	ppl(mx2.inputs, "");
-	//return 2;
 
-*/
+	std::cout << "FOO " << rinputs.size() << std::endl;
 
+	return 23;
+
+
+/*
+	// @TODO FIXME this is the manual solution
 	mx2.inputs.clear();
-
 	rinputs.clear();
 
 	rinput = "A,B,A,B,A,C,B,C,A,C";
@@ -961,6 +905,7 @@ int paint(OpList code, OpList inputs)
 	mx2.inputs.push_back(10);
 	std::reverse(mx2.inputs.begin(), mx2.inputs.end());
 	ppl(mx2.inputs, "FOO");
+	*/
 
 	do {
 		mx2 = calc(mx2);
