@@ -45,3 +45,6 @@
     * **Ruby** - 1
   * day17 - *Set and Forget* - IntCode
     * **C++** - 1 + 2
+  * day18
+  * day19
+    * **C++** - 1
