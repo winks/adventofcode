@@ -45,6 +45,9 @@
     * **Ruby** - 1
   * day17 - *Set and Forget* - IntCode
     * **C++** - 1 + 2
-  * day18
-  * day19
-    * **C++** - 1
+  * day18 - *Many-Worlds Interpretation*
+    * unsolved :(
+  * day19 - *Tractor Beam* - IntCode
+    * **C++** - 1 + 2
+  * day20 - *Donut Maze*
+    * **Python3** - 1
