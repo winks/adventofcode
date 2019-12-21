@@ -42,7 +42,7 @@
   * day15 - *Oxygen System* - IntCode
     * **C++** - 1
   * day16 - *Flawed Frequency Transmission*
-    * **Ruby** - 1
+    * **Ruby** - 1 + 2
   * day17 - *Set and Forget* - IntCode
     * **C++** - 1 + 2
   * day18 - *Many-Worlds Interpretation*
