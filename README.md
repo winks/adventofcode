@@ -28,6 +28,7 @@
     * **Common Lisp**: `day08/day08.cl` - 1+2
   * day09 - *Sensor Boost* - IntCode
     * **C++** - 1+2
+    * **Java** - 1+2
   * day10 - *Monitoring Station*
     * **Python3**: `day10/day10.py` - 1+2
   * day11 - *Space Police* - IntCode
@@ -42,12 +43,12 @@
   * day15 - *Oxygen System* - IntCode
     * **C++** - 1
   * day16 - *Flawed Frequency Transmission*
-    * **Ruby** - 1 + 2
+    * **Ruby** - 1+2
   * day17 - *Set and Forget* - IntCode
-    * **C++** - 1 + 2
+    * **C++** - 1+2
   * day18 - *Many-Worlds Interpretation*
     * unsolved :(
   * day19 - *Tractor Beam* - IntCode
-    * **C++** - 1 + 2
+    * **C++** - 1+2
   * day20 - *Donut Maze*
     * **Python3** - 1
