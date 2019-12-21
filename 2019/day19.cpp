@@ -84,6 +84,7 @@ void print(data x, std::string prefix = "# ")
 
 void write(int64_t x)
 {
+	if (!DEBUG) return;
 	std::cout << "OUTPUT: " << x << std::endl;
 }
 
@@ -394,19 +395,29 @@ std::string getin()
 	return allops;
 }
 
-data step(data v)
+int single(data v, OpList code, int x, int y)
 {
-	print(v, "#GO## ");
+	v.status = 0;
+	v.position = 0;
+	v.relbase = 0;
+	v.inputs.clear();
+	v.output = 0;
+	v.outputs.clear();
+	v.op = code;
+	v.inputs.push_back(y);
+	v.inputs.push_back(x);
+
+	std::cout << "  CHK " << x << "/" << y << std::endl;
 
 	do {
 		v = calc(v);
 		print(v);
+		if (v.outputs.size() > 0) {
+			return v.outputs.front();
+		}
 	} while (v.position < v.op.size()-1 && v.status != 10 && v.status != 1);
 
-	v.status = 0;
-	print(v, "#END# ");
-
-	return v;
+	return 666;
 }
 
 OpList convert(int64_t i)
@@ -441,24 +452,6 @@ OpList convert(int64_t i)
 	rv.insert(it, i);
 
 	return rv;
-}
-
-data runEngine(data x, OpList inputs, int num)
-{
-	std::cout << "# Starting engine " << num << std::endl;
-	x.inputs = inputs;
-	x = step(x);
-	if (x.outputs.size() < 1) {
-		std::cout << "NO OUTPUT! " << num << std::endl;
-		x.status = 200 + num;
-		x.output = 0;
-	} else {
-		x.output = x.outputs.front();
-		x.status = 0;
-	}
-	x.outputs.clear();
-
-	return x;
 }
 
 std::vector<OpList> get_perms(bool part1 = true)
@@ -539,6 +532,97 @@ void show(int64_t image[100][100], uint maxw, uint maxh, uint size)
 	}
 }
 
+int paint2(OpList code, OpList inputs)
+{
+	int cnt = 0;
+	int affectedRow = 0;
+	int minx = 0;
+	int64_t lout = 0;
+
+	int minw = 400;
+	int maxw = 1000;
+	int minh = 850;
+	int maxh = 1200;
+	uint searchSize = 100;
+	OpList lastIn;
+
+	//minh = 35;
+	//maxh = 45;
+	//minw = 20;
+	//maxw = 30;
+	//searchSize = 4;
+
+	// map 100x100 => size 8 = > found 81/50 =>  on line 80: x =50, start on row 75 = 10 first len 8 on row 57
+	// 10 in 100x100 => 75
+	// size 100 => 1000x1000 => 750
+
+	std::cout << "### PART 2 ###################################" << std::endl;
+	for (int y = minh; y < maxh; ++y) {
+		affectedRow = 0;
+		int firstx = 0;
+		for (int x = minw; x < maxw; ++x) {
+			data mx;
+			mx.status = 0;
+			mx.position = 0;
+			mx.relbase = 0;
+			mx.inputs.clear();
+			mx.output = 0;
+			mx.outputs.clear();
+			mx.op = code;
+
+			mx.inputs.push_back(y);
+			mx.inputs.push_back(x);
+
+			do {
+				mx = calc(mx);
+				print(mx);
+
+				if (mx.outputs.size() > 0) {
+					lout = mx.outputs.front();
+					mx.outputs.clear();
+					//std::cout << "FT " << x << "/" << y << " = " << lout << std::endl;
+					if (lout == 1) {
+						++affectedRow;
+						// save some processing time
+						//if (minx == 0) {
+						//	minx = x;
+						//	firstx = x;
+						//}
+						firstx = x;
+					}
+				}
+
+				if (firstx == x) {
+					data mx2;
+					int x2 = x;
+					int y2 = y+searchSize-1;
+					int r = single(mx2, code, x2, y2);
+					if (r == 1) {
+						std::cout << "  FOUND y " << x << "/" << y << " last row size: " << affectedRow  << std::endl;
+						data mx3;
+						x2 = x+searchSize-1;
+						y2 = y;
+						r = single(mx3, code, x2, y2);
+						if (r == 1) {
+							std::cout << "  FOUND x " << x << "/" << y << std::endl;
+							break;
+						}
+					}
+				}
+
+				++cnt;
+				firstx = 0;
+			} while(mx.position < mx.op.size()-1 && mx.status != 10 && mx.status != 1);
+		}
+		std::cout << "ROW " << y << " " << affectedRow << std::endl;
+	}
+	//show(image, maxw, maxh, searchSize);
+
+	//std::cout << "SIZE " << (maxw * maxh) << std::endl;
+	//std::cout << "AFF  " << affectedRow << std::endl;
+
+	return 0;
+}
 
 int paint(OpList code, OpList inputs)
 {
@@ -610,5 +694,7 @@ int main(int argc, char *argv[])
 	}
 
 	// part 1
-	paint(ops, inputs);
+	//paint(ops, inputs);
+	// part 2
+	paint2(ops, inputs);
 }
