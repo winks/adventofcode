@@ -22,7 +22,7 @@ class VM {
 	}
 
 	private void maybeResize(long val) {
-		if (ops.size() < val) {
+		if (ops.size() <= val) {
 			for (int i=ops.size(); i<=val+1; ++i) {
 				ops.add(0L);
 			}
@@ -31,11 +31,6 @@ class VM {
 
 	public void setRelPos(long n) {
 		this.relPos = n;
-//		if (ops.size() < this.relPos) {
-//			for (int i=ops.size(); i<=relPos; ++i) {
-//				ops.add(0L);
-//			}
-//		}
 		maybeResize(this.relPos);
 	}
 	public void setPos(long p, long val) {
@@ -103,7 +98,7 @@ class VM {
 				}
 				mode = (long) Math.floor(mode / 10.0);
 			}
-//System.out.println("PRE: pos:" + pos + " []a= " + args.size() + " nI: " + numIn + " nO: " + numOut);
+			//System.out.println("PRE: pos:" + pos + " []a= " + args.size() + " nI: " + numIn + " nO: " + numOut);
 
 			if (opcode == 1) {
 				maybeResize(posOut);
@@ -119,10 +114,8 @@ class VM {
 					return;
 				}
 			} else if (opcode == 4) {
-//System.out.println("opcode: " + opcode);
-//System.out.println("opcode: " + ops.get((int)pos));
-//System.out.println("sz    : " + args.size());
 				outputs.add(args.get(0));
+				System.out.println("OUTPUT: " + args.get(0));
 			} else if (opcode == 5) {
 				if (args.get(0) != 0) {
 					pos = args.get((int)1);
@@ -134,12 +127,14 @@ class VM {
 					continue;
 				}
 			} else if (opcode == 7) {
+				maybeResize(posOut);
 				if (args.get(0) < args.get(1)) {
 					ops.set((int)posOut, 1L);
 				} else {
 					ops.set((int)posOut, 0L);
 				}
 			} else if (opcode == 8) {
+				maybeResize(posOut);
 				if (args.get(0) == args.get(1)) {
 					ops.set((int)posOut, 1L);
 				} else {
@@ -183,5 +178,4 @@ class VM {
 
 		return s.toString();
 	}
-
 }
