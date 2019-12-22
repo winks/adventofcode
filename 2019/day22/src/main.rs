@@ -1,4 +1,5 @@
 use std::env;
+use std::convert::TryInto;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use regex::Regex;
@@ -15,7 +16,7 @@ pub struct Step {
 fn parse(s: &str) -> Step {
     let re_deal_new = Regex::new(r"^deal into new stack$").unwrap();
     let re_deal_inc = Regex::new(r"^deal with increment (\d+)$").unwrap();
-    let re_cut = Regex::new(r"^cut (\d+)$").unwrap();
+    let re_cut = Regex::new(r"^cut (-?\d+)$").unwrap();
     if re_deal_new.is_match(s) {
         Step {
             action: Action::DealNew,
@@ -45,8 +46,11 @@ fn parse(s: &str) -> Step {
     }
 }
 
+fn pp(v: &Vec<u32>) {
+    println!("  cur B {:?} TOP", v);
+}
+
 fn main() {
-    println!("Hello, world!");
     let args: Vec<String> = env::args().collect();
     let program = args[0].clone();
     if args.len() < 3 {
@@ -65,14 +69,100 @@ fn main() {
         let line = line.unwrap();
         println!("{}> {}", index+1, line.trim());
         let step = parse(line.trim());
-        println!("{:?}", step);
+        //println!("{:?}", step);
         steps.push(step);
     }
 
     let mut deck_orig: Vec<u32> = Vec::with_capacity(deck_size);
-    let mut deck: Vec<u32> = Vec::with_capacity(deck_size);
-    let mut decks: Vec<Vec<u32>> = Vec::new();
     for i in 0..deck_size {
         deck_orig.push(i as u32);
+    }
+    deck_orig.reverse();
+    let mut deck_cur = deck_orig.clone();
+    println!("do {:?}", deck_orig);
+    pp(&deck_cur);
+    println!("------------------");
+
+    for step in steps {
+        println!("Current step: {:?}", step);
+        match step.action {
+            Action::DealInc => {
+                let mut deck: Vec<u32> = Vec::with_capacity(deck_size);
+                for _i in 0..deck_size {
+                    deck.push(0);
+                }
+                let mut i = 0;
+                let stepsize: usize = step.arg.try_into().unwrap();
+                while deck_cur.len() > 0 {
+                    //println!("i {:?}", i);
+                    if i >= deck_orig.len() {
+                        i -= deck_size;
+                    }
+                    //println!("i {:?}", i);
+                    let n = deck_cur.pop().unwrap();
+                    deck[i] = n;
+                    i += stepsize;
+                    //println!("dc {:?}", deck_cur);
+                    //println!("d {:?}", deck);
+                }
+                deck.reverse();
+                deck_cur = deck;
+                pp(&deck_cur);
+            },
+            Action::DealNew => {
+                let mut deck = deck_cur.clone();
+                deck.reverse();
+                //println!("d: {:?}", deck);
+                deck_cur = deck;
+                pp(&deck_cur);
+            },
+            Action::Cut => {
+                let mut deck : Vec<u32> = Vec::with_capacity(deck_size);
+
+                if step.arg > 0 {
+                    let cut_size: usize = step.arg.try_into().unwrap();
+                    let rest_size: usize = deck_size - cut_size;
+                    let (orig, cut) = deck_cur.split_at(rest_size);
+                    //println!("dc {:?}", cut);
+                    //println!("dc {:?}", orig);
+                    for n in orig {
+                        deck.push(*n);
+                    }
+                    for i in 0..cut.len() {
+                        deck.insert(i, cut[i]);
+                    }
+                } else {
+                    let tmp = step.arg * -1;
+                    let cut_size: usize = tmp.try_into().unwrap();
+                    //println!("{:?} {:?}", step.arg, cut_size);
+                    let (orig, cut) = deck_cur.split_at(cut_size);
+                    //println!("dc {:?}", cut);
+                    //println!("dc {:?}", orig);
+                    for n in orig {
+                        deck.push(*n);
+                    }
+                    for i in 0..cut.len() {
+                        deck.insert(i, cut[i]);
+                    }
+                }
+                deck_cur = deck;
+                pp(&deck_cur);
+            },
+            Action::Nope => {
+            },
+        }
+    }
+    println!("result:");
+    pp(&deck_cur);
+
+    if deck_cur.len() > 2100 {
+        println!("#####");
+        let mut cnt = 1;
+        for ii in (0..deck_cur.len()-1).rev() {
+            if deck_cur[ii] == 2019 {
+                println!("{:?} : {:?} : {:?}", ii, deck_cur[ii], cnt);
+            }
+            cnt += 1;
+        }
     }
 }

@@ -52,5 +52,7 @@
     * **C++** - 1+2
   * day20 - *Donut Maze*
     * **Python3** - 1
-  * day21 - *Springdroid Adventure*
+  * day21 - *Springdroid Adventure* - IntCode
     * **Java** - 1+2
+  * day22 - *Slam Shuffle*
+    * **Rust** - 1
