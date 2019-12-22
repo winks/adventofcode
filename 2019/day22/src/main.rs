@@ -48,15 +48,58 @@ fn parse(s: &str) -> Step {
     }
 }
 
+fn ppf(v: &Vec<u32>) {
+    println!("  cur BOTTOM {:?} TOP", v);
+}
+
 fn pp(v: &Vec<u32>) {
     if !DEBUG {
         return;
     }
     if v.len() < 20 {
-        println!("  cur BOTTOM {:?} TOP", v);
+        //println!("  cur BOTTOM {:?} TOP", v);
+        ppf(&v);
     } else {
         println!("  cur BOTTOM [{:?}, {:?}, ... {:?}, {:?}] TOP", v[0], v[1], v[v.len()-2], v[v.len()-1]);
     }
+}
+
+fn shuffle2(deck_size: u64, pos_orig: u64, steps: &Vec<Step>) -> u64 {
+    let mut pos = pos_orig;
+    let mut pos0 = pos_orig;
+
+    for step in steps {
+        if DEBUG {
+            println!("Current step orig: {:?}", step);
+        }
+        pos0 = pos;
+        let xarg: u64 = step.arg as u64;
+        match step.action {
+            Action::DealInc => {
+                for i in 0..step.arg {
+                let tmp_arg : u64 = xarg;
+                //let tmp_arg : u64 = deck_size - xarg;
+                pos = (pos * tmp_arg) % deck_size;
+                }
+            },
+            Action::DealNew => {
+                pos = deck_size - pos - 1;
+            },
+            Action::Cut => {
+                if step.arg > 0  {
+                    pos = (deck_size + pos + xarg) % deck_size;
+                } else {
+                    let parg = step.arg * -1;
+                    pos = (deck_size + pos - parg as u64) % deck_size;
+                }
+            },
+            Action::Nope => {
+            },
+        }
+        println!("pos {} -> {}", pos0, pos);
+    }
+
+    return pos;
 }
 
 fn shuffle(deck_orig: Vec<u32>, steps: &Vec<Step>, reverse: bool) -> Vec<u32> {
@@ -158,18 +201,31 @@ fn shuffle(deck_orig: Vec<u32>, steps: &Vec<Step>, reverse: bool) -> Vec<u32> {
 }
 
 fn part1(deck: Vec<u32>) {
+    ppf(&deck);
     if deck.len() > 2100 {
         let mut cnt = 1;
         for ii in (0..deck.len()-1).rev() {
             if deck[ii] == 2019 {
                 println!("{:?} : {:?} => {:?}", ii, deck[ii], cnt);
             }
+            println!("X {:?} : {:?} => {:?}", ii, deck[ii], cnt);
             cnt += 1;
         }
     }
 }
 
-fn part2(deck: Vec<u32>, steps: Vec<Step>) {
+fn part3(_deck: Vec<u32>, steps: &Vec<Step>) {
+    let mut s2 = steps.clone();
+    s2.reverse();
+    let decksize: u64 = 10;
+
+    let mut pos2 = 9;
+    pos2 = shuffle2(decksize, pos2, &s2);
+    println!("pos2 {}", pos2);
+}
+
+fn part2(_deck: Vec<u32>, steps: &Vec<Step>) {
+    /*
     let mut i = 0;
     let mut deck_x = deck.clone();
     let s2 = steps.clone();
@@ -182,6 +238,46 @@ fn part2(deck: Vec<u32>, steps: Vec<Step>) {
     }
     println!("fin {}", i);
     // 101741582076661 - (5003 * 20336114746) = 2423
+    */
+    let mut s2 = steps.clone();
+    s2.reverse();
+    //let pos0 = 2020;
+    //let decksize: u64 = 119315717514047;
+    let decksize: u64 = 10007;
+    let pos0 = 6289;
+
+    let mut pos = pos0;
+    let mut i: u64 = 0;
+
+    let mut pos2 = 6288;
+    pos2 = shuffle2(decksize, pos2, &s2);
+    println!("pos2 {}", pos2);
+    pos2 = 0;
+    pos2 = shuffle2(decksize, pos2, &s2);
+    println!("pos2 {}", pos2);
+    pos2 = 1;
+    pos2 = shuffle2(decksize, pos2, &s2);
+    println!("pos2 {}", pos2);
+    pos2 = 10005;
+    pos2 = shuffle2(decksize, pos2, &s2);
+    println!("pos2 {}", pos2);
+    pos2 = 10006;
+    pos2 = shuffle2(decksize, pos2, &s2);
+    println!("pos2 {}", pos2);
+/*
+    loop {
+        pos = shuffle2(decksize, pos, &s2);
+        i += 1;
+        if i %  1000000 == 0 {
+            println!("loop {}", i);
+        }
+        if pos == pos0 {
+            println!("found {} at iter {}", pos, i);
+            break;
+        }
+    }
+    println!("pos {}", pos);
+    */
 }
 
 fn main() {
@@ -224,8 +320,10 @@ fn main() {
     pp(&deck_cur);
     println!("------------------");
 
-    if part_num == 2 {
-        part2(deck_cur, steps);
+    if part_num == 3 {
+        part3(deck_cur, &steps);
+    } else if part_num == 2 {
+        part2(deck_cur, &steps);
     } else {
         let deck_s = shuffle(deck_cur, &steps, false);
         part1(deck_s);
