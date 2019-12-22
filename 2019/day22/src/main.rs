@@ -4,10 +4,12 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use regex::Regex;
 
-#[derive(Debug)]
+static DEBUG: bool = true;
+
+#[derive(Debug, Clone, Copy)]
 enum Action { Nope, DealNew, Cut, DealInc }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Step {
     action: Action,
     arg: i32,
@@ -47,6 +49,9 @@ fn parse(s: &str) -> Step {
 }
 
 fn pp(v: &Vec<u32>) {
+    if !DEBUG {
+        return;
+    }
     if v.len() < 20 {
         println!("  cur BOTTOM {:?} TOP", v);
     } else {
@@ -54,12 +59,14 @@ fn pp(v: &Vec<u32>) {
     }
 }
 
-fn shuffle(deck_orig: Vec<u32>, steps: Vec<Step>) -> Vec<u32> {
+fn shuffle(deck_orig: Vec<u32>, steps: &Vec<Step>, reverse: bool) -> Vec<u32> {
     let deck_size: usize = deck_orig.len();
     let mut deck_cur = deck_orig.clone();
 
     for step in steps {
-        println!("Current step: {:?}", step);
+        if DEBUG {
+            println!("Current step: {:?}", step);
+        }
         match step.action {
             Action::DealInc => {
                 let mut deck: Vec<u32> = Vec::with_capacity(deck_size);
@@ -67,7 +74,13 @@ fn shuffle(deck_orig: Vec<u32>, steps: Vec<Step>) -> Vec<u32> {
                     deck.push(0);
                 }
                 let mut i = 0;
-                let stepsize: usize = step.arg.try_into().unwrap();
+                let stepsize: usize = match reverse {
+                    false => step.arg.try_into().unwrap(),
+                    true => {
+                        let ss: usize = step.arg.try_into().unwrap();
+                        deck_size - ss
+                    }
+                };
                 while deck_cur.len() > 0 {
                     //println!("i {:?}", i);
                     if i >= deck_orig.len() {
@@ -96,7 +109,14 @@ fn shuffle(deck_orig: Vec<u32>, steps: Vec<Step>) -> Vec<u32> {
 
                 if step.arg > 0 {
                     let cut_size: usize = step.arg.try_into().unwrap();
-                    let rest_size: usize = deck_size - cut_size;
+                    let rest_size: usize = match reverse {
+                        false => {
+                            deck_size - cut_size
+                        },
+                        true => {
+                            cut_size
+                        }
+                    };
                     let (orig, cut) = deck_cur.split_at(rest_size);
                     //println!("dc {:?}", cut);
                     //println!("dc {:?}", orig);
@@ -107,8 +127,13 @@ fn shuffle(deck_orig: Vec<u32>, steps: Vec<Step>) -> Vec<u32> {
                         deck.insert(i, cut[i]);
                     }
                 } else {
-                    let tmp = step.arg * -1;
-                    let cut_size: usize = tmp.try_into().unwrap();
+                    let tmp = (step.arg * -1) as usize;
+                    let cut_size: usize = match reverse {
+                        false => tmp.try_into().unwrap(),
+                        true => {
+                            deck_size - tmp
+                        }
+                    };
                     //println!("{:?} {:?}", step.arg, cut_size);
                     let (orig, cut) = deck_cur.split_at(cut_size);
                     //println!("dc {:?}", cut);
@@ -127,7 +152,6 @@ fn shuffle(deck_orig: Vec<u32>, steps: Vec<Step>) -> Vec<u32> {
             },
         }
     }
-    println!("result:");
     pp(&deck_cur);
 
     return deck_cur;
@@ -145,7 +169,20 @@ fn part1(deck: Vec<u32>) {
     }
 }
 
-fn part2(steps: Vec<Step>) {}
+fn part2(deck: Vec<u32>, steps: Vec<Step>) {
+    let mut i = 0;
+    let mut deck_x = deck.clone();
+    let s2 = steps.clone();
+    while deck_x != deck || i == 0 {
+        deck_x = shuffle(deck_x, &s2, false);
+        i += 1;
+        if i % 1000 == 0 {
+            println!("loop {}", i);
+        }
+    }
+    println!("fin {}", i);
+    // 101741582076661 - (5003 * 20336114746) = 2423
+}
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -183,13 +220,14 @@ fn main() {
     deck_orig.reverse();
     let deck_cur = deck_orig.clone();
     //println!("do {:?}", deck_orig);
+    println!("------------------");
     pp(&deck_cur);
     println!("------------------");
 
     if part_num == 2 {
-        part2(steps);
+        part2(deck_cur, steps);
     } else {
-        let deck_s = shuffle(deck_cur, steps);
+        let deck_s = shuffle(deck_cur, &steps, false);
         part1(deck_s);
     }
 }
