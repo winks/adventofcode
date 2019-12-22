@@ -2,9 +2,9 @@ import java.util.List;
 import java.util.ArrayList;
 
 class VM {
-	private List<Long> ops;
-	private List<Long> inputs;
-	private List<Long> outputs;
+	private ArrayList<Long> ops;
+	private ArrayList<Long> inputs;
+	private ArrayList<Long> outputs;
 	private boolean ran = false;
 	private long pos = 0;
 	private long relPos = 0;
@@ -37,13 +37,13 @@ class VM {
 		ops.set((int)p, val);
 	}
 
-	public List<Long> getOutputs() {
+	public ArrayList<Long> getOutputs() {
 		return outputs;
 	}
-	public List<Long> getInputs() {
+	public ArrayList<Long> getInputs() {
 		return inputs;
 	}
-	public List<Long> getOps() {
+	public ArrayList<Long> getOps() {
 		return ops;
 	}
 	public boolean isStopped() {
