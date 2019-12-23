@@ -1,43 +1,11 @@
-from itertools import permutations
-from itertools import combinations
 import math
 import sys
 
 def dist(a,b):
    return math.sqrt( (a[0] - b[0]) * (a[0] - b[0]) + (a[1] - b[1]) * (a[1] - b[1]) )
 
-def rev(a):
-    return [0 - a[0], 0 - a[1]]
-
-def add(a,b):
-    return [a[0] + b[0], a[1] + b[1]]
-
 def sub(a,b):
     return [a[0] - b[0], a[1] - b[1]]
-
-def scale(v, f=1):
-    return [v[0] * f, v[1] * f]
-
-def count(x, pairs):
-  y = map(str, x)
-  z = set(y)
-  return len(pairs) - len(z)
-
-def getvec(x,y,x1,y1):
-  a = 0
-  b = 0
-  if x > x1:
-    a = x - x1
-  else:
-    a = x1 - x
-  if y > y1:
-    b = y - y1
-  else:
-    b = y1 - y
-  return [a,b]
-
-def crossp(a, b):
-   return a[0] * b[1] - b[0] * a[1];
 
 def angle2(a, b):
   return math.atan2(b[1] - a[1], b[0] - a[0])
@@ -49,7 +17,6 @@ def part1(a, pairs):
     x = angle2([0,0], u1)
     md = math.degrees(x)
     md = round(md,10)
-    #print(a,t[0],t[1], md)
     if not md in lookup:
       lookup.append(md)
   return lookup
@@ -58,11 +25,9 @@ def part2(a, pairs):
   lookup = []
   for t in pairs:
     u1 = sub(t[1], a)
-    x = angle2([0,0], u1)
     x = angle2(a, t[1])
     md = math.degrees(x)
     md = round(md,10)
-    #print(a,t[0],t[1], md)
     lookup.append([t[1][0],t[1][1],md])
   return lookup
 

@@ -31,6 +31,7 @@
     * **Java**: `day09/day09.java` - 1+2
   * day10 - *Monitoring Station*
     * **Python3**: `day10/day10.py` - 1+2
+    * **Julia**: `day10/day10.jl` - 1+2
   * day11 - *Space Police* - IntCode
     * **C++** - 1+2
   * day12 - *The N-Body Problem*
