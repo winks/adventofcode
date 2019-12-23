@@ -28,7 +28,7 @@
     * **Common Lisp**: `day08/day08.cl` - 1+2
   * day09 - *Sensor Boost* - IntCode
     * **C++** - 1+2
-    * **Java** - 1+2
+    * **Java**: `day09/day09.java` - 1+2
   * day10 - *Monitoring Station*
     * **Python3**: `day10/day10.py` - 1+2
   * day11 - *Space Police* - IntCode
@@ -43,7 +43,7 @@
   * day15 - *Oxygen System* - IntCode
     * **C++** - 1
   * day16 - *Flawed Frequency Transmission*
-    * **Ruby** - 1+2
+    * **Ruby**: `day16/day16.rb` - 1+2
   * day17 - *Set and Forget* - IntCode
     * **C++** - 1+2
   * day18 - *Many-Worlds Interpretation*
@@ -51,8 +51,10 @@
   * day19 - *Tractor Beam* - IntCode
     * **C++** - 1+2
   * day20 - *Donut Maze*
-    * **Python3** - 1
+    * **Python3**: `day20/day20.py` - 1
   * day21 - *Springdroid Adventure* - IntCode
-    * **Java** - 1+2
+    * **Java**: `day21/day21.java` - 1+2
   * day22 - *Slam Shuffle*
-    * **Rust** - 1
+    * **Rust**: `day22/src/main.rs` - 1
+  * day23 - *Categroy Siy* - IntCode
+    * **Java**: `day23/day23.java` - 1+2

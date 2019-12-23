@@ -32,13 +32,24 @@ class VM {
 	public void setPos(long n) {
 		this.pos = n;
 	}
-
 	public void setRelPos(long n) {
 		this.relPos = n;
 		maybeResize(this.relPos);
 	}
 	public void setCodeAt(long p, long val) {
 		ops.set((int)p, val);
+	}
+	public void setOutputs(ArrayList<Long> o) {
+		outputs = o;
+	}
+	public void setInputs(ArrayList<Long> o) {
+		inputs = o;
+	}
+	public void addInput(long o) {
+		inputs.add(o);
+	}
+	public void addInput2(long o) {
+		inputs.add(0, o);
 	}
 
 	public ArrayList<Long> getOutputs() {
