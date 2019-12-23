@@ -5,6 +5,7 @@
   * day01 - *The Tyranny of the Rocket Equation*
     * **C++** - 1+2
     * **Crystal**: `day01/day01.cr` - 1+2
+    * **PowerShell**: `day01/day01.ps1` - 1+2
   * day02 - *1202 Program Alarm* - IntCode
     * **C++** - 1+2
 	* **TypeScript** - 1
@@ -39,7 +40,7 @@
   * day13 - *Care Package* - IntCode
     * **C++** - 1+2
   * day14 - *Space Stoichiometry*
-    * **Python**: `day14/day14.py` - 1
+    * **Python3**: `day14/day14.py` - 1
     * **Perl**: `day14/day14.pl` - 1
   * day15 - *Oxygen System* - IntCode
     * **C++** - 1
@@ -57,5 +58,5 @@
     * **Java**: `day21/day21.java` - 1+2
   * day22 - *Slam Shuffle*
     * **Rust**: `day22/src/main.rs` - 1
-  * day23 - *Categroy Siy* - IntCode
+  * day23 - *Category Six* - IntCode
     * **Java**: `day23/day23.java` - 1+2
