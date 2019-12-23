@@ -93,7 +93,7 @@ class Day09 {
 		VM vm = new VM(ops, in);
 		System.out.println(vm);
 		vm.setRelPos(2000L);
-		vm.setPos(1985L, 666L);
+		vm.setCodeAt(1985L, 666L);
 		vm.run();
 		List<Long> rv = vm.getOutputs();
 		System.out.println("==========");

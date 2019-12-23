@@ -29,11 +29,15 @@ class VM {
 		}
 	}
 
+	public void setPos(long n) {
+		this.pos = n;
+	}
+
 	public void setRelPos(long n) {
 		this.relPos = n;
 		maybeResize(this.relPos);
 	}
-	public void setPos(long p, long val) {
+	public void setCodeAt(long p, long val) {
 		ops.set((int)p, val);
 	}
 
@@ -149,6 +153,10 @@ class VM {
 
 	public String toString() {
 		StringBuffer s = new StringBuffer();
+		s.append("> VM: \n> pos: ");
+		s.append(pos);
+		s.append("\n> pos: ");
+		s.append(relPos);
 		s.append("> VM: \n> OPS[");
 		s.append(ops.size());
 		s.append("]:\t");
