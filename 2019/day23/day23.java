@@ -28,8 +28,10 @@ class Day23 {
 		}
 		System.out.println("Ops: " + ops.size());
 
-		//tests();
-		part1(ops);
+		String p1 = go(ops, false);
+		String p2 = go(ops, true);
+		System.out.println(p1);
+		System.out.println(p2);
 	}
 
 	private static void show(List<Long> v) {
@@ -45,19 +47,6 @@ class Day23 {
 		}
 		if (max > 0) s.append(v.get(max));
 		System.out.println(s);
-	}
-
-	private static void showAscii(List<Long> v) {
-		StringBuffer s = new StringBuffer();
-		for (int i=0;i<v.size();++i) {
-			s.append(toAscii(v.get(i)));
-		}
-		System.out.println(s);
-	}
-
-	private static char toAscii(long v) {
-		char c = (char) v;
-		return c;
 	}
 
 	private static ArrayList<Long> fromAscii(ArrayList<String> lines) {
@@ -79,7 +68,7 @@ class Day23 {
 		System.out.println(Instant.now().toString() + " " +s);
 	}
 
-	private static void part1(ArrayList<Long> ops) throws InterruptedException {
+	private static String go(ArrayList<Long> ops, boolean part2) throws InterruptedException {
 		int sz = 50;
 
 		VM[] vms = new VM[sz];
@@ -94,11 +83,11 @@ class Day23 {
 		long naty = 0;
 		long lastnaty = -1;
 		boolean finished = false;
-		
+
 		int i = 0;
 		while (!finished) {
 			int numIdle = 0;
-			
+
 				tp("Next is "+i);
 
 				if (vms[i].getInputs().size() == 0) {
@@ -116,18 +105,21 @@ class Day23 {
 						addr = out.remove(0);
 						x = out.remove(0);
 						y = out.remove(0);
+						if (!part2) {
+							return "Part 1: " + y;
+						}
 						tp("Sending from "+i+" to " + addr + ": ("+x+"/"+y+")");
 						if ((int)addr == 255) {
 							natx = x;
 							naty = y;
 						} else {
 							vms[(int)addr].addInput2(x);
-							vms[(int)addr].addInput2(y);						
+							vms[(int)addr].addInput2(y);
 						}
 					}
 					vms[i].setOutputs(new ArrayList<Long>());
 				}
-			
+
 			for (int ia = 0; ia<sz; ++ia) {
 				numIdle += vms[ia].getInputs().size();
 			}
@@ -137,125 +129,18 @@ class Day23 {
 				tp("ALL IDLE, SENDING "+natx+"/"+naty);
 				vms[0].addInput(naty);
 				vms[0].addInput(natx);
-				if (naty == lastnaty)	tp("Sending again: " +naty);
+				if (naty == lastnaty) {
+					tp("Sending again: " +naty);
+					if (part2) {
+						return "Part 2: " + naty;
+					}
+				}
 				lastnaty = naty;
 			}
-			
+
 			++i;
 			if (i > 49) i = 0;
 		}
-	}
-
-	private static void tests() {
-		test1();
-		test2();
-		test3();
-		test4();
-		test5();
-		test6();
-	}
-
-	private static void test1() {
-		int[] arr = {1,0,0,0,99};
-		ArrayList<Long> ops = new ArrayList<Long>();
-		ArrayList<Long> in  = new ArrayList<Long>();
-
-		for (int i : arr) {
-			ops.add(Long.valueOf(i));
-		}
-
-		VM vm = new VM(ops, in);
-		vm.run();
-		List<Long> rv = vm.getOps();
-		System.out.println("==========");
-		show(ops);
-		show(rv);
-	}
-
-	private static void test2() {
-		int[] arr = {2,3,0,3,99};
-		ArrayList<Long> ops = new ArrayList<Long>();
-		ArrayList<Long> in  = new ArrayList<Long>();
-
-		for (int i : arr) {
-			ops.add(Long.valueOf(i));
-		}
-
-		VM vm = new VM(ops, in);
-		vm.run();
-		List<Long> rv = vm.getOps();
-		System.out.println("==========");
-		show(ops);
-		show(rv);
-	}
-
-	private static void test3() {
-		int[] arr = {2,4,4,5,99,0};
-		ArrayList<Long> ops = new ArrayList<Long>();
-		ArrayList<Long> in  = new ArrayList<Long>();
-
-		for (int i : arr) {
-			ops.add(Long.valueOf(i));
-		}
-
-		VM vm = new VM(ops, in);
-		vm.run();
-		List<Long> rv = vm.getOps();
-		System.out.println("==========");
-		show(ops);
-		show(rv);
-	}
-
-	private static void test4() {
-		int[] arr = {1, 1, 1, 4, 99, 5, 6, 0, 99};
-		ArrayList<Long> ops = new ArrayList<Long>();
-		ArrayList<Long> in  = new ArrayList<Long>();
-
-		for (int i : arr) {
-			ops.add(Long.valueOf(i));
-		}
-
-		VM vm = new VM(ops, in);
-		vm.run();
-		List<Long> rv = vm.getOps();
-		System.out.println("==========");
-		show(ops);
-		show(rv);
-	}
-
-	private static void test5() {
-		int[] arr = {1002, 4, 3, 4, 33, 99};
-		int[] exp = {1002, 4, 3, 4, 99, 99};
-		ArrayList<Long> ops = new ArrayList<Long>();
-		ArrayList<Long> in  = new ArrayList<Long>();
-
-		for (int i : arr) {
-			ops.add(Long.valueOf(i));
-		}
-
-		VM vm = new VM(ops, in);
-		vm.run();
-		List<Long> rv = vm.getOps();
-		System.out.println("==========");
-		show(ops);
-		show(rv);
-	}
-
-	private static void test6() {
-		int[] arr = {1101, 100, -1, 4, 0, 99};
-		int[] exp = {1101, 100, -1, 4, 99, 99};
-		ArrayList<Long> ops = new ArrayList<Long>();
-		ArrayList<Long> in  = new ArrayList<Long>();
-
-		for (int i : arr) {
-			ops.add(Long.valueOf(i));
-		}
-
-		VM vm = new VM(ops, in);
-		vm.run();
-		List<Long> rv = vm.getOps();
-		System.out.println("==========");
-		show(ops);
-		show(rv);
+		return "";
 	}
 }
