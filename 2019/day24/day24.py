@@ -3,25 +3,6 @@ import sys
 from copy import deepcopy
 
 
-def bio(m):
-  p = 0
-  rv = 0
-  for y in range(0, len(m)):
-    for x in range(0, len(m[0])):
-      if m[y][x] == '#':
-        rv = rv + math.pow(2, p)
-      p = p + 1
-  return rv
-
-def bio2(mm):
-  c = 0
-  for k in mm:
-    for y in mm[k]:
-      for x in y:
-        if x == '#':
-          c = c + 1
-  return c
-
 def pp(m):
   for y in range(0, len(m)):
     for x in range(0, len(m[0])):
@@ -42,6 +23,16 @@ def nm():
     m0.append(['.','.','.','.','.',])
   return m0
 
+def bio(m):
+  p = 0
+  rv = 0
+  for y in range(0, len(m)):
+    for x in range(0, len(m[0])):
+      if m[y][x] == '#':
+        rv = rv + math.pow(2, p)
+      p = p + 1
+  return rv
+
 def getnec(t, m):
   sz = len(m)
   c = 0
@@ -53,7 +44,6 @@ def getnec(t, m):
       continue
     if m[y1][x1] == '#':
       c = c + 1
-    #print("_",x,y," ",x1,y1," ",c)
   return c
 
 def tick(m):
@@ -63,7 +53,6 @@ def tick(m):
       t = (x,y)
       c = m[y][x]
       n = getnec(t, m)
-      #print(x,y," ",c,n)
       if c == '#':
         if n != 1:
           m2[y][x] = '.'
@@ -74,8 +63,16 @@ def tick(m):
           m2[y][x] = '#'
         else:
           m2[y][x] = m[y][x]
-    #print("eol")
   return m2
+
+def bio2(mm):
+  c = 0
+  for k in mm:
+    for y in mm[k]:
+      for x in y:
+        if x == '#':
+          c = c + 1
+  return c
 
 def getnec2(t, mm, lv):
   sz = len(mm[lv])
@@ -84,26 +81,26 @@ def getnec2(t, mm, lv):
   for (x1,y1) in [(x,y-1), (x+1,y), (x,y+1), (x-1,y)]:
     if x1 < 0 or x1 >= sz:
       ko = lv - 1
-      print("zoom out to",ko," ",x,y,"  ",x1,y1," ",c)
+      #print("zoom out to",ko," ",x,y,"  ",x1,y1," ",c)
       if x1 < 0:
         idx = 1
       else:
         idx = 3
       if mm[ko][2][idx] == '#':
         c = c + 1
-      print("zoom in        ",x,y,"  ",x1,y1," ",c)
+      #print("zoom in        ",x,y,"  ",x1,y1," ",c)
     elif y1 < 0 or y1 >= sz:
       ko = lv - 1
-      print("zoom out to",ko," ",x,y,"  ",x1,y1," ",c)
+      #print("zoom out to",ko," ",x,y,"  ",x1,y1," ",c)
       if y1 < 0:
         idx = 1
       else:
         idx = 3
       if mm[ko][idx][2] == '#':
         c = c + 1
-      print("zoom in        ",x,y,"  ",x1,y1," ",c)
+      #print("zoom in        ",x,y,"  ",x1,y1," ",c)
     elif x1 == 2 and y1 == 2:
-      print("Zoom in  to",lv+1," ",x,y,"  ",x1,y1," ",c)
+      #print("Zoom in  to",lv+1," ",x,y,"  ",x1,y1," ",c)
       if x == 1:
         rx = 0
       elif x == 3:
@@ -120,11 +117,10 @@ def getnec2(t, mm, lv):
         for i in range(0,5):
           if mm[lv+1][ry][i] == '#':
             c = c + 1
-      print("Zoom out       ",x,y,"  ",x1,y1," ",c)
+      #print("Zoom out       ",x,y,"  ",x1,y1," ",c)
     else:
       if mm[lv][y1][x1] == '#':
         c = c + 1
-    #print("_",x,y," ",x1,y1," ",c)
   return c
 
 def tick2(mm, num):
@@ -152,8 +148,6 @@ def tick2(mm, num):
             m2[y][x] = '#'
           else:
             m2[y][x] = mm[i][y][x]
-    print("=",i)
-    pp(m2)
     mm2[i] = m2
     mm2[i][2][2] = '?'
   return mm2
@@ -180,13 +174,10 @@ def part1(m):
   while True:
     m = tick(m)
     if m in rx:
-      print(i)
-      pp(m)
+      #pp(m)
       return round(bio(m))
     rx.append(m)
     i = i + 1
-    #print("--- 1")
-  #pp(m)
 
 if __name__ == "__main__":
   if len(sys.argv) < 2:
