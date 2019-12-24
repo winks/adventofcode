@@ -9,7 +9,6 @@ def equalify(n):
       dlast = int(s[i-1])
       if dthis < dlast:
         s = "{}{}".format(s[0:i], (str(dlast) * len(s[i:])))
-        print("  adj",s)
         return int(s)
     return int(s)
 
@@ -26,7 +25,6 @@ def check1(n):
     if s[i] < s[i-1]:
       return False
     if s[i] == s[i-1]:
-      #print("###",s[i], s[i-1], i, s)
       ok = ok + 1
   if ok > 0:
     return True
@@ -48,7 +46,6 @@ def check2(n):
       cnt = cnt + 1
     else:
       cnt = 1
-    #print("\n#i",i,"last",last,"cur",cur,"cnt",cnt,"ok",ok)
 
     if i == 0:
       last = cur
@@ -59,7 +56,6 @@ def check2(n):
           ok = ok + 1
         elif i == len(s)-1:
           ok = ok +1
-        #print("#i",i,"last",last,"cur",cur,"cnt",cnt,"ok",ok)
         last = cur
         continue
       else:
@@ -79,10 +75,8 @@ def f1(a, b):
     counter = 0
     lastok = 0
     while (a <= b):
-      print("  #", a, lastok)
       r = check1(a)
       if r and a > lastok:
-        print("##", a)
         counter = counter + 1
         lastok = a
         a = a + 1
@@ -90,11 +84,8 @@ def f1(a, b):
         a2 = equalify(a)
         if a2 > b:
           break
-        #print(a)
         r = check1(a2)
         if r and a2 > lastok:
-          #print("###", a2, lastok)
-          print("##", a2)
           counter = counter + 1
           lastok = a2
         a = a2 + 1
@@ -111,16 +102,11 @@ def f2(a, b):
     counter = 0
     lastok = 0
     while (a <= b):
-      print("  #", a, lastok)
-      r = check2(a)
       a2 = equalify(a)
       if a2 > b:
         break
-      #print(a)
       r = check2(a2)
       if r and a2 > lastok:
-        #print("###", a2, lastok)
-        print("##", a2)
         counter = counter + 1
         lastok = a2
       a = a2 + 1

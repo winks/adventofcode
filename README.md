@@ -16,7 +16,7 @@
     * **C++** - 1
     * **Python3**: `day04/day04.py` - 1+2
     * **Tcl**: `day04/day04.tcl` - 1
-    * **PHP**: `day04/day04.php` - 2
+    * **PHP**: `day04/day04.php` - 1+2
   * day05 - *Sunny with a Chance of Asteroids* - IntCode
     * **C++** - 1+2
   * day06 - *Universal Orbit Map*
