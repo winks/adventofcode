@@ -60,3 +60,5 @@
     * **Rust**: `day22/src/main.rs` - 1
   * day23 - *Category Six* - IntCode
     * **Java**: `day23/day23.java` - 1+2
+  * day24 - *Planet of Discord*
+    * **Python**: `day24/day24.py` - 1+2
