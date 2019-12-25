@@ -143,6 +143,7 @@ class Day25 {
 		int p1 = s.indexOf(ck)+ck.length()+1;
 		int p2 = 0;
 		int p9 = s.indexOf("Command?");
+		if (p9 < 0) return sl;
 		String rest = s.substring(p1, p9);
 		//System.out.println(">>>"+rest+"<<<");
 		boolean finished = false;
@@ -229,17 +230,11 @@ class Day25 {
 		while (!finished /*&& todo.size() > 0 */ && idx < 20000) {
 			vm.run();
 			ArrayList<Long> out = vm.getOutputs();
-show(out, 99999);
-			if (out.size() == 0) {
-System.out.println("FOO");
-				//break;
-			}
 			System.out.println("====================================================");
 			String recv = showAscii(out);
 			if (recv.indexOf("You can't go that way") >= 0 || recv.indexOf("Unrecognized command") >= 0 ) {
 				moved = false;
 				last = cur;
-				//cur = last;
 			} else if (next.x != last.x || next.y != last.y || idx == 0) {
 				moved = true;
 					if (doors.size() < 2) {
@@ -257,7 +252,6 @@ System.out.println("FOO");
 					image[cur.x][cur.y] = 6;
 					last = cur;
 					cur = next;
-System.out.println("66)");
 				} else {
 				moved = false;
 				cur = last;
@@ -306,11 +300,6 @@ System.out.println("66)");
 				}
 			}
 			vm.setOutputs(new ArrayList<Long>());
-			//System.out.print("X TODO : ");
-			//for (Point pt : todo) {
-			//	System.out.print(pt);
-			//}
-			//System.out.println("");
 			showImage(image);
 
 			String nextCmd;
@@ -328,12 +317,7 @@ System.out.println("66)");
 					if (nextCmd.equals("s")) nextCmd = "south";
 					if (nextCmd.equals("w")) nextCmd = "west";
 
-						next = Point.wheres(cur, nextCmd);
-						//if (doors.size() < 2) {
-						//	image[last.x][last.y] = 7;
-						//} else {
-						//	image[last.x][last.y] = 6;
-						//}
+					next = Point.wheres(cur, nextCmd);
 				}
 
 				ins = fromAscii(nextCmd);
@@ -359,11 +343,6 @@ System.out.println("66)");
 				continue;
 			}
 
-			//if (doors.size() < 2) {
-			//	image[last.x][last.y] = 7;
-			//} else {
-			//	image[last.x][last.y] = 6;
-			//}
 			next = todo.remove(todo.size()-1);
 			nextCmd = next.cmd(cur);
 

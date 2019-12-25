@@ -15,10 +15,10 @@ class VM {
 		this.ops = tmpOps;
 		this.inputs = inputs;
 		this.outputs = new ArrayList<>();
-		System.out.println("########## Booting up ##########");
-		System.out.println("OPS    : " + this.ops.size());
-		System.out.println("INPUTS : " + this.inputs.size());
-		System.out.println("OUTPUTS: " + this.outputs.size());
+		//System.out.println("########## Booting up ##########");
+		//System.out.println("OPS    : " + this.ops.size());
+		//System.out.println("INPUTS : " + this.inputs.size());
+		//System.out.println("OUTPUTS: " + this.outputs.size());
 	}
 
 	private void maybeResize(long val) {
@@ -84,6 +84,7 @@ class VM {
 	public void run() {
 		ran = false;
 		while (!isStopped()) {
+			//System.out.println("AT POS "+pos);
 			ran = true;
 			long opcode = ops.get((int)pos) % 100;
 			long numIn  = getIn(opcode);
@@ -123,14 +124,15 @@ class VM {
 				ops.set((int)posOut, args.get(0) * args.get(1));
 			} else if (opcode == 3) {
 				if (inputs.size() > 0) {
+					//System.out.println("READ IN: " + inputs.get(inputs.size()-1) + ", "+ (inputs.size()-1) + " left");
 					ops.set((int)posOut, inputs.remove(inputs.size()-1));
 				} else {
-					System.out.println("NO INPUT");
+					////System.out.println("NO INPUT");
 					return;
 				}
 			} else if (opcode == 4) {
 				outputs.add(args.get(0));
-				System.out.println("OUTPUT: " + args.get(0));
+				//System.out.println("OUTPUT: " + args.get(0));
 			} else if (opcode == 5) {
 				if (args.get(0) != 0) {
 					pos = args.get((int)1);
@@ -150,7 +152,7 @@ class VM {
 				}
 			} else if (opcode == 8) {
 				maybeResize(posOut);
-				if (args.get(0) == args.get(1)) {
+				if (args.get(0).equals(args.get(1))) {
 					ops.set((int)posOut, 1L);
 				} else {
 					ops.set((int)posOut, 0L);
