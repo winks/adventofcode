@@ -6,19 +6,27 @@ class VM {
 	private ArrayList<Long> inputs;
 	private ArrayList<Long> outputs;
 	private boolean ran = false;
+	private boolean debug = false;
 	private long pos = 0;
 	private long relPos = 0;
 
 	public VM(ArrayList<Long> ops, ArrayList<Long> inputs) {
+		this(ops, inputs, false);
+	}
+
+	public VM(ArrayList<Long> ops, ArrayList<Long> inputs, boolean debug) {
 		ArrayList<Long> tmpOps = (ArrayList<Long>) ops.clone();
 		ArrayList<Long> tmpIn = (ArrayList<Long>) inputs.clone();
 		this.ops = tmpOps;
 		this.inputs = inputs;
+		this.debug = debug;
 		this.outputs = new ArrayList<>();
-		//System.out.println("########## Booting up ##########");
-		//System.out.println("OPS    : " + this.ops.size());
-		//System.out.println("INPUTS : " + this.inputs.size());
-		//System.out.println("OUTPUTS: " + this.outputs.size());
+		if (this.debug) {
+			System.out.println("########## Booting up ##########");
+			System.out.println("OPS    : " + this.ops.size());
+			System.out.println("INPUTS : " + this.inputs.size());
+			System.out.println("OUTPUTS: " + this.outputs.size());
+		}
 	}
 
 	private void maybeResize(long val) {
@@ -84,7 +92,7 @@ class VM {
 	public void run() {
 		ran = false;
 		while (!isStopped()) {
-			//System.out.println("AT POS "+pos);
+			if (this.debug) System.out.println("AT POS "+pos);
 			ran = true;
 			long opcode = ops.get((int)pos) % 100;
 			long numIn  = getIn(opcode);
@@ -114,7 +122,7 @@ class VM {
 				}
 				mode = (long) Math.floor(mode / 10.0);
 			}
-			//System.out.println("PRE: pos:" + pos + " []a= " + args.size() + " nI: " + numIn + " nO: " + numOut);
+			if (this.debug) System.out.println("PRE: pos:" + pos + " []a= " + args.size() + " nI: " + numIn + " nO: " + numOut);
 
 			if (opcode == 1) {
 				maybeResize(posOut);
@@ -124,15 +132,15 @@ class VM {
 				ops.set((int)posOut, args.get(0) * args.get(1));
 			} else if (opcode == 3) {
 				if (inputs.size() > 0) {
-					//System.out.println("READ IN: " + inputs.get(inputs.size()-1) + ", "+ (inputs.size()-1) + " left");
+					if (this.debug) System.out.println("READ IN: " + inputs.get(inputs.size()-1) + ", "+ (inputs.size()-1) + " left");
 					ops.set((int)posOut, inputs.remove(inputs.size()-1));
 				} else {
-					////System.out.println("NO INPUT");
+					if (this.debug) System.out.println("NO INPUT");
 					return;
 				}
 			} else if (opcode == 4) {
 				outputs.add(args.get(0));
-				//System.out.println("OUTPUT: " + args.get(0));
+				if (this.debug) System.out.println("OUTPUT: " + args.get(0));
 			} else if (opcode == 5) {
 				if (args.get(0) != 0) {
 					pos = args.get((int)1);
