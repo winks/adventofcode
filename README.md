@@ -8,7 +8,7 @@
     * **PowerShell**: `day01/day01.ps1` - 1+2
   * day02 - *1202 Program Alarm* - IntCode
     * **C++** - 1+2
-	* **TypeScript** - 1
+	* **TypeScript** - 1+2
   * day3 - *Crossed Wires*
     * **Nim**: `day03/day03.nim` - 1+2
     * **BASH**: `day03/day03.sh` - 1+2
@@ -62,3 +62,6 @@
     * **Java**: `day23/day23.java` - 1+2
   * day24 - *Planet of Discord*
     * **Python**: `day24/day24.py` - 1+2
+  * day25 - *Cryostasis* - IntCode
+    * **C++**: - 1
+    * **Java**: `day25/day25.java` - 1
