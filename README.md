@@ -46,6 +46,7 @@
     * **C++** - 1
   * day16 - *Flawed Frequency Transmission*
     * **Ruby**: `day16/day16.rb` - 1+2
+    * **D**: `day16/day16.d` - 2
   * day17 - *Set and Forget* - IntCode
     * **C++** - 1+2
   * day18 - *Many-Worlds Interpretation*
