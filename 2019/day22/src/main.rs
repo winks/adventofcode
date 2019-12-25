@@ -64,42 +64,56 @@ fn pp(v: &Vec<u32>) {
     }
 }
 
-fn shuffle2(deck_size: u64, pos_orig: u64, steps: &Vec<Step>) -> u64 {
-    let mut pos = pos_orig;
-    let mut pos0 = pos_orig;
+fn mod_exp(base: i128, exponent: i128, modulus: i128) -> i128 {
+    let mut result = 1;
+    let mut base = base % modulus;
+    let mut exponent = exponent;
+
+    loop {
+        if exponent <= 0 {
+            break result;
+        }
+        if exponent % 2 == 1 {
+            result = (result * base) % modulus;
+        }
+        exponent = exponent >> 1;
+        base = (base * base) % modulus;
+    }
+}
+
+fn shuffle2(pos_orig: u64, steps: &Vec<Step>) {
+    let len   : i128 = 119315717514047;
+    let times : i128 = 101741582076661;
+    let pos : i128 = pos_orig as i128;
+    let mut off : i128 = 0;
+    let mut inc : i128 = 1;
 
     for step in steps {
         if DEBUG {
             println!("Current step orig: {:?}", step);
         }
-        pos0 = pos;
-        let xarg: u64 = step.arg as u64;
         match step.action {
             Action::DealInc => {
-                for i in 0..step.arg {
-                let tmp_arg : u64 = xarg;
-                //let tmp_arg : u64 = deck_size - xarg;
-                pos = (pos * tmp_arg) % deck_size;
-                }
+                inc = inc * mod_exp(step.arg as i128, len - 2, len);
             },
             Action::DealNew => {
-                pos = deck_size - pos - 1;
+                off = off - inc;
+                inc = -inc;
             },
             Action::Cut => {
-                if step.arg > 0  {
-                    pos = (deck_size + pos + xarg) % deck_size;
-                } else {
-                    let parg = step.arg * -1;
-                    pos = (deck_size + pos - parg as u64) % deck_size;
-                }
+                off = off + inc * step.arg as i128;
             },
             Action::Nope => {
             },
         }
-        println!("pos {} -> {}", pos0, pos);
+        off = off % len;
+        inc = inc % len;
     }
-
-    return pos;
+    let incr : i128 = mod_exp(inc, times, len);
+    let offs : i128 = off * (1 - mod_exp(inc, times, len)) % len;
+    let offs = offs * mod_exp(1 - inc, len - 2, len) % len;
+    let r : i128 = (offs + incr * pos) % len;
+    println!("Part 2: {} -> {}", pos, r);
 }
 
 fn shuffle(deck_orig: Vec<u32>, steps: &Vec<Step>, reverse: bool) -> Vec<u32> {
@@ -214,72 +228,6 @@ fn part1(deck: Vec<u32>) {
     }
 }
 
-fn part3(_deck: Vec<u32>, steps: &Vec<Step>) {
-    let mut s2 = steps.clone();
-    s2.reverse();
-    let decksize: u64 = 10;
-
-    let mut pos2 = 9;
-    pos2 = shuffle2(decksize, pos2, &s2);
-    println!("pos2 {}", pos2);
-}
-
-fn part2(_deck: Vec<u32>, steps: &Vec<Step>) {
-    /*
-    let mut i = 0;
-    let mut deck_x = deck.clone();
-    let s2 = steps.clone();
-    while deck_x != deck || i == 0 {
-        deck_x = shuffle(deck_x, &s2, false);
-        i += 1;
-        if i % 1000 == 0 {
-            println!("loop {}", i);
-        }
-    }
-    println!("fin {}", i);
-    // 101741582076661 - (5003 * 20336114746) = 2423
-    */
-    let mut s2 = steps.clone();
-    s2.reverse();
-    //let pos0 = 2020;
-    //let decksize: u64 = 119315717514047;
-    let decksize: u64 = 10007;
-    let pos0 = 6289;
-
-    let mut pos = pos0;
-    let mut i: u64 = 0;
-
-    let mut pos2 = 6288;
-    pos2 = shuffle2(decksize, pos2, &s2);
-    println!("pos2 {}", pos2);
-    pos2 = 0;
-    pos2 = shuffle2(decksize, pos2, &s2);
-    println!("pos2 {}", pos2);
-    pos2 = 1;
-    pos2 = shuffle2(decksize, pos2, &s2);
-    println!("pos2 {}", pos2);
-    pos2 = 10005;
-    pos2 = shuffle2(decksize, pos2, &s2);
-    println!("pos2 {}", pos2);
-    pos2 = 10006;
-    pos2 = shuffle2(decksize, pos2, &s2);
-    println!("pos2 {}", pos2);
-/*
-    loop {
-        pos = shuffle2(decksize, pos, &s2);
-        i += 1;
-        if i %  1000000 == 0 {
-            println!("loop {}", i);
-        }
-        if pos == pos0 {
-            println!("found {} at iter {}", pos, i);
-            break;
-        }
-    }
-    println!("pos {}", pos);
-    */
-}
-
 fn main() {
     let args: Vec<String> = env::args().collect();
     let program = args[0].clone();
@@ -320,10 +268,8 @@ fn main() {
     pp(&deck_cur);
     println!("------------------");
 
-    if part_num == 3 {
-        part3(deck_cur, &steps);
-    } else if part_num == 2 {
-        part2(deck_cur, &steps);
+    if part_num == 2 {
+        shuffle2(2020, &steps);
     } else {
         let deck_s = shuffle(deck_cur, &steps, false);
         part1(deck_s);
