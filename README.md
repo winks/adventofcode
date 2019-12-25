@@ -57,7 +57,8 @@
   * day21 - *Springdroid Adventure* - IntCode
     * **Java**: `day21/day21.java` - 1+2
   * day22 - *Slam Shuffle*
-    * **Rust**: `day22/src/main.rs` - 1
+    * **Rust**: `day22/src/main.rs` - 1 (+2, but not my own)
+    * **C**: `day22/day22.c` - 1
   * day23 - *Category Six* - IntCode
     * **Java**: `day23/day23.java` - 1+2
   * day24 - *Planet of Discord*

@@ -9,6 +9,21 @@ struct Step {
 	__int64_t num;
 };
 
+void pps(struct Step s) {
+	if (s.type == 0) printf("None\n");
+	if (s.type == 1) printf("Cut %ld\n", s.num);
+	if (s.type == 2) printf("Deal New\n");
+	if (s.type == 4) printf("Deal Inc %ld\n", s.num);
+}
+
+void ppd(int **orig_deck, size_t deck_size) {
+	printf("TOP [");
+	for (size_t i=0; i<deck_size; ++i) {
+		printf(" %d", (*orig_deck)[i]);
+	}
+	printf(" ] BOT\n");
+}
+
 int parse(char *line, struct Step *rv) {
 	rv->type = None;
 	rv->num = 0;
@@ -24,14 +39,14 @@ int parse(char *line, struct Step *rv) {
 		rv->num = strtoll(ptr, &end, 10);
 		if (*end) return 11;
 		rv->type = Cut;
-		printf("# CUT:%s:%ld\n", ptr, rv->num);
+		pps(*rv);
 
 		return 0;
 	}
 	ptr = strstr(line, xdealnew);
 	if (ptr != NULL) {
 		rv->type = DealNew;
-		printf("# DEAL NEW\n");
+		pps(*rv);
 
 		return 0;
 	}
@@ -42,23 +57,80 @@ int parse(char *line, struct Step *rv) {
 		rv->num = strtoll(ptr, &end, 10);
 		if (*end) return 12;
 		rv->type = DealInc;
-		printf("# DEAL INC:%s:%ld\n", ptr, rv->num);
+		pps(*rv);
 
 		return 0;
 	}
 	return 15;
 }
 
-void part1(int deck[], size_t len) {
+void part1(int **deck, size_t len) {
+	if (len < 2000) return;
 	size_t x = 1;
 	for (size_t i=(len-1); i!=0; --i) {
-		printf(" %ld> %d\n", i, deck[i]);
-		if (deck[i] == 2019) {
-			printf("FOUND %ld : %d => %ld\n", i, deck[i], x);
+		//printf(" %ld> %d\n", i, (*deck)[i]);
+		if ((*deck)[i] == 2019) {
+			printf("FOUND %ld : %d => %ld\n", i, (*deck)[i], x);
 			return;
 		}
 		++x;
 	}
+}
+
+int shuffle(int **orig_deck, size_t deck_size, struct Step steps[], size_t num_steps) {
+	int deck[deck_size];
+	for (size_t i=0; i<deck_size; ++i) {
+		deck[i] = 0;
+	}
+	printf("Deck : %ld\n", deck_size);
+	printf("Steps: %ld\n", num_steps);
+	ppd(orig_deck, deck_size);
+
+	for (size_t i=0; i<num_steps; ++i) {
+		if (steps[i].type < 1) continue;
+		if (steps[i].type > 4) continue;
+		printf("Current step: ");
+		pps(steps[i]);
+
+		if (steps[i].type == DealNew) {
+			for (size_t i=0; i<deck_size; ++i) {
+				deck[deck_size - 1 - i] = (*orig_deck)[i];
+			}
+		}
+		if (steps[i].type == Cut) {
+			__int64_t n = steps[i].num;
+			if (n > 0) {
+				for (int i=0;i<n;++i) {
+					deck[deck_size - n + i] = (*orig_deck)[i];
+				}
+				for (int i=n;i<deck_size;++i) {
+					deck[0 - n + i] = (*orig_deck)[i];
+				}
+			} else {
+				for (int i=(deck_size+n);i<deck_size;++i) {
+					deck[i - (deck_size+n)] = (*orig_deck)[i];
+				}
+				for (int i=0;i<(deck_size+n);++i) {
+					deck[0 - n + i] = (*orig_deck)[i];
+				}
+
+			}
+		}
+		if (steps[i].type == DealInc) {
+			__int64_t n = steps[i].num;
+			size_t pos = 0;
+			deck[0] = (*orig_deck)[0];
+			for (int i=1;i<deck_size;++i) {
+				pos = (pos + n);
+				deck[pos % deck_size] = (*orig_deck)[i];
+			}
+		}
+		for (size_t i=0; i<deck_size; ++i) {
+			(*orig_deck)[i] = deck[i];
+		}
+		ppd(orig_deck, deck_size);
+	}
+	part1(orig_deck, deck_size);
 }
 
 int main(int argc, char *argv[]) {
@@ -101,15 +173,12 @@ int main(int argc, char *argv[]) {
 		steps[i] = dummy;
 	}
 
-	int deck[decksize];
+	int *deck;
+	deck = malloc(decksize * sizeof(int));
 	for (size_t i=0; i<decksize; ++i) {
 		deck[i] = i;
 	}
 
-	part1(deck, decksize);
-
-	//for (int i=0; i<num_steps; ++i) {
-	//	if (steps[i].type != None) printf("%d %d %ld\n", i, steps[i].type, steps[i].num);
-	//	else printf("%d 000\n", i);
-	//}
+	ppd(&deck, decksize);
+	shuffle(&deck, decksize, steps, num_steps);
 }
