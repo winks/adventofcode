@@ -1,3 +1,5 @@
+# Julia 1.3.0
+
 function dist(a, b)
 	return sqrt( (a[1] - b[1]) * (a[1] - b[1]) + (a[2] - b[2]) * (a[2] - b[2]) )
 end
@@ -68,36 +70,20 @@ function los1(m)
 	println()
 	println("Part 1: ($(bs[1]-1),$(bs[2]-1)) :: $(mx)")
 	println()
-	return bs
+	return (bs, mx)
 end
 
-function h(x, bs, lang)
-	return (((x[3] - lang) % 360) * 1000  + dist(bs, x))
+function m(x, bs, lang)
+	rv = ((((x[3] - lang) % 360) + 360) % 360) * 1000 + dist(bs, x)
+	#println("    m(",x," ",bs," ",lang," ",dist(bs,x),")=",rv)
+	return rv
 end
 
-function mmin(aa, bs, lang)
-	mm = 999999999
-	rv = (1,2,3)
-	rx = 0
-	idx = 1
-	for a in aa
-		hx = abs(h(a, bs, lang))
-		println("MM ",a," ",bs," ",lang," = ",hx)
-		if hx < mm
-			mm = hx
-			rv = a
-			rx = idx
-		end
-		idx += 1
-	end
-	return (rv, rx)
-end
-
-function los2(m, bs)
+function los2(mm, bs)
 	ck = []
-	for y1 in 1:length(m)
-		for x1 in 1:length(m[y1])
-			if m[y1][x1] == '.'
+	for y1 in 1:length(mm)
+		for x1 in 1:length(mm[y1])
+			if mm[y1][x1] == '.'
 				continue
 			end
 			if y1 == bs[2] && x1 == bs[1]
@@ -110,17 +96,13 @@ function los2(m, bs)
 	for i in 1:length(aa)
 		aa[i] = (aa[i][1], aa[i][2], (aa[i][3] + 90 + 360) % 360)
 	end
-	for a in aa
-		println(a," ",a[3] * 1000 + dist(bs, a))
+	for a in sort(aa)
+		#println(a," ",a[3] * 10000 + dist(bs, a))
 	end
-	println(length(aa), aa[1])
 	shot = []
 	lang = 0
-	print("aa: ")
-	print(length(aa))
-	print(" shot: ")
-	println(length(shot))
-	println("----")
+	println("left: ",length(aa)," shot: ",length(shot))
+	println()
 
 	tgt = (0,0,0)
 	lang = 0
@@ -128,18 +110,23 @@ function los2(m, bs)
 		if length(aa) < 1
 			break
 		end
-		(tgt,idx) = mmin(aa, bs, lang)
-		hx = h(tgt, bs, lang)
-		println("Target: ",tgt," ",hx ," l ", lang)
-		aa = deleteat!(aa, idx)
+		if length(shot) >= 200
+			break
+		end
+		tmpa = sort(aa, by = x -> m(x, bs, lang))
+		tgt = tmpa[1]
+		idx = 1
+		hx = m(tgt, bs, lang)
+		println("Target: (",tgt[1],", ",tgt[2],", ",tgt[3],") m: ",hx ," l: ", lang)
+		aa = deleteat!(tmpa, idx)
 		push!(shot, tgt)
-		lang = (hx + 0.001) % 360
-		println("aa:", length(aa), " shot: ", length(shot), " last: ", tgt, " lang: ", lang)
+		lang = (tgt[3] + 0.001) % 360
+		println("left: ", length(aa), " shot: ", length(shot), " last: ", tgt, " lang: ", lang)
 		println()
 	end
 	println("Part 2: (", tgt[1]-1,"/",tgt[2]-1,") :: ", (tgt[1]-1)*100 + (tgt[2]-1))
+	return tgt
 end
-
 
 filename = "../input/day10/part1"
 
@@ -149,5 +136,8 @@ end
 
 println("File: $(filename)")
 am = readlines(filename)
-bs = los1(am)
-los2(am, bs)
+(bs, mx) = los1(am)
+tgt = los2(am, bs)
+println("---")
+println("Part 1: ($(bs[1]-1),$(bs[2]-1)) :: $(mx)")
+println("Part 2: (", tgt[1]-1,"/",tgt[2]-1,") :: ", (tgt[1]-1)*100 + (tgt[2]-1))

@@ -59,7 +59,8 @@ def los(m):
       bs = r[:2]
       mx = r[2]
   print("")
-  print("best",bs,mx)
+  print("Part 1:",bs,"::",mx)
+  print("")
 
   #part2
   ck = []
@@ -73,24 +74,28 @@ def los(m):
   aa = part2(bs, ck)
   for i in range(0, len(aa)):
      aa[i] = [aa[i][0],aa[i][1],(aa[i][2]+90+360)%360]
-  for a in aa:
-    print(a, (a[2] * 10000 + dist(bs,a)))
-  print("-----")
   shot = []
   lang = 0
-  print("aa:",len(aa),"shot:",len(shot))
-  print("-----")
+  print("left:",len(aa),"shot:",len(shot))
+  print("")
+
+  def m(x):
+    rv = ((x[2] - lang)%360) * 1000 + dist(bs, x)
+    return rv
 
   while aa:
-    def m(x):
-      return ((x[2] - lang)%360) * 100000 + dist(bs, x)
+    if len(shot) >= 200:
+      break
     tgt = min(aa, key=m)
-    print(tgt, m(tgt))
+    print("Target:",tgt,"m:", m(tgt),"a:","l:", lang, dist(bs, tgt))
     shot.append(tgt)
     aa.remove(tgt)
     lang = (tgt[2] + 0.001)%360
-    print("aa:",len(aa),"shot:",len(shot),"last:",tgt,"lang:",lang)
+    print("left:",len(aa),"shot:",len(shot),"last:",tgt,"lang:",lang)
     print("")
+
+  print("Part 1:",bs,"::",mx)
+  print("Part 2:",tgt,"::",(tgt[0]*100+tgt[1]))
 
 if __name__ == "__main__":
   if len(sys.argv) < 2:
