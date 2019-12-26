@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -77,7 +78,7 @@ void part1(int **deck, size_t len) {
 	}
 }
 
-int shuffle(int **orig_deck, size_t deck_size, struct Step steps[], size_t num_steps) {
+void shuffle(int **orig_deck, size_t deck_size, struct Step steps[], size_t num_steps) {
 	int deck[deck_size];
 	for (size_t i=0; i<deck_size; ++i) {
 		deck[i] = 0;
@@ -133,9 +134,117 @@ int shuffle(int **orig_deck, size_t deck_size, struct Step steps[], size_t num_s
 	part1(orig_deck, deck_size);
 }
 
+__int128 mod_exp(__int128 base, __int128 exponent, __int128 modulus) {
+	__int128 result = 1;
+	base = base % modulus;
+
+	while (1) {
+		if (exponent <= 0) {
+			break;
+		}
+		if (exponent % 2 == 1) {
+			result = (result * base) % modulus;
+		}
+		exponent = exponent >> 1;
+		base = (base * base) & modulus;
+	}
+	return result;
+}
+
+void shuffle2(struct Step steps[], size_t num_steps) {
+	__int128 pos = 2020;
+	__int128 len = 119315717514047;
+	__int128 times = 101741582076661;
+	__int128 off = 0;
+	__int128 inc = 1;
+
+	for (size_t i=0; i<num_steps; ++i) {
+		if (steps[i].type < 1) continue;
+		if (steps[i].type > 4) continue;
+		printf("Current step: ");
+		pps(steps[i]);
+
+		if (steps[i].type == DealNew) {
+			off = off - inc;
+			inc = -inc;
+		}
+		if (steps[i].type == Cut) {
+			off = off + inc * steps[i].num;
+		}
+		if (steps[i].type == DealInc) {
+			inc = inc * mod_exp(steps[i].num, len - 2, len);
+		}
+		off = off % len;
+		inc = inc % len;
+	}
+	__int128 incr = mod_exp(inc, times, len);
+	__int128 offs = off * (1 - mod_exp(inc, times, len)) % len;
+	offs = offs * mod_exp(1 - inc, len - 2, len) % len;
+	__int128 r = (offs + incr * pos) % len;
+
+	printf("Part 2: %ld :: %ld\n", off, inc);
+	printf("Part 2: %ld :: %ld\n", offs, incr);
+	printf("Part 2: %ld :: %ld\n", pos, r);
+}
+
+const __int64_t mm = 119315717514047;
+const __int64_t nn = 101741582076661;
+
+__int64_t add(__int64_t a, __int64_t b) {
+	return (mm + (a + b) % mm) % mm;
+}
+
+__int64_t mul(__int64_t a, __int64_t b) {
+	__int64_t unit = 0;
+	for (__int64_t r = unit;; b >>= 1, a = add(a, a)) {
+		if (!b) return r;
+		if (b & 1) r = add(r, a);
+	}
+}
+
+__int64_t powx(__int64_t a, __int64_t b) {
+	__int64_t unit = 1;
+	for (__int64_t r = unit;; b >>= 1, a = mul(a, a)) {
+		if (!b) return r;
+		if (b & 1) r = mul(r, a);
+	}
+}
+
+void shuffle3(struct Step steps[], size_t num_steps) {
+	__int64_t pos = 2020;
+	__int64_t off = 0;
+	__int64_t inc = 1;
+	__int64_t k = 1;
+	__int64_t b = 0;
+	__int64_t x;
+
+	for (size_t i=0; i<num_steps; ++i) {
+		if (steps[i].type < 1) continue;
+		if (steps[i].type > 4) continue;
+		printf("Current step: ");
+		pps(steps[i]);
+
+		if (steps[i].type == DealNew) {
+			k = add (0, -k);
+			b = add(-1, -b);
+		}
+		if (steps[i].type == Cut) {
+			b = add(b, -steps[i].num);
+		}
+		if (steps[i].type == DealInc) {
+			x = steps[i].num;
+			k = mul(k, x);
+			b = mul(b, x);
+		}
+	}
+	x = mul(b, powx(k - 1, mm - 2));
+	x = add(mul(add(x, pos), powx( powx(k, mm - 2), nn)), -x);
+	printf("Part 2: %ld :: %ld\n", pos, x);
+}
+
 int main(int argc, char *argv[]) {
 	if (argc < 3) {
-		printf("Usage: %s /path/to/file decksize \n", argv[0]);
+		printf("Usage: %s /path/to/file decksize [2]\n", argv[0]);
 		return 1;
 	}
 	char *filename = argv[1];
@@ -145,7 +254,14 @@ int main(int argc, char *argv[]) {
 	char *ds_end;
 	decksize = strtoll(ds, &ds_end, 10);
 	if (*ds_end) return 2;
+	if (decksize < 10) decksize = 10;
 	printf("deck size: %ld\n", decksize);
+	__int64_t part = 1;
+	if (argc > 3) {
+		char *part2s = argv[3];
+		char *p_end;
+		part = strtoll(part2s, &p_end, 10);
+	}
 
 	FILE *fp;
 	char *line = NULL;
@@ -180,5 +296,6 @@ int main(int argc, char *argv[]) {
 	}
 
 	ppd(&deck, decksize);
-	shuffle(&deck, decksize, steps, num_steps);
+	if (part == 2) shuffle3(steps, num_steps);
+	else shuffle(&deck, decksize, steps, num_steps);
 }

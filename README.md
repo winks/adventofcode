@@ -46,7 +46,7 @@
     * **C++** - 1
   * day16 - *Flawed Frequency Transmission*
     * **Ruby**: `day16/day16.rb` - 1+2
-    * **D**: `day16/day16.d` - 2
+    * **D**: `day16/day16.d` - 1+2 (solution 1 not by me)
   * day17 - *Set and Forget* - IntCode
     * **C++** - 1+2
   * day18 - *Many-Worlds Interpretation*
@@ -58,8 +58,8 @@
   * day21 - *Springdroid Adventure* - IntCode
     * **Java**: `day21/day21.java` - 1+2
   * day22 - *Slam Shuffle*
-    * **Rust**: `day22/src/main.rs` - 1 (+2, but not my own)
-    * **C**: `day22/day22.c` - 1
+    * **Rust**: `day22/src/main.rs` - 1+2 (solution 2 not by me)
+    * **C**: `day22/day22.c` - 1+2 (solution 2 not by me)
   * day23 - *Category Six* - IntCode
     * **Java**: `day23/day23.java` - 1+2
   * day24 - *Planet of Discord*
