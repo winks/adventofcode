@@ -1,3 +1,4 @@
+// dmd 2.089.1-0 (Ubuntu)
 import std.algorithm;
 import std.conv;
 import std.file;

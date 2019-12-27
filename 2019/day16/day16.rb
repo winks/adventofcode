@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby2.5
 def readf(fn)
   text = File.open(fn).read
   text.gsub!(/\r\n?/, "\n")
@@ -11,33 +12,23 @@ def splitn(x)
   for i in 0..x.length-1 do
     rv.push(x[i].to_i)
   end
-  #puts rv
   return rv
 end
 
 def mul(x,y,rep=1)
   rv = []
   y2 = []
-  #puts "rep : #{rep}"
   for i in 0..(x.length+rep) do
     k = i%y.length
     v = y[k]
-     #puts "# #{k} #{v}"
     for ii in 0..(rep-1) do
-      #puts "  Loop"
       y2.push y[i%y.length]
     end
   end
-  #puts ""
-  #puts y2
   y2 = y2.drop(1)
-  #puts y2
-  #puts ""
   for i in 0..(x.length-1) do
     b = y2[i]
-    #puts b,i
     r = (x[i] * b) #% 10
-    #puts "i #{i} : #{x[i]} * #{b} = #{r}"
     rv.push r
   end
   rv = rv.inject(0, :+)
@@ -50,8 +41,6 @@ def phase(nums,base)
     r = mul(nums, base,i+1)
     rv.push r
   end
-  #rv = rv[0..nums.length]
-  #puts rv.join ","
   return rv
 end
 
@@ -75,9 +64,12 @@ def part2(nruns, line)
       rv[i] = (input[i].to_i + rv[i+1]) % 10
     end
     input = rv
+    #puts "run #{p} done"
+    #puts rv[0..19].join("")
+    #puts rv[-20..-1].join("")
   end
 
-  puts "> Result:"
+  puts "> Part 2:"
   puts input[0..7].join("")
 
 end
@@ -94,8 +86,9 @@ def part1(nruns, line)
     tx = rv.join " "
     dbg = dbg + "old: After phase #{i+1} : #{tx}\n"
   end
-  puts dbg
-  puts rv.length
+  #puts dbg
+  #puts rv.length
+  puts "> Part 1:"
   puts rv.slice(0,8).join("")
 
 end
