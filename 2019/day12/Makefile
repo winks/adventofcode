@@ -3,13 +3,14 @@ LUA ?= luajit
 
 
 help:
-	@echo "# Go, 1+2: ~0.04s"
+	@echo "# Go 1.13, 1+2: ~0.04s"
 	@echo "FILE=... make run-go"
 	@echo
-	@echo "# Lua, 1: ~0.02s"
+	@echo "# Lua 5.2, 1: ~0.02s"
 	@echo "FILE=... make run-lua-1"
 	@echo
-	@echo "# Lua, 2: ~4.7s // Luajit: 0.4s"
+	@echo "# Lua 5.2, 2: ~4.7s"
+	@echo "# Luajit 2.1.0-beta2, 2: ~0.4s"
 	@echo "FILE=... make run-lua-2"
 
 bin/day12: day12.go

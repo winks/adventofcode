@@ -7,10 +7,12 @@ OBJS = $(patsubst %.c,bin/%,$(SRCS))
 
 
 help:
-	@echo "# Rust 1.38.0, 1+2: ~0.1s + ~0.05s"
+	@echo "# Rust 1.38.0, 1: ~0.1s "
+	@echo "# Rust 1.38.0, 2: ~0.05s"
 	@echo "FILE=... make run-rust"
 	@echo
-	@echo "# C, GCC 7.4.0, 1+2: ~0.15s + ~0.01s"
+	@echo "# C ~ GCC 7.4.0, 1: ~0.15s"
+	@echo "# C ~ GCC 7.4.0, 2: ~0.01s"
 	@echo "FILE=... make run-c"
 
 all: $(OBJS)

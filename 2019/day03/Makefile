@@ -3,10 +3,10 @@ BASH ?= bash
 
 
 help:
-	@echo "# Bash, 1+2: ~46s"
+	@echo "# Bash 4.4.20, 1+2: ~46s"
 	@echo "FILE=... make run-bash"
 	@echo
-	@echo "# Nim, 1+2: ~0.01s"
+	@echo "# Nim 1.0.4, 1+2: ~0.01s"
 	@echo "FILE=... make run-nim"
 
 bin/day03: day03.nim

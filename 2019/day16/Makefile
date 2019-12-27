@@ -2,13 +2,13 @@ FILE ?= input.txt
 
 
 help:
-	@echo "# D, 1+2: ~0.6s"
+	@echo "# D 2.089.1, 1+2: ~0.6s"
 	@echo "FILE=... make run-d"
 	@echo
-	@echo "# Ruby, 1: ~45m"
+	@echo "# Ruby 2.5, 1: ~45m"
 	@echo "FILE=... make run-ruby-1"
 	@echo
-	@echo "# Ruby, 2: ~8.5s"
+	@echo "# Ruby 2.5, 2: ~8.5s"
 	@echo "FILE=... make run-d-ruby-2"
 
 bin/day16:
