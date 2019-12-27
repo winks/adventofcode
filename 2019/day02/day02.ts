@@ -1,9 +1,14 @@
+// TSC 3.7.3 // node 12.5.0
 import fs from 'fs';
 import argv from 'process';
 
 const OP_ADD = 1;
 const OP_MUL = 2;
 const OP_HLT = 99;
+
+function dlog(x) {
+    //console.log(x);
+}
 
 function getArgsIn(op: number) {
     switch(op) {
@@ -23,13 +28,11 @@ function getArgsOut(op: number) {
     }
 }
 
-//let instruction: [number, Array<number>];
-
 function calc(dtx: {position: number, status: number, ops: number[]}) {
     var op = dtx.ops[dtx.position];
     var argsIn = getArgsIn(op);
     var argsOut = getArgsOut(op);
-    
+
     var paramsIn: number[] = [];
     for (var i=0; i<argsIn;++i) {
         var pos = dtx.ops[dtx.position+1+i];
@@ -39,16 +42,16 @@ function calc(dtx: {position: number, status: number, ops: number[]}) {
     if (argsOut > 0) {
         paramOut = dtx.ops[dtx.position+1+argsIn]
     }
-    
+
     if (op == OP_HLT) {
-        console.log("#OP_HLT @" + dtx.position);
+        dlog("#OP_HLT @" + dtx.position);
         dtx.status = 10;
         return dtx;
     } else if (op == OP_ADD) {
         dtx.ops[paramOut] = paramsIn[0] + paramsIn[1];
-        console.log("#OP_ADD @" + dtx.position + " " + paramsIn + " " + paramOut+" = "+dtx.ops[paramOut]);
+        dlog("#OP_ADD @" + dtx.position + " " + paramsIn + " " + paramOut+" = "+dtx.ops[paramOut]);
     } else if (dtx.ops[dtx.position] == OP_MUL) {
-        console.log("#OP_MUL @" + dtx.position + " " + paramsIn + " " + paramOut);
+        dlog("#OP_MUL @" + dtx.position + " " + paramsIn + " " + paramOut);
         dtx.ops[paramOut] = paramsIn[0] * paramsIn[1];
     } else {
         dtx.status = 10;
@@ -56,6 +59,33 @@ function calc(dtx: {position: number, status: number, ops: number[]}) {
 
     dtx.position = dtx.position + 1 + argsIn + argsOut;
     return dtx;
+}
+
+function part1(odata: {position: number, status: number, ops: number[]}) {
+    var data = { ...odata };
+    do {
+        data = calc(data);
+    } while (data.position < data.ops.length && data.status == 0)
+
+    return data.ops[0];
+}
+
+function part2(oops: number[]) {
+    var target = 19690720;
+    for (var n=0; n<50;++n) {
+        for (var v=0; v<50;++v) {
+            var data = { position: 0, status: 0, ops: [...oops ] };
+            data.ops[1] = n;
+            data.ops[2] = v;
+            do {
+                data = calc(data);
+            } while (data.position < data.ops.length && data.status == 0)
+            if (data.ops[0] == target) {
+                return 100 * n + v;
+            }
+        }
+    }
+    return 0;
 }
 
 function main() {
@@ -80,23 +110,24 @@ function main() {
     var opsNum = opsStr.map(function(o) {
         return parseInt(o, 10);
     });
-    console.log(opsNum);
+    dlog(opsNum);
 
     // 12 + 2 for part1
-    if (process.argv.length > 3) opsNum[1] = parseInt(process.argv[3]);
-    if (process.argv.length > 4) opsNum[2] = parseInt(process.argv[4]);
+    var opsP1 = [ ...opsNum ];
+    if (process.argv.length > 3) opsP1[1] = parseInt(process.argv[3]);
+    if (process.argv.length > 4) opsP1[2] = parseInt(process.argv[4]);
 
-    var data = {
-        position: 0, 
-        status: 0, 
-        ops: opsNum
+    var data1 = {
+        position: 0,
+        status: 0,
+        ops: opsP1
     };
-    console.log(data);
+    var p1 = part1(data1);
 
-    do {
-        data = calc(data);
-        console.log(data);
-    } while (data.position < data.ops.length && data.status == 0)
+    var p2 = part2(opsNum);
+
+    console.log("Part 1: " + p1);
+    console.log("Part 2: " + p2);
 }
 
 main();
