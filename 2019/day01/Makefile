@@ -8,6 +8,8 @@ help:
 	@echo
 	@echo "# PowerShell, 1+2: ~0.03s"
 	@echo "FILE=... make run-powershell"
+	@echo
+	@echo "# C++, 1+2: ~0.1s"
 
 bin/day01: day01.cr
 	${CRYSTAL} build day01.cr

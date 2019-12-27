@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
 		infile >> data;
 	}
 	if (argc < 4) {
+		std::cout << "Usage: " << argv[0] << " /path/to/file width height" << std::endl;
 		return 1;
 	}
 	iw = (size_t) std::stoi(argv[2]);

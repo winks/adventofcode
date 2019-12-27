@@ -8,12 +8,12 @@
     * **PowerShell**: `day01/day01.ps1` - 1+2
   * day02 - *1202 Program Alarm* - IntCode
     * **C++** - 1+2
-	* **TypeScript** - 1+2
+	* **TypeScript**: `day02/day02.ts` - 1+2
   * day3 - *Crossed Wires*
+    * **C++** - slow and incomplete
     * **Nim**: `day03/day03.nim` - 1+2
     * **BASH**: `day03/day03.sh` - 1+2
   * day04 - *Secure Container*
-    * **C++** - 1
     * **Python3**: `day04/day04.py` - 1+2
     * **Tcl**: `day04/day04.tcl` - 1+2
     * **PHP**: `day04/day04.php` - 1+2

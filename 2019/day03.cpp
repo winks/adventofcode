@@ -1,6 +1,7 @@
-#include <stdlib.h>
+#include <fstream>
 #include <iostream>
 #include <sstream>
+#include <stdlib.h>
 #include <tuple>
 #include <vector>
 
@@ -167,16 +168,16 @@ std::tuple<int,int> find(std::vector<std::tuple<int,int>> v, std::tuple<int, int
 int main(int argc, char *argv[])
 {
 	std::vector<std::string> allops;
+	std::ifstream infile;
 
 	if (argc < 2) {
-		std::string input;
-		while (std::cin) {
-			getline(std::cin, input);
-			if (input.size() > 2) allops.push_back(input);
-		}
-	} else {
-		allops.push_back("R8,U5,L5,D3");
-		allops.push_back("U7,R6,D4,L4");
+		std::cout << "Usage: " << argv[0] << " /path/to/filename" << std::endl;
+		return 0;
+	}
+	infile = std::ifstream(argv[1]);
+	std::string input;
+	while (infile >> input) {
+		if (input.size() > 2) allops.push_back(input);
 	}
 
 	std::cout << "lines: " << allops.size() << std::endl;

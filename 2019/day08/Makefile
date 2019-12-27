@@ -4,6 +4,8 @@ FILE ?= input.txt
 help:
 	@echo "# SBCL 1.4.5, 1+2: ~0.1s"
 	@echo "FILE=... make run-cl"
+	@echo
+	@echo "# C++, 1+2: ~0.1s"
 
 bin/day08: day08.cl
 	sbcl day08.cl
