@@ -41,7 +41,7 @@
     * **C++** - 1+2
   * day14 - *Space Stoichiometry*
     * **Python3**: `day14/day14.py` - 1
-    * **Perl**: `day14/day14.pl` - 1
+    * **Perl**: `day14/day14.pl` - 1+2 (solution 1 not by me)
   * day15 - *Oxygen System* - IntCode
     * **C++** - 1
   * day16 - *Flawed Frequency Transmission*
