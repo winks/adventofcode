@@ -128,11 +128,11 @@ function los2(mm, bs)
 	return tgt
 end
 
-filename = "../input/day10/part1"
-
-if length(ARGS) > 0
-	filename = ARGS[1]
+if length(ARGS) <1
+	println("Usage: ", PROGRAM_FILE, " /path/to/file")
+	exit()
 end
+filename = ARGS[1]
 
 println("File: $(filename)")
 am = readlines(filename)

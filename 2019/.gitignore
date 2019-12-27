@@ -2,3 +2,4 @@ bin/
 input/
 node_modules
 *.class
+*.o

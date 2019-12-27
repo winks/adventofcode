@@ -127,8 +127,12 @@ function f2($a, $b) {
 	printf("result: %s\n", $cnt);
 }
 
-if (count($argv) < 2) $fname = "../input/day04/part1";
-else                  $fname = $argv[1];
+if (count($argv) < 2) {
+	echo sprintf("Usage: %s /path/to/file", $argv[0]) . PHP_EOL;
+	exit();
+} else {
+	$fname = $argv[1];
+}
 
 $fh = fopen($fname, "r");
 while (!feof($fh)) {

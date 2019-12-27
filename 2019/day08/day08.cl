@@ -69,7 +69,7 @@
 
 (defun main ()
   (let ((args (cli-args)))
-    (let ((fname (or (nth 1 args) "../input/day08/part1"))
+    (let ((fname (or (nth 1 args) "input.txt"))
 	  (iw    (or (parse-integer (nth 2 args)) 2))
 	  (ih    (or (parse-integer (nth 3 args)) 2)))
       (let ((data (trim (file-string fname)))

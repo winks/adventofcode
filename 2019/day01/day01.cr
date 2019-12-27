@@ -7,7 +7,7 @@ class Calc
 
   def read(name : String)
     fh = File.open(name)
-    puts "reading from '#{name}' : #{fh}"
+    #puts "reading from '#{name}' : #{fh}"
 
     fh.each_line do |line|
       @numbers.push(line.to_i32)
@@ -38,7 +38,15 @@ class Calc
   end
 end
 
-name = "../input/day01/part1"
-c = Calc.new
-c.read(name)
-c.run()
+def main
+  if ARGV.size < 1
+    puts "Usage: #{PROGRAM_NAME} /path/to/file"
+    exit
+  end
+  name = ARGV[0]
+  c = Calc.new
+  c.read(name)
+  c.run()
+end
+
+main

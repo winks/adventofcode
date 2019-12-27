@@ -99,7 +99,8 @@ def los(m):
 
 if __name__ == "__main__":
   if len(sys.argv) < 2:
-    name = "../input/day10/part1"
+    print("Usage: {} /path/to/file".format(sys.argv[0]))
+    sys.exit()
   else:
     name = sys.argv[1]
   with open(name, "r") as fh:
