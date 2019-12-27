@@ -1,3 +1,5 @@
+-- Lua 5.2 // Luajit 2.1.0-beta2
+
 function getl(file)
 	lines = {}
 	for line in io.lines(file) do
@@ -98,6 +100,30 @@ function calcgrav(moons)
 	return moons
 end
 
+function calcvelo2(moons, what, vel)
+	for k,_ in ipairs(moons) do
+		moons[k][what] = moons[k][what] + moons[k][vel]
+	end
+	return moons
+end
+
+function calcgrav2(moons, what, vel)
+	for k1,_ in ipairs(moons) do
+		for k2,_ in ipairs(moons) do
+			if k2 <= k1 then goto continue end
+			if moons[k1][what] < moons[k2][what] then
+				moons[k1][vel] = moons[k1][vel] + 1
+				moons[k2][vel] = moons[k2][vel] - 1
+			elseif moons[k1][what] > moons[k2][what] then
+				moons[k1][vel] = moons[k1][vel] - 1
+				moons[k2][vel] = moons[k2][vel] + 1
+			end
+			::continue::
+		end
+	end
+	return moons
+end
+
 function calcenergy(moons)
 	local total = 0
 	for k,v in ipairs(moons) do
@@ -161,7 +187,6 @@ function rpart2(moons, what)
 			else
 				goto continue
 			end
-
 		end
 		if m == szt then
 			ok = i
@@ -220,9 +245,9 @@ function main()
 			local xxx = rpart2(deepcopy2(moons), what)
 			print(xxx)
 		else
-			local x2 = 	rpart2(deepcopy2(moons), "x")
-			local y2 = 	rpart2(deepcopy2(moons), "y")
-			local z2 = 	rpart2(deepcopy2(moons), "z")
+			local x2 = rpart2(deepcopy2(moons), "x")
+			local y2 = rpart2(deepcopy2(moons), "y")
+			local z2 = rpart2(deepcopy2(moons), "z")
 			local pp1 = lcm(x2,y2)
 			local pp2 = lcm(pp1, z2)
 			print(string.format("%18.0f",pp2))
