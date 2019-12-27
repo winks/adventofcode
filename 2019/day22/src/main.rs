@@ -214,18 +214,20 @@ fn shuffle(deck_orig: Vec<u32>, steps: &Vec<Step>, reverse: bool) -> Vec<u32> {
     return deck_cur;
 }
 
-fn part1(deck: Vec<u32>) {
+fn part1(deck: Vec<u32>) -> u32 {
     ppf(&deck);
     if deck.len() > 2100 {
         let mut cnt = 1;
         for ii in (0..deck.len()-1).rev() {
             if deck[ii] == 2019 {
                 println!("{:?} : {:?} => {:?}", ii, deck[ii], cnt);
+                return cnt;
             }
-            println!("X {:?} : {:?} => {:?}", ii, deck[ii], cnt);
+            //println!("X {:?} : {:?} => {:?}", ii, deck[ii], cnt);
             cnt += 1;
         }
     }
+    return 0;
 }
 
 fn main() {
@@ -272,6 +274,6 @@ fn main() {
         shuffle2(2020, &steps);
     } else {
         let deck_s = shuffle(deck_cur, &steps, false);
-        part1(deck_s);
+        println!("Part 1: {}", part1(deck_s));
     }
 }
