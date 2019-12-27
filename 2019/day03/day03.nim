@@ -1,6 +1,6 @@
 # Nim 1.0.4
 
-import parseUtils
+import os
 import strutils
 
 type
@@ -11,8 +11,7 @@ type
 proc splitdir(s : string) : tuple[dir: string, len: int] =
   var dir : string = "" & s[0]
   var len1 = s[1 .. s.high]
-  var len2 : int
-  let x = parseInt(len1, len2, 0)
+  var len2 : int = parseInt(len1)
   return (dir, len2)
 
 proc splitit(s: string) : seq[string]  =
@@ -25,7 +24,6 @@ proc paths(zero: tuple[x: int, y: int], s: string) : tuple[h: seq[Line], v: seq[
   var cost = 0
   for sx in sp:
     var d = splitdir(sx)
-    #echo d
     var stop : Point
     var line: Line
     cost += d[1]
@@ -90,7 +88,13 @@ proc cnt(zero: Point, h: Line, v: Line) : tuple[m: int, c: int] =
   return (manh, cost)
 
 proc runit =
-  let f = open("input.txt")
+  let args = commandLineParams()
+  if len(args) < 1:
+    let app = getAppFilename()
+    echo "Usage: ", app, " /path/to/file"
+    return
+  let filename = args[0].string
+  let f = open(filename)
   defer: f.close()
 
   let line1 = f.readLine()
@@ -99,7 +103,6 @@ proc runit =
   echo line2
 
   let zero = (0,0)
-  #echo zero
   let p1 = paths(zero, line1)
   let p2 = paths(zero, line2)
 
