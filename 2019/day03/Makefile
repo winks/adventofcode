@@ -1,6 +1,7 @@
 FILE ?= input.txt
 BASH ?= bash
 
+
 help:
 	@echo "# Bash, 1+2: ~46s"
 	@echo "FILE=... make run-bash"
@@ -8,7 +9,7 @@ help:
 	@echo "# Nim, 1+2: ~0.01s"
 	@echo "FILE=... make run-nim"
 
-bin/day03:
+bin/day03: day03.nim
 	nim compile -d:release day03.nim
 	-mkdir bin
 	mv day03 bin/day03

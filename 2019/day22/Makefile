@@ -2,9 +2,9 @@ FILE ?= input.txt
 CARGO ?= CARGO
 
 CFLAGS ?= -Wall -std=c99
-
 SRCS = $(wildcard *.c)
 OBJS = $(patsubst %.c,bin/%,$(SRCS))
+
 
 help:
 	@echo "# Rust 1.38.0, 1+2: ~0.1s + ~0.05s"
@@ -19,7 +19,7 @@ bin/day%: day%.c
 	$(CC) $(CPPFLAGS)  $< -o $@
 
 target/release/day22: src/main.rs
-	cargo build --release
+	${CARGO} build --release
 
 run-c: run-c-1 run-c-2
 
