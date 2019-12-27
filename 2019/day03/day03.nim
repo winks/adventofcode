@@ -1,4 +1,4 @@
-# Nim 1.0.4 // nim c -r day03.nim
+# Nim 1.0.4
 
 import parseUtils
 import strutils
@@ -90,7 +90,7 @@ proc cnt(zero: Point, h: Line, v: Line) : tuple[m: int, c: int] =
   return (manh, cost)
 
 proc runit =
-  let f = open("../input/day03/part1")
+  let f = open("input.txt")
   defer: f.close()
 
   let line1 = f.readLine()

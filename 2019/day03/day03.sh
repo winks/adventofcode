@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Bash 4.4.20
 
 function dp {
 	local x1=$1
