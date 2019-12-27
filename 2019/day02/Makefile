@@ -2,7 +2,7 @@ TSC ?= ./node_modules/.bin/tsc --esModuleInterOp
 NODE ?= node
 
 help:
-	@echo "# TypeScript, 1: ~0.07s"
+	@echo "# TypeScript, 1+2: ~0.07s"
 	@echo "FILE=... make run-ts"
 
 day02.js: day02.ts

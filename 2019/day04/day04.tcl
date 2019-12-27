@@ -129,5 +129,9 @@ proc run2 {name } {
   puts [format "Part 2: %d" $good]
 }
 
-run1 "../input/day04/part1"
-run2 "../input/day04/part1"
+if { $argc != 1 } {
+  puts "Usage: day04.tcl /path/to/file"
+} else {
+  run1 [lindex $argv 0]
+  run2 [lindex $argv 0]
+}
