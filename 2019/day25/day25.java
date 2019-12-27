@@ -215,7 +215,7 @@ class Day25 {
 		String line = "";
 		//ArrayList<Long> ins = fromAscii(line);
 		ArrayList<Long> ins = new ArrayList<Long>();
-		VM vm = new VM(ops, ins);
+		VM vm = new VM(ops, ins, true);
 		long temp = -40;
 
 		boolean finished = false;

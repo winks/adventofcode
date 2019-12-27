@@ -12,7 +12,7 @@ class Day23 {
 		}
 		String fname = args[0];
 		List<String> data = new ArrayList<String>();
-		Scanner sc = new Scanner(new File(fname)); 
+		Scanner sc = new Scanner(new File(fname));
 
 		while (sc.hasNextLine()) {
 			String x = sc.nextLine();
@@ -47,21 +47,6 @@ class Day23 {
 		}
 		if (max > 0) s.append(v.get(max));
 		System.out.println(s);
-	}
-
-	private static ArrayList<Long> fromAscii(ArrayList<String> lines) {
-		ArrayList<Long> rv = new ArrayList<Long>();
-
-		for (int i=lines.size()-1; i>=0; --i) {
-			rv.add(10L);
-			String line = lines.get(i);
-			for (int j=line.length()-1; j>=0; --j) {
-				char c = line.charAt(j);
-				rv.add((long)c);
-			}
-		}
-
-		return rv;
 	}
 
 	private static void tp(String s) {

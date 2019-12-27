@@ -37,11 +37,16 @@ def calc3(lookup,bases, fuel):
     return zero
   i = 0
   print("go",check(r),i)
+  lo1 = 0
+  lo2 = 0
+  lo3 = 0
   while check(r) > 1:
+    lo1 = lo1 + 1
     print()
     print("rrr1",r)
     i = i + 1
     for k in r.keys():
+      lo2 = lo2 + 1
       if r[k] <= 0 or k == 'ORE':
         continue
       if k in bases:
@@ -69,6 +74,7 @@ def calc3(lookup,bases, fuel):
       r[k] = r[k] - costs
       prod[k] = prod[k] + costs
       for kk in tmpkeys:
+        lo3 = lo3 + 1
         print("  kk",kk,parts[kk][0])
         r[kk] = r[kk] + parts[kk][0]
     print("rrr2",r)
@@ -77,6 +83,10 @@ def calc3(lookup,bases, fuel):
   print("=========")
   print("NEED",r)
   print("PROD",prod)
+  print("Part 1:",r['ORE'])
+  print(lo1)
+  print(lo2)
+  print(lo3)
 
 if __name__ == "__main__":
   if len(sys.argv) < 2:

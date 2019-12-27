@@ -67,4 +67,12 @@ class Point {
 		if (y == cur.y - 1) return "north";
 		return "";
 	}
+
+	public int direc(Point cur) {
+		if (x == cur.x + 1) return 3;
+		if (x == cur.x - 1) return 4;
+		if (y == cur.y + 1) return 2;
+		if (y == cur.y - 1) return 1;
+		return 0;
+	}
 }

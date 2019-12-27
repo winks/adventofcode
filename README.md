@@ -37,6 +37,7 @@
     * **C++** - 1+2
   * day12 - *The N-Body Problem*
     * **Lua 5.2**: `day12/day12.lua` - 1 + 2
+    * **Go 1.13**: `day12/day12.go` - 1 + 2
   * day13 - *Care Package* - IntCode
     * **C++** - 1+2
   * day14 - *Space Stoichiometry*
