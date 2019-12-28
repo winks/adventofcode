@@ -1,14 +1,14 @@
 import sys
 
 def parse(lines):
-  print(lines)
+  #print(lines)
   parsed = []
   for line in lines:
     line = line.strip()
     if len(line) < 3:
       continue
     p = line.split(")")
-    print(p)
+    #print(p)
     parsed.append(p)
   return parsed
 
@@ -17,7 +17,7 @@ def sortit(px,par):
   def isleaf(k, par):
     for v in par.keys():
       if par[v] == k:
-        print("#IL", k,v)
+        #print("#IL", k,v)
         return False
     return True
 
@@ -31,11 +31,11 @@ def sortit(px,par):
   for chl in par.keys():
     pnt = par[chl]
     il = isleaf(chl, par)
-    print("#now",chl,pnt, il)
+    #print("#now",chl,pnt, il)
     if not il:
       continue
     x = walk(chl, par, [])
-    print("#now2",x)
+    #print("#now2",x)
     rv.append(x)
   return rv
 
@@ -48,7 +48,7 @@ def cnt(lst, c=0):
       else:
        c = c + i
        done.append(a[i])
-    print("## cnt",a," ",c)
+    #print("## cnt",a," ",c)
   return c
 
 def revmap(pa):
@@ -73,7 +73,7 @@ def cmp(a1, a2):
       x = tmp.pop(0)
       cm.append(x)
   result = (len(a1) + len(a2) - len(cm) -len(cm) -2)
-  print("num_hops",result)
+  return result
 
 def main():
   if len(sys.argv) < 2:
@@ -83,17 +83,18 @@ def main():
   with open(name, "r") as fh:
     lines = fh.readlines()
     parsed = parse(lines)
-  print(parsed)
-  print("")
+  #print(parsed)
+  #print("")
   lookup = revmap(parsed)
   s = sortit(parsed, lookup)
-  print("paths:", s)
-  print("num_paths:", len(s))
-  print("")
-  print("num_orbits:", cnt(s))
+  #print("paths:", s)
+  #print("num_paths:", len(s))
+  #print("")
+  print("Part 1: Orbits:", cnt(s))
   x = filtr(s)
   if len(x) == 2:
-    cmp(x[0],x[1])
+    y = cmp(x[0],x[1])
+    print("Part 1: Hops  :", y)
 
 if __name__ == '__main__':
   main()
