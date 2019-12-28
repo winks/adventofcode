@@ -24,6 +24,7 @@ const int OP_FIN = 99;
 
 struct data {
 	std::vector<int> op;
+	std::vector<int> inputs;
 	uint position = 0;
 	int status = 0;
 };
@@ -146,7 +147,12 @@ data calc(data v)
 		uint pos = v.position+1;
 		int z = v.op[pos];
 		int n;
-		std::cin >> n;
+		if (v.inputs.size() > 0) {
+			n = v.inputs.back();
+			v.inputs.pop_back();
+		} else {
+			std::cin >> n;
+		}
 		std::cout << "# IN val: " << n << " address: pos " << pos << " val: " << z << " => " << n << std::endl;
 
 		v.op[(uint)z] = n;
@@ -257,19 +263,6 @@ std::vector<int> getops(std::string allops)
 	return ops;
 }
 
-std::string getin()
-{
-	std::string allops;
-
-	std::string input;
-	while (std::cin) {
-		getline(std::cin, input);
-		if (input.size() > 2) allops = input;
-	}
-
-	return allops;
-}
-
 int main(int argc, char *argv[])
 {
 	std::string::size_type sz;
@@ -279,16 +272,14 @@ int main(int argc, char *argv[])
 		infile >> allops;
 	}
 
-	//std::string allops = getin();
 	std::cout << allops << std::endl << "###" << std::endl;
 
 	std::vector<int> ops = getops(allops);
 	if (ops.size() < 1) return 1;
 
-	if (argc > 2) ops[1] = std::stoi(argv[2], &sz);
-	if (argc > 3) ops[2] = std::stoi(argv[3], &sz);
-
 	data x;
+	if (argc > 2) x.inputs.push_back(std::stoi(argv[2], &sz));
+
 	x.op = ops;
 	x.position = 0;
 

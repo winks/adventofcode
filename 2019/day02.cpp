@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iostream>
 #include <iterator>
 #include <sstream>
@@ -37,6 +38,7 @@ data calc(data v)
 		int a = v.op[v.position+1];
 		int b = v.op[v.position+2];
 		int z = v.op[v.position+3];
+		//if (a >= v.op.size()) v.op.resize(a+3);
 		v.op[z] = v.op[a] + v.op[b];
 		v.position += STEP_DEFAULT;
 	} else if (v.op[v.position] == OP_MUL) {
@@ -56,19 +58,57 @@ data calc(data v)
 	return v;
 }
 
+int part1(const std::vector<int> & ops) {
+	data x;
+	x.op = ops;
+	x.position = 0;
+
+	//print(x);
+
+	do {
+		x = calc(x);
+		//print(x);
+	} while (x.position < x.op.size()-1 && x.status != 10 && x.status != 1);
+
+	return x.op[0];
+}
+
+int part2(const std::vector<int> & ops) {
+	int target = 19690720;
+	for (int i=0; i<50; ++i) {
+		for (int j=0; j<50; ++j) {
+			data x;
+			x.op = ops;
+			x.position = 0;
+			x.op[1] = i;
+			x.op[2] = j;
+			do {
+				x = calc(x);
+				//print(x);
+			} while (x.position < x.op.size()-1 && x.status != 10 && x.status != 1);
+			if (x.op[0] == target) {
+				return 100 * i + j;
+			}
+		}
+	}
+
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
+	if (argc < 2) {
+		std::cout << "Usage: " << argv[0] << " /path/to/filename" << std::endl;
+		return 0;
+	}
+	std::ifstream infile(argv[1]);
 	std::string allops;
-
 	std::string input;
-	while (std::cin) {
-		getline(std::cin, input);
+	while (infile >> input) {
 		if (input.size() > 2) allops = input;
 	}
 
 	std::cout << allops << std::endl;
-
-	uint pos = 0;
 
 	std::vector<std::string> sops;
 	std::vector<int> ops;
@@ -84,17 +124,13 @@ int main(int argc, char *argv[])
 	}
 	if (ops.size() < 1) return 1;
 
-	if (argc > 1) ops[1] = std::stoi(argv[1], &sz);
-	if (argc > 2) ops[2] = std::stoi(argv[2], &sz);
+	if (argc > 2) ops[1] = std::stoi(argv[2], &sz);
+	if (argc > 3) ops[2] = std::stoi(argv[3], &sz);
 
-	data x;
-	x.op = ops;
-	x.position = pos;
+	int p1 = part1(ops);
+	std::cout << "Part 1: " << p1 << std::endl;
 
-	print(x);
+	int p2 = part2(ops);
+	std::cout << "Part 2: " << p2 << std::endl;
 
-	do {
-		x = calc(x);
-		print(x);
-	} while (x.position < x.op.size()-1 && x.status != 10 && x.status != 1);
 }

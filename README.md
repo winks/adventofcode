@@ -22,6 +22,7 @@
   * day06 - *Universal Orbit Map*
     * **Python3**: `day06/day06.py` - 1+2
     * **Clojure**: `day06/clojure/` - 1+2
+    * **C**: `day06/day06.c` - 1+2
   * day07 - *Amplification Circuit* - IntCode
     * **C++** - 1+2
   * day08 - *Space Image Format*
