@@ -28,6 +28,7 @@
   * day08 - *Space Image Format*
     * **C++** - 1+2
     * **Common Lisp**: `day08/day08.cl` - 1+2
+    * **D**: `day08/day08.d` - 1+2
   * day09 - *Sensor Boost* - IntCode
     * **C++** - 1+2
     * **Java**: `day09/day09.java` - 1+2
