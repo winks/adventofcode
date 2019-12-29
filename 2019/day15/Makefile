@@ -2,7 +2,8 @@ FILE ?= input.txt
 
 
 help:
-	@echo "# C++, 1+2: ???"
+	@echo "# C++, 1: TBD"
+	@echo "# C++, 2: TBD"
 	@echo "FILE=... make run-cpp"
 
 run-cpp:

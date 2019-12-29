@@ -5,7 +5,7 @@ help:
 	@echo "# Java 1.8.0_222, 1+2: ~0.4s"
 	@echo "FILE=... make run-java"
 	@echo
-	@echo "# C++, 1+2: ???"
+	@echo "# C++, 1+2: TBD"
 	@echo "FILE=... make run-cpp"
 
 run-java: Day09.class VM.class
