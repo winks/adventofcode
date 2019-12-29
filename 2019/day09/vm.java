@@ -133,6 +133,7 @@ class VM {
 			} else if (opcode == 3) {
 				if (inputs.size() > 0) {
 					if (this.debug) System.out.println("READ INPUT: " + inputs.get(inputs.size()-1) + ", "+ (inputs.size()-1) + " left");
+					maybeResize(posOut);
 					ops.set((int)posOut, inputs.remove(inputs.size()-1));
 				} else {
 					if (this.debug) System.out.println("NO INPUT");
