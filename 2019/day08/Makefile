@@ -6,6 +6,10 @@ help:
 	@echo "FILE=... make run-cl"
 	@echo
 	@echo "# C++, 1+2: ~0.1s"
+	@echo "FILE=... make run-cpp"
+
+run-cpp:
+	../bin/day08 ${FILE}
 
 bin/day08: day08.cl
 	sbcl day08.cl
@@ -15,4 +19,4 @@ bin/day08: day08.cl
 run-cl:
 	./bin/day08 ${FILE} 25 6
 
-.PHONY: help run-cl
+.PHONY: help run-cl run-cpp

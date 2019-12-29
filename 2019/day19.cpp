@@ -407,7 +407,7 @@ int single(data v, OpList code, int x, int y)
 	v.inputs.push_back(y);
 	v.inputs.push_back(x);
 
-	std::cout << "  CHK " << x << "/" << y << std::endl;
+	if (DEBUG) std::cout << "  CHK " << x << "/" << y << std::endl;
 
 	do {
 		v = calc(v);
@@ -598,14 +598,14 @@ int paint2(OpList code, OpList inputs)
 					int y2 = y+searchSize-1;
 					int r = single(mx2, code, x2, y2);
 					if (r == 1) {
-						std::cout << "  FOUND y " << x << "/" << y << " last row size: " << affectedRow  << std::endl;
+						if (DEBUG) std::cout << "  FOUND y " << x << "/" << y << " last row size: " << affectedRow  << std::endl;
 						data mx3;
 						x2 = x+searchSize-1;
 						y2 = y;
 						r = single(mx3, code, x2, y2);
 						if (r == 1) {
 							std::cout << "  FOUND x " << x << "/" << y << std::endl;
-							break;
+							return 10000 * x + y;
 						}
 					}
 				}
@@ -614,7 +614,7 @@ int paint2(OpList code, OpList inputs)
 				firstx = 0;
 			} while(mx.position < mx.op.size()-1 && mx.status != 10 && mx.status != 1);
 		}
-		std::cout << "ROW " << y << " " << affectedRow << std::endl;
+		if (DEBUG) std::cout << "ROW " << y << " " << affectedRow << std::endl;
 	}
 	//show(image, maxw, maxh, searchSize);
 
@@ -631,8 +631,8 @@ int paint(OpList code, OpList inputs)
 	int affected = 0;
 	int64_t lout = 0;
 
-	int maxw = 100;
-	int maxh = 100;
+	int maxw = 50;
+	int maxh = 50;
 	uint searchSize = 8;
 	OpList lastIn;
 
@@ -664,7 +664,7 @@ int paint(OpList code, OpList inputs)
 			} while(mx.position < mx.op.size()-1 && mx.status != 10 && mx.status != 1);
 		}
 	}
-	show(image, maxw, maxh, searchSize);
+	if (DEBUG) show(image, maxw, maxh, searchSize);
 
 	std::cout << "SIZE " << (maxw * maxh) << std::endl;
 	std::cout << "AFF  " << affected << std::endl;
@@ -687,14 +687,13 @@ int main(int argc, char *argv[])
 	if (ops.size() < 1) return 1;
 
 	OpList inputs = {};
+
+	// part 2
 	if (argc > 2) {
-		infile = std::ifstream(argv[2]);
-		infile >> allops;
-		inputs = getops(allops);
+		int p2 = paint2(ops, inputs);
+		std::cout << "Part 2: " << p2 << std::endl;
+		return 0;
 	}
 
-	// part 1
-	//paint(ops, inputs);
-	// part 2
-	paint2(ops, inputs);
+	paint(ops, inputs);
 }

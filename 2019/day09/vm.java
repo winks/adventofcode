@@ -18,7 +18,7 @@ class VM {
 		ArrayList<Long> tmpOps = (ArrayList<Long>) ops.clone();
 		ArrayList<Long> tmpIn = (ArrayList<Long>) inputs.clone();
 		this.ops = tmpOps;
-		this.inputs = inputs;
+		this.inputs = tmpIn;
 		this.debug = debug;
 		this.outputs = new ArrayList<>();
 		if (this.debug) {
@@ -132,7 +132,7 @@ class VM {
 				ops.set((int)posOut, args.get(0) * args.get(1));
 			} else if (opcode == 3) {
 				if (inputs.size() > 0) {
-					if (this.debug) System.out.println("READ IN: " + inputs.get(inputs.size()-1) + ", "+ (inputs.size()-1) + " left");
+					if (this.debug) System.out.println("READ INPUT: " + inputs.get(inputs.size()-1) + ", "+ (inputs.size()-1) + " left");
 					ops.set((int)posOut, inputs.remove(inputs.size()-1));
 				} else {
 					if (this.debug) System.out.println("NO INPUT");

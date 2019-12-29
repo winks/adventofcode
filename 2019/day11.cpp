@@ -5,6 +5,8 @@
 #include <sstream>
 #include <vector>
 
+const bool DEBUG = false;
+
 const uint64_t RESIZE = 2;
 const uint64_t STEP_DEFAULT = 4;
 
@@ -49,6 +51,7 @@ struct Image {
 
 void ppl(OpList params, std::string prefix, std::string sep = " ")
 {
+	if (!DEBUG) return;
 	std::cout << prefix;
 	if (params.size() < 1) {
 		std::cout << std::endl;
@@ -66,6 +69,7 @@ void ppl(OpList params, std::string prefix, std::string sep = " ")
 
 void print(data x, std::string prefix = "# ")
 {
+	if (!DEBUG) return;
 	std::cout << prefix << "position: " << x.position << " val: " << x.op[x.position] << std::endl;
 	std::cout << prefix << "relbase : " << x.relbase << std::endl;
 	std::cout << prefix << "status  : " << x.status << std::endl;
@@ -147,6 +151,7 @@ instruction parseop(int64_t op)
 
 void pins(instruction ins)
 {
+	if (!DEBUG) return;
 	std::cout << "### opcode: " << ins.opcode << std::endl;
 	ppl(ins.params, "### params: ");
 }
@@ -178,7 +183,7 @@ int64_t getbymode2(data & v, instruction ix)
 		if (asdf > v.op.size()) v.op.resize(asdf+RESIZE);
 		rv = v.op[asdf];
 	}
-	std::cout << "# gbm2 " << asdf << " " << rv << "[] " << v.op.size() << std::endl;
+	if (DEBUG) std::cout << "# gbm2 " << asdf << " " << rv << "[] " << v.op.size() << std::endl;
 	return rv;
 }
 
@@ -190,19 +195,19 @@ OpList getbymode(data & v, instruction ix)
 		uint64_t asdf = v.position + i + 1;
 		int64_t cur = v.op[asdf];
 
-		std::cout << "##gba *" << asdf << "="<< cur << " isr: " << isrelative(ix, i) << " isi: " << isimmediate(ix, i) << std::endl;
+		if (DEBUG) std::cout << "##gba *" << asdf << "="<< cur << " isr: " << isrelative(ix, i) << " isi: " << isimmediate(ix, i) << std::endl;
 		if (isrelative(ix, i)) {
 			uint64_t nx = (uint64_t)(cur + v.relbase);
 			if (v.op.size() < nx) v.op.resize(nx+RESIZE);
 			cur = v.op[nx];
-			std::cout << "##gbr " << cur << " " << nx << " " << v.relbase << std::endl;
+			if (DEBUG) std::cout << "##gbr " << cur << " " << nx << " " << v.relbase << std::endl;
 		} else if (isimmediate(ix, i)) {
-			std::cout << "##gbi " << cur << std::endl;
+			if (DEBUG) std::cout << "##gbi " << cur << std::endl;
 		} else {
 			uint64_t nx = (uint64_t)cur;
 			if (v.op.size() < nx) v.op.resize(nx+RESIZE);
 			cur = v.op[nx];
-			std::cout << "##gbn " << cur << std::endl;
+			if (DEBUG) std::cout << "##gbn " << cur << std::endl;
 		}
 		params.push_back(cur);
 	}
@@ -224,7 +229,7 @@ data calc(data v)
 	instruction ix = parseop(op);
 	pins(ix);
 
-	std::cout << "@#pos " << v.position << " rel " << v.relbase << " op " << ix.opcode << std::endl;
+	if (DEBUG) std::cout << "@#pos " << v.position << " rel " << v.relbase << " op " << ix.opcode << std::endl;
 	if (ix.opcode == OP_FIN) {
 		v.status = 10;
 	} else if (ix.opcode == OP_ADD) {
@@ -238,8 +243,8 @@ data calc(data v)
 		int64_t z = params[0] + params[1];
 		if ((uint64_t) pos >= v.op.size()) v.op.resize((uint64_t)pos+RESIZE);
 		v.op[pos] = z;
-		std::cout << "# ADD " << pos << " = " << v.op[pos] << " []" << v.op.size() << std::endl;
-		std::cout << "@#op1 " << pos << " " << v.op[pos] << std::endl;
+		if (DEBUG) std::cout << "# ADD " << pos << " = " << v.op[pos] << " []" << v.op.size() << std::endl;
+		if (DEBUG) std::cout << "@#op1 " << pos << " " << v.op[pos] << std::endl;
 		v.position += STEP_DEFAULT;
 	} else if (ix.opcode == OP_MUL) {
 		v = check(ix.opcode, v);
@@ -252,8 +257,8 @@ data calc(data v)
 		int64_t z = params[0] * params[1];
 		if ((uint64_t) pos >= v.op.size()) v.op.resize((uint64_t)pos+RESIZE);
 		v.op[pos] = z;
-		std::cout << "# MUL " << pos << " = " << v.op[pos] << " []" << v.op.size() << std::endl;
-		std::cout << "@#op2 " << pos << " " << v.op[pos] << std::endl;
+		if (DEBUG) std::cout << "# MUL " << pos << " = " << v.op[pos] << " []" << v.op.size() << std::endl;
+		if (DEBUG) std::cout << "@#op2 " << pos << " " << v.op[pos] << std::endl;
 		v.position += STEP_DEFAULT;
 	} else if (ix.opcode == OP_IN) {
 		v = check(ix.opcode, v);
@@ -261,7 +266,7 @@ data calc(data v)
 
 		uint64_t pos = (uint64_t) getbymode2(v, ix);
 		int64_t n;
-		std::cout << "@#op3 " << v.inputs.size() << std::endl;
+		if (DEBUG) std::cout << "@#op3 " << v.inputs.size() << std::endl;
 		if (v.inputs.size() > 0) {
 			n = v.inputs.back();
 			v.inputs.pop_back();
@@ -272,8 +277,8 @@ data calc(data v)
 
 		if ((uint64_t) pos >= v.op.size()) v.op.resize((uint64_t)pos+RESIZE);
 		v.op[pos] = n;
-		std::cout << "# IN val:" << n << " pos " << pos << " = " << v.op[pos] << std::endl;
-		std::cout << "@#op3 " << pos << " " << v.op[pos] << std::endl;
+		if (DEBUG) std::cout << "# IN val:" << n << " pos " << pos << " = " << v.op[pos] << std::endl;
+		if (DEBUG) std::cout << "@#op3 " << pos << " " << v.op[pos] << std::endl;
 		v.position += stp(ix.opcode);
 	} else if (ix.opcode == OP_OUT) {
 		v = check(ix.opcode, v);
@@ -281,8 +286,8 @@ data calc(data v)
 
 		OpList params = getbymode(v, ix);
 		int64_t z = params[0];
-		std::cout << "# OUT " << z <<  std::endl;
-		std::cout << "@OUT " << z << std::endl;
+		if (DEBUG) std::cout << "# OUT " << z <<  std::endl;
+		if (DEBUG) std::cout << "@OUT " << z << std::endl;
 
 		v.outputs.push_back(z);
 		write(z);
@@ -292,8 +297,8 @@ data calc(data v)
 		if (v.status >= 100 && v.status < 200) return v;
 
 		OpList params = getbymode(v, ix);
-		std::cout << "# JMT a " << params[0] << " b " << params[1] << " :: " << (bool)(params[0] != 0) << std::endl;
-		std::cout << "@#op5 " << params[0] << " " << params[1] << std::endl;
+		if (DEBUG) std::cout << "# JMT a " << params[0] << " b " << params[1] << " :: " << (bool)(params[0] != 0) << std::endl;
+		if (DEBUG) std::cout << "@#op5 " << params[0] << " " << params[1] << std::endl;
 
 		if (params[0] != 0) {
 			v.position = (uint64_t) params[1];
@@ -305,8 +310,8 @@ data calc(data v)
 		if (v.status >= 100 && v.status < 200) return v;
 
 		OpList params = getbymode(v, ix);
-		std::cout << "# JMF a " << params[0] << " b " << params[1] << " :: " << (bool)(params[0] == 0) << std::endl;
-		std::cout << "@#op6 " << params[0] << " " << params[1] << std::endl;
+		if (DEBUG) std::cout << "# JMF a " << params[0] << " b " << params[1] << " :: " << (bool)(params[0] == 0) << std::endl;
+		if (DEBUG) std::cout << "@#op6 " << params[0] << " " << params[1] << std::endl;
 
 		if (params[0] == 0) {
 			v.position = (uint64_t) params[1];
@@ -319,11 +324,11 @@ data calc(data v)
 
 		OpList params = getbymode(v, ix);
 		uint64_t pos = (uint64_t) getbymode2(v, ix);
-		std::cout << "# LT a " << params[0] << " b " << params[1] << " from pos " << pos << "|" << (params[0]<params[1]) << std::endl;
+		if (DEBUG) std::cout << "# LT a " << params[0] << " b " << params[1] << " from pos " << pos << "|" << (params[0]<params[1]) << std::endl;
 
 		v.op[pos] = (params[0] < params[1]) ? 1 : 0;
-		std::cout << "# LT " << pos << " = " << v.op[pos] << std::endl;
-		std::cout << "@#op7 " << pos << " " << v.op[pos] << std::endl;
+		if (DEBUG) std::cout << "# LT " << pos << " = " << v.op[pos] << std::endl;
+		if (DEBUG) std::cout << "@#op7 " << pos << " " << v.op[pos] << std::endl;
 		v.position += stp(ix.opcode);
 	} else if (ix.opcode == OP_EQ) {
 		v = check(ix.opcode, v);
@@ -331,28 +336,28 @@ data calc(data v)
 
 		OpList params = getbymode(v, ix);
 		uint64_t pos = (uint64_t) getbymode2(v, ix);
-		std::cout << "# EQ a " << params[0] << " b " << params[1] << " from pos " << pos << "|" << (params[0]==params[1]) << std::endl;
+		if (DEBUG) std::cout << "# EQ a " << params[0] << " b " << params[1] << " from pos " << pos << "|" << (params[0]==params[1]) << std::endl;
 
 		v.op[pos] = (params[0] == params[1]) ? 1 : 0;
-		std::cout << "# EQ " << pos << " = " << v.op[pos] << std::endl;
-		std::cout << "@#op8 " << pos << " " << v.op[pos] << std::endl;
+		if (DEBUG) std::cout << "# EQ " << pos << " = " << v.op[pos] << std::endl;
+		if (DEBUG) std::cout << "@#op8 " << pos << " " << v.op[pos] << std::endl;
 		v.position += stp(ix.opcode);
 	} else if (ix.opcode == OP_REL) {
 		v = check(ix.opcode, v);
 		if (v.status >= 100 && v.status < 200) return v;
 
 		OpList params = getbymode(v, ix);
-		std::cout <<"# REL " << params[0] << std::endl;
+		if (DEBUG) std::cout <<"# REL " << params[0] << std::endl;
 
 		v.relbase += params[0];
-		std::cout << "@#op9 " << v.relbase-params[0] << " " << v.relbase << std::endl;
+		if (DEBUG) std::cout << "@#op9 " << v.relbase-params[0] << " " << v.relbase << std::endl;
 		v.position += stp(ix.opcode);
 	} else {
 		v.status = 1;
 	}
 
-	std::cout << "@#sz " << v.op.size() << std::endl;
-	std::cout << std::endl;
+	if (DEBUG) std::cout << "@#sz " << v.op.size() << std::endl;
+	if (DEBUG) std::cout << std::endl;
 
 	return v;
 }
@@ -501,10 +506,10 @@ Image paint(OpList code, int64_t start)
 			int64_t color = mx.outputs.front();
 			image[cur.x][cur.y] = color;
 			done[cur.x][cur.y] = 1;
-			std::cout << "XCM (" << cur.x << "/" << cur.y << ")=" << image[cur.x][cur.y] << std::endl;
+			if (DEBUG) std::cout << "XCM (" << cur.x << "/" << cur.y << ")=" << image[cur.x][cur.y] << std::endl;
 			int64_t turn = mx.outputs.back();
 			mx.outputs.clear();
-			std::cout << "XMM1 (" << cur.x << "/" << cur.y << ") " << dir << " " << turn << std::endl;
+			if (DEBUG) std::cout << "XMM1 (" << cur.x << "/" << cur.y << ") " << dir << " " << turn << std::endl;
 
 			if (turn == 0) {
 				switch (dir) {
@@ -549,7 +554,7 @@ Image paint(OpList code, int64_t start)
 					break;
 				}
 			}
-			std::cout << "XMM2 (" << cur.x << "/" << cur.y << ") " << dir << std::endl;
+			if (DEBUG) std::cout << "XMM2 (" << cur.x << "/" << cur.y << ") " << dir << std::endl;
 			mx.inputs.push_back(image[cur.x][cur.y]);
 		}
 
@@ -586,10 +591,12 @@ int main(int argc, char *argv[])
 
 	// part 1
 	Image image = paint(ops, 0);
-	std::cout << "XP1: " << image.done << std::endl;
+	int p1 = image.done;
+	if (DEBUG) std::cout << "XP1: " << image.done << std::endl;
 
 	// part 2
 	image = paint(ops, 1);
+	std::cout << "Part 1: " << p1 << std::endl;
 
 	int minx = 100;
 	int maxx = 0;

@@ -28,7 +28,12 @@ class Day25 {
 		}
 		System.out.println("Ops: " + ops.size());
 
-		String p1 = go(ops);
+		boolean auto = false;
+		if (args.length > 1 && args[1].equals("auto")) {
+			auto = true;
+		}
+
+		String p1 = go(ops, auto);
 		System.out.println(p1);
 	}
 
@@ -197,7 +202,7 @@ class Day25 {
 		}
 	}
 
-	private static String go(ArrayList<Long> ops) throws InterruptedException {
+	private static String go(ArrayList<Long> ops, boolean autoMode) throws InterruptedException {
 		int[][] image = new int[100][100];
 		int x = 50;
 		int y = 50;
@@ -212,10 +217,15 @@ class Day25 {
 		ArrayList<Point> neighbors = new ArrayList<Point>();
 		ArrayList<Point> doorNeighbors = new ArrayList<Point>();
 
-		String line = "";
-		//ArrayList<Long> ins = fromAscii(line);
 		ArrayList<Long> ins = new ArrayList<Long>();
-		VM vm = new VM(ops, ins, true);
+		if (autoMode) {
+			String lol =  "east\nnorth\nnorth\nnorth\nsouth\neast\nnorth\nnorth\nwest\nsouth\nnorth\ntake asterisk\n";
+			lol = lol + "east\nsouth\neast\nsouth\nwest\ntake prime number\n";
+			lol = lol + "east\nnorth\ntake sand\neast\nsouth\ntake tambourine\nwest\nnorth\nwest";
+			ins = fromAscii(lol);
+		}
+
+		VM vm = new VM(ops, ins, false);
 		long temp = -40;
 
 		boolean finished = false;
@@ -232,7 +242,10 @@ class Day25 {
 			ArrayList<Long> out = vm.getOutputs();
 			System.out.println("====================================================");
 			String recv = showAscii(out);
-			if (recv.indexOf("You can't go that way") >= 0 || recv.indexOf("Unrecognized command") >= 0 ) {
+			if (recv.indexOf("Analysis complete! You may proceed") >= 0 ) {
+				System.out.println(recv);
+				return "";
+			} else if (recv.indexOf("You can't go that way") >= 0 || recv.indexOf("Unrecognized command") >= 0 ) {
 				moved = false;
 				last = cur;
 			} else if (next.x != last.x || next.y != last.y || idx == 0) {

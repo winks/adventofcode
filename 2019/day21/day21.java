@@ -88,6 +88,7 @@ class Day21 {
 		show(in);
 		VM vm = new VM(ops, in);
 		vm.run();
+		System.out.println(vm.getOutputs().get(vm.getOutputs().size()-1));
 	}
 
 	private static void part2(ArrayList<Long> ops) {
@@ -110,6 +111,7 @@ class Day21 {
 		show(in);
 		VM vm = new VM(ops, in);
 		vm.run();
+		System.out.println(vm.getOutputs().get(vm.getOutputs().size()-1));
 	}
 
 	private static void tests() {

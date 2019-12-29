@@ -177,11 +177,11 @@ int64_t getbymode2(data & v, instruction ix)
 	int64_t rv = 0;
 	if (isrelative(ix, ain(ix.opcode)+num-1)) {
 		asdf = v.position + ain(ix.opcode) + 1;
-		if (asdf > v.op.size()) v.op.resize(asdf+RESIZE);
+		if (asdf >= v.op.size()) v.op.resize(asdf+RESIZE);
 		rv = v.relbase + v.op[asdf];
 	} else if (!isimmediate(ix, ain(ix.opcode)+num-1)) {
 		asdf = v.position + ain(ix.opcode) + 1;
-		if (asdf > v.op.size()) v.op.resize(asdf+RESIZE);
+		if (asdf >= v.op.size()) v.op.resize(asdf+RESIZE);
 		rv = v.op[asdf];
 	}
 	if (DEBUG) std::cout << "# gbm2 " << asdf << " " << rv << "[] " << v.op.size() << std::endl;
@@ -194,19 +194,20 @@ OpList getbymode(data & v, instruction ix)
 	for (uint64_t i=0; i<ain(ix.opcode); ++i) {
 		// immediate by default
 		uint64_t asdf = v.position + i + 1;
+		if (asdf >= v.op.size()) v.op.resize(asdf+RESIZE);
 		int64_t cur = v.op[asdf];
 
 		if (DEBUG) std::cout << "##gba *" << asdf << "="<< cur << " isr: " << isrelative(ix, i) << " isi: " << isimmediate(ix, i) << std::endl;
 		if (isrelative(ix, i)) {
 			uint64_t nx = (uint64_t)(cur + v.relbase);
-			if (v.op.size() < nx) v.op.resize(nx+RESIZE);
+			if (v.op.size() <= nx) v.op.resize(nx+RESIZE);
 			cur = v.op[nx];
 			if (DEBUG) std::cout << "##gbr " << cur << " " << nx << " " << v.relbase << std::endl;
 		} else if (isimmediate(ix, i)) {
 			if (DEBUG) std::cout << "##gbi " << cur << std::endl;
 		} else {
 			uint64_t nx = (uint64_t)cur;
-			if (v.op.size() < nx) v.op.resize(nx+RESIZE);
+			if (v.op.size() <= nx) v.op.resize(nx+RESIZE);
 			cur = v.op[nx];
 			if (DEBUG) std::cout << "##gbn " << cur << std::endl;
 		}
@@ -226,6 +227,7 @@ data check(int64_t opcode, data v)
 
 data calc(data v)
 {
+	if ((uint64_t) v.position >= v.op.size()) v.op.resize((uint64_t)v.position+RESIZE);
 	int64_t op = v.op[v.position];
 	instruction ix = parseop(op);
 	pins(ix);
@@ -302,6 +304,7 @@ data calc(data v)
 		if (DEBUG) std::cout << "@#op5 " << params[0] << " " << params[1] << std::endl;
 
 		if (params[0] != 0) {
+			if ((uint64_t) params[1] >= v.op.size()) v.op.resize((uint64_t)params[1]+RESIZE);
 			v.position = (uint64_t) params[1];
 		} else {
 			v.position += stp(ix.opcode);
@@ -315,6 +318,7 @@ data calc(data v)
 		if (DEBUG) std::cout << "@#op6 " << params[0] << " " << params[1] << std::endl;
 
 		if (params[0] == 0) {
+			if ((uint64_t) params[1] >= v.op.size()) v.op.resize((uint64_t)params[1]+RESIZE);
 			v.position = (uint64_t) params[1];
 		} else {
 			v.position += stp(ix.opcode);
@@ -696,8 +700,8 @@ int paint(OpList code, OpList inputs)
 	int j = 0;
 
 	std::string input;
-input ="east\nnorth\nnorth\nnorth\ntake spool of cat6\nsouth\neast\ntake mug\nnorth\nnorth\nwest\nsouth\ntake monolith\nnorth\ntake asterisk\neast\nsouth\neast\nsouth\nwest\ntake prime number\n";
-input.append("east\nnorth\ntake sand\neast\nsouth\ntake tambourine\nwest\ntake festive hat\nnorth\n");
+input ="east\nnorth\nnorth\nnorth\nsouth\neast\nnorth\nnorth\nwest\nsouth\nnorth\ntake asterisk\neast\nsouth\neast\nsouth\nwest\ntake prime number\n";
+input.append("east\nnorth\ntake sand\neast\nsouth\ntake tambourine\nwest\nnorth\nwest\n");
 	for (int i = input.size()-1; i>=0; --i) {
 		mx.inputs.push_back(input[i]);
 	}
@@ -708,7 +712,7 @@ j = 0;
 	do {
 		mx = calc(mx);
 
-std::cout << "AT POS " << mx.position << std::endl;
+		if (DEBUG) std::cout << "AT POS " << mx.position << std::endl;
 ++j;
 	} while(j < 500000 && mx.position < mx.op.size()-1 && mx.status != 10 && mx.status != 1 && mx.op[mx.position] != 99);
 
