@@ -14,6 +14,73 @@ proc readfile {name} {
 }
 
 proc check1 {num} {
+  set s [format "%d" $num]
+  set ok 0
+  # i will start at 1
+  set i2 0
+  for { set i 1 } { $i < 6 } { incr i } {
+    set s1 [string index $s $i]
+    set s2 [string index $s $i2]
+    if { $s1 < $s2 } {
+      return 0
+    }
+    if { $s1 == $s2 } {
+      set ok [expr $ok + 1]
+    }
+    incr i2 1
+  }
+  if { $ok > 0 } {
+    return 1
+  }
+  return 0
+}
+
+proc check2 {num} {
+  set s [format "%d" $num]
+
+  set ok 0
+  set last " "
+  set cnt 1
+  set last [string index $s 0]
+  for { set i 1 } { $i < 6 } { incr i } {
+    set cur [string index $s $i]
+    if { $cur < $last } {
+      return 0
+    }
+
+    if { $cur == $last } {
+      set cnt [expr $cnt + 1]
+    } else {
+      set cnt 1
+    }
+
+    if { $cnt == 2 } {
+      if { $i < 5 && $cur != [string index $s [expr $i + 1] ] } {
+        set ok [expr $ok + 1]
+      } elseif { $i == 5 } {
+        set ok [expr $ok + 1]
+      }
+      set last $cur
+      continue
+    } else {
+      set last $cur
+      continue
+    }
+  }
+  if { $i == 5 } {
+    if { $ok > 0 && $cnt <= 2 } {
+      return 1
+    } else {
+      return 0
+    }
+  }
+  if { $ok > 0 } {
+    return 1
+  }
+  return 0
+}
+
+proc check1_slow {num} {
   if { $num < 100000 } {
     return 0
   }
@@ -41,7 +108,7 @@ proc check1 {num} {
   return 0
 }
 
-proc check2 {num} {
+proc check2_slow {num} {
   if { $num < 100000 } {
     return 0
   }

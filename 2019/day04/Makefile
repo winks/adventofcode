@@ -11,7 +11,8 @@ help:
 	@echo "# PHP 7.2.24, 1+2: ~0.04s"
 	@echo "FILE=... make run-php"
 	@echo
-	@echo "# Tcl 8.6.8, 1+2: ~5.1s"
+	@echo "# Tcl 8.6.8, 1: ~0.9s"
+	@echo "# Tcl 8.6.8, 2: ~1.0s"
 	@echo "FILE=... make run-tcl"
 
 run-php:
