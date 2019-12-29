@@ -50,7 +50,7 @@ class Day23 {
 	}
 
 	private static void tp(String s) {
-		System.out.println(Instant.now().toString() + " " +s);
+		//System.out.println(Instant.now().toString() + " " +s);
 	}
 
 	private static String go(ArrayList<Long> ops, boolean part2) throws InterruptedException {
@@ -85,7 +85,7 @@ class Day23 {
 				long x = -1;
 				long y = -1;
 				if (out.size() > 0) {
-					show(out);
+					//show(out);
 					while (out.size() > 0) {
 						addr = out.remove(0);
 						x = out.remove(0);
