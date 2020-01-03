@@ -2,6 +2,7 @@
 pub struct VM {
     status: i64,
     position: usize,
+    relbase: usize,
     code: Vec<i64>,
     inputs: Vec<i64>,
     outputs: Vec<i64>,
@@ -13,6 +14,7 @@ impl VM {
         VM {
             status: 0,
             position: 0,
+            relbase : 0,
             code: code,
             inputs: inputs,
             outputs: Vec::new(),
@@ -24,6 +26,7 @@ impl VM {
         VM {
             status: 0,
             position: 0,
+            relbase : 0,
             code: code,
             inputs: inputs,
             outputs: Vec::new(),
@@ -32,16 +35,40 @@ impl VM {
     }
 
     pub fn gbm(&mut self, pos: usize, mode: i64) -> i64 {
+        if pos >= self.code.len() {
+            self.code.resize(pos * 2, 0);
+        }
         match mode {
+            2 => {
+                let val = (self.code[pos] + self.relbase as i64) as usize;
+                if val >= self.code.len() {
+                    self.code.resize(val * 2, 0);
+                }
+                self.code[val]
+            },
             1 => self.code[pos],
-            _ => { let val = self.code[pos] as usize; self.code[val] }
+            _ => {
+                let val = self.code[pos] as usize;
+                if val >= self.code.len() {
+                    self.code.resize(val * 2, 0);
+                }
+                self.code[val]
+            }
         }
     }
 
     pub fn gbmo(&mut self, pos: usize, mode: i64) -> i64 {
-        match mode {
-            _ => self.code[pos]
+        if pos >= self.code.len() {
+            self.code.resize(pos * 2, 0);
         }
+        let np = match mode {
+            2 => self.relbase as i64 + self.code[pos],
+            _ => self.code[pos]
+        };
+        if np >= self.code.len() as i64 {
+            self.code.resize(np as usize * 2, 0);
+        }
+        np
     }
 
     pub fn run(&mut self) {
@@ -54,16 +81,17 @@ impl VM {
             let par3 = (opcode / 10000) % 10;
             opcode = opcode % 100;
             let params : Vec<i64> = vec![par1, par2, par3];
-            if self.debug { println!("pos: {} opcode: {}", self.position, opcode); }
+            if self.debug { println!("pos: {} rb: {} opcode: {}", self.position, self.relbase, opcode); }
+
             if opcode == 1 { // ADD
                 let a = self.gbm(self.position+1, params[0]);
                 let b = self.gbm(self.position+2, params[1]);
-                let pos_out = self.code[self.position+3];
+                let pos_out = self.gbmo(self.position+3, params[2]);
                 self.code[pos_out as usize] = a + b;
             } else if opcode == 2 { // MUL
                 let a = self.gbm(self.position+1, params[0]);
                 let b = self.gbm(self.position+2, params[1]);
-                let pos_out = self.code[self.position+3];
+                let pos_out = self.gbmo(self.position+3, params[2]);
                 self.code[pos_out as usize] = a * b;
             } else if opcode == 3 { // INP
                 let a = self.gbmo(self.position+1, params[0]);
@@ -82,8 +110,8 @@ impl VM {
                 step_size = 2;
             } else if opcode == 5 { // JMT
                 let a = self.gbm(self.position+1, params[0]);
+                let b = self.gbm(self.position+2, params[1]);
                 if a != 0 {
-                    let b = self.gbm(self.position+2, params[1]);
                     self.position = b as usize;
                     step_size = 0;
                 } else {
@@ -101,7 +129,7 @@ impl VM {
             } else if opcode == 7 { // LT
                 let a = self.gbm(self.position+1, params[0]);
                 let b = self.gbm(self.position+2, params[1]);
-                let pos_out = self.code[self.position+3];
+                let pos_out = self.gbmo(self.position+3, params[2]);
                 if a < b {
                     self.code[pos_out as usize] = 1;
                 } else {
@@ -110,14 +138,19 @@ impl VM {
             } else if opcode == 8 { //EQ
                 let a = self.gbm(self.position+1, params[0]);
                 let b = self.gbm(self.position+2, params[1]);
-                let pos_out = self.code[self.position+3];
+                let pos_out = self.gbmo(self.position+3, params[2]);
                 if a == b {
                     self.code[pos_out as usize] = 1;
                 } else {
                     self.code[pos_out as usize] = 0;
                 }
+            } else if opcode == 9 {
+                let nbase = self.gbm(self.position+1, params[0]);
+                self.relbase = (self.relbase as i64 + nbase) as usize;
+                step_size = 2;
             } else if opcode == 99 {
                 finished = true;
+                step_size = 0;
             } else {
                 finished = true;
                 println!("Unknown code {} at position {}", self.code[self.position], self.position);
@@ -135,10 +168,13 @@ impl VM {
     }
 
     pub fn pp(&mut self) {
-        println!("--------------------------");
-        println!("status  : {:?}", self.status);
-        println!("position: {:?}", self.position);
-        println!("code[]: : {:?}", self.code.len());
-        println!("code:   : {:?}", self.code);
+        println!("+--------------------------");
+        println!("|status  : {:?}", self.status);
+        println!("|position: {:?}", self.position);
+        println!("|relbase : {:?}", self.relbase);
+        println!("|code[]  : {:?}", self.code.len());
+        //println!("|code:   : {:?}", self.code);
+        println!("|inputs[]: {:?}", self.inputs.len());
+        println!("+--------------------------");
     }
 }

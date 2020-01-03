@@ -1,0 +1,11 @@
+[package]
+name = "day02"
+version = "0.1.0"
+authors = ["Florian"]
+edition = "2018"
+
+[lib]
+name = "intcode"
+path = "../common/intcode.rs"
+
+[dependencies]
