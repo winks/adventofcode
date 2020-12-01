@@ -1,5 +1,10 @@
 # Advent of Code
 
+## 2020
+
+  * day01 - *Report Repair*
+    * **Bash**: 1+2
+
 ## 2019
 
   * day01 - *The Tyranny of the Rocket Equation*
