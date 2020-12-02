@@ -4,6 +4,9 @@
 
   * day01 - *Report Repair*
     * **Bash**: 1+2
+    * **Python**: 1+2
+  * day02 - *Password Philosophy*
+    * **Python**: 1+2
 
 ## 2019
 
