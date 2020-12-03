@@ -7,6 +7,8 @@
     * **Python**: 1+2
   * day02 - *Password Philosophy*
     * **Python**: 1+2
+  * day03 - *Toboggan Trajectory*
+    * **Python**: 1+2
 
 ## 2019
 
