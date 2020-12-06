@@ -13,6 +13,8 @@
     * **Python**: 1+2
   * day05 - *Binary Boarding*
     * **Python**: 1+2
+  * day06 - *Custom Customs*
+    * **Python**: 1+2
 
 ## 2019
 
