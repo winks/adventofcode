@@ -50,5 +50,5 @@ n3 = slope(5, 1)
 n4 = slope(7, 1)
 n5 = slope(1, 2)
 
-print(n1, n2, n3, n4, n5)
+#print(n1, n2, n3, n4, n5)
 print(n1*n2*n3*n4*n5)

@@ -1,5 +1,6 @@
 import sys
 import re
+import timeit
 
 fname = '../input/day08/input.txt'
 
@@ -33,7 +34,7 @@ def run(code):
             return [loop_acc, False, acc]
         visited.add(i)
         if ins[0] == 'acc':
-            acc = acc + ins[1]
+            acc += ins[1]
             i += 1
             #print(acc, i)
             continue
@@ -42,7 +43,7 @@ def run(code):
             #print(acc, i)
             continue
         elif ins[0] == 'jmp':
-            i = i + ins[1]
+            i += ins[1]
             #print(acc, i)
             continue
         else:
@@ -53,8 +54,6 @@ def run(code):
 def mutate(code, idx):
     code2 = code.copy()
     for i in range(idx, len(code)):
-        if i < idx:
-            continue
         if code2[i][0] == 'acc':
             continue
         elif code2[i][0] == 'jmp':
@@ -68,7 +67,10 @@ def mutate(code, idx):
     return []
 
 if part1:
+    start = timeit.default_timer()
     (loop_acc, fin, acc) = run(codex)
+    end = timeit.default_timer()
+    print("#", (end - start) * 1000)
     if loop_acc:
         #print("loop detected, last acc:", loop_acc)
         print(loop_acc)
@@ -80,10 +82,17 @@ else:
     finished = False
     acc = 0
     code2 = codex.copy()
+    start = timeit.default_timer()
+    avg = []
     while idx < len(code2) and not finished:
+        start2 = timeit.default_timer()
         code2 = mutate(codex, idx)
         #print("mutated line",idx)
         (loop_acc, finished, acc) = run(code2)
+        end2 = timeit.default_timer()
+        avg.append((end2-start2))
         idx += 1
     #print("terminated with acc:", loop_acc, finished, acc, idx) #, code2)
+    end = timeit.default_timer()
+    print("#", (end - start) * 1000, len(avg), (sum(avg)/len(avg)) * 1000 )
     print(acc)

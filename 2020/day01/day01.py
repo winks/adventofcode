@@ -16,7 +16,7 @@ with open(fname, "r") as t1:
             for line2 in t2:
                 line2 = int(line2.strip())
                 if line1 + line2 == 2020:
-                    print(line1,line2,line1+line2,line1*line2)
+                    print(line1*line2)
                     break
             else:
                 continue
@@ -34,5 +34,5 @@ with open(fname, "r") as t1:
             for line3 in t3:
                 line3 = int(line3.strip())
                 if line1 + line2 + line3 == 2020:
-                    print(line1,line2,line3,line1+line2+line3,line1*line2*line3)
+                    print(line1*line2*line3)
                     sys.exit(0)
