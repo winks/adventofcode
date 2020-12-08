@@ -1,4 +1,3 @@
-import copy
 import sys
 import re
 
@@ -18,23 +17,21 @@ for line in lines:
     parts = line.split(' ')
     cmd = parts[0]
     num = int(parts[1])
-    codex.append([cmd, num])
+    codex.append((cmd, num))
 
 def run(code):
     i = 0
-    j = 0
     acc = 0
-    visited = []
+    visited = set()
     loop_acc = None
     finished = False
-    while i < len(code): # and j < 15:
+    while i < len(code):
         ins = code[i]
         #print("#", ins, i, acc)
-        j += 1
         if i in visited:
             loop_acc = acc
             return [loop_acc, False, acc]
-        visited.append(i)
+        visited.add(i)
         if ins[0] == 'acc':
             acc = acc + ins[1]
             i += 1
@@ -54,17 +51,17 @@ def run(code):
     return [loop_acc, finished, acc]
 
 def mutate(code, idx):
-    code2 = copy.deepcopy(code)
+    code2 = code.copy()
     for i in range(idx, len(code)):
         if i < idx:
             continue
         if code2[i][0] == 'acc':
             continue
         elif code2[i][0] == 'jmp':
-            code2[i][0] = 'nop'
+            code2[i] = ('nop', code2[i][1])
             return code2
         elif code2[i][0] == 'nop':
-            code2[i][0] = 'jmp'
+            code2[i] = ('jmp', code2[i][1])
             return code2
         else:
             print("error", i, code[i])
@@ -82,7 +79,7 @@ else:
     loop_acc = None
     finished = False
     acc = 0
-    code2 = copy.deepcopy(codex)
+    code2 = codex.copy()
     while idx < len(code2) and not finished:
         code2 = mutate(codex, idx)
         #print("mutated line",idx)
