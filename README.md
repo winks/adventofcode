@@ -15,7 +15,9 @@
     * **Python**: 1+2
   * day06 - *Custom Customs*
     * **Python**: 1+2
-  * day06 - *Handy Haversacks*
+  * day07 - *Handy Haversacks*
+    * **Python**: 1+2
+  * day08 - *Handheld Halting*
     * **Python**: 1+2
 
 ## 2019
