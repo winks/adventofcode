@@ -3,9 +3,7 @@ import re
 import timeit
 
 fname = '../input/day09/input.txt'
-#fname = '../input/day09/test'
 cut = 25
-#cut = 5
 
 part1 = True
 if len(sys.argv) > 1 and sys.argv[1] == '2':
@@ -15,9 +13,6 @@ lines = []
 with open(fname) as fh:
     lines = fh.readlines()
 
-pre = []
-main = []
-
 def chk(num, pre):
     for p1 in pre:
         for p2 in pre:
@@ -25,41 +20,43 @@ def chk(num, pre):
                 return True
     return False
 
-i = 0
-target = 0
-for line in lines:
-    line = line.strip()
-    cur = int(line)
-    if len(pre) < cut:
-        pre.append(cur)
-    else:
-        if not chk(cur, pre):
-            target = cur
-            print(cur)
-        pre.pop(0)
-        pre.append(cur)
-    i += 1
+def ppart1(lines):
+    pre = []
+    for line in lines:
+        line = line.strip()
+        cur = int(line)
+        if len(pre) < cut:
+            pre.append(cur)
+        else:
+            if not chk(cur, pre):
+                return cur
+            pre.pop(0)
+            pre.append(cur)
+    return None
 
-print("###",len(pre),len(main))
+def ppart2(target, lines):
+    cand = []
+    for line in lines:
+        line = line.strip()
+        cur = int(line)
+        if sum(cand) == target:
+            return min(cand) + max(cand)
+        while sum(cand) > target:
+            cand.pop(0)
+            if sum(cand) == target:
+                return min(cand) + max(cand)
+        cand.append(cur)
+
+start = timeit.default_timer()
+target = ppart1(lines)
 
 if part1:
-    print(target)
-    sys.exit()
-
-i = 0
-cand = []
-for line in lines:
-    line = line.strip()
-    cur = int(line)
-    if sum(cand) == target:
-        print("!",min(cand),max(cand),min(cand)+max(cand))
-        sys.exit()
-    while sum(cand) > target:
-        cand.pop(0)
-        if sum(cand) == target:
-            print("!",min(cand),max(cand),min(cand)+max(cand))
-            sys.exit()
-    cand.append(cur)
-    #print(cand, sum(cand))
-    print(sum(cand))
+    end = timeit.default_timer()
+    print("#", (end - start) * 1000)
+    print(ppart1(lines))
+else:
+    p2 = ppart2(target, lines)
+    end = timeit.default_timer()
+    print("#", (end - start) * 1000)
+    print(p2)
 
