@@ -1,4 +1,5 @@
 import sys
+import timeit
 
 fname = '../input/day01/input.txt'
 
@@ -6,33 +7,48 @@ part1 = True
 if len(sys.argv) > 1 and sys.argv[1] == '2':
     part1 = False
 
-with open(fname, "r") as t1:
+lines = []
+with open(fname, "r") as fh:
+    lines = fh.readlines()
 
-    if part1:
-        t1 = t1.readlines()
-        t2 = t1
-        for line1 in t1:
-            line1 = int(line1.strip())
-            for line2 in t2:
-                line2 = int(line2.strip())
-                if line1 + line2 == 2020:
-                    print(line1*line2)
-                    break
-            else:
+def ppart1(limit, line):
+    m = {}
+    for line in lines:
+        line = int(line.strip())
+        other = (limit - line)
+        if other in m:
+            return (line * other)
+        m[line] = True
+    return 0
+
+def ppart2(limit, lines):
+    m = {}
+    n = {}
+    for line in lines:
+        line = int(line.strip())
+        if len(m) < 2:
+            m[line] = line
+            continue
+        for mm in m.keys():
+            if line + mm >= limit:
                 continue
-            break
-        sys.exit(0)
+            if line in n.keys():
+                return line * n[line][0] * n[line][1]
+            other = (limit - mm - line)
+            n[other] = (line, mm)
+        m[line] = line
+    return 0
 
-    # part 2
-    t1 = t1.readlines()
-    t2 = t1
-    t3 = t1
-    for line1 in t1:
-        line1 = int(line1.strip())
-        for line2 in t2:
-            line2 = int(line2.strip())
-            for line3 in t3:
-                line3 = int(line3.strip())
-                if line1 + line2 + line3 == 2020:
-                    print(line1*line2*line3)
-                    sys.exit(0)
+if part1:
+    start = timeit.default_timer()
+    num = ppart1(2020, lines)
+    end = timeit.default_timer()
+    print("#", (end-start) * 1000)
+    print(num)
+
+else:
+    start = timeit.default_timer()
+    num = ppart2(2020, lines)
+    end = timeit.default_timer()
+    print("#", (end-start) * 1000)
+    print(num)
