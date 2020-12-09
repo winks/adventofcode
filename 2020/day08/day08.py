@@ -77,12 +77,12 @@ if part1:
     else:
         print("hmmm", loop_acc, fin, acc)
 else:
+    start = timeit.default_timer()
     idx = 0
     loop_acc = None
     finished = False
     acc = 0
     code2 = codex.copy()
-    start = timeit.default_timer()
     avg = []
     while idx < len(code2) and not finished:
         start2 = timeit.default_timer()

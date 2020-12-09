@@ -19,6 +19,8 @@
     * **Python**: 1+2
   * day08 - *Handheld Halting*
     * **Python**: 1+2
+  * day08 - *Encoding Error*
+    * **Python**: 1+2
 
 ## 2019
 
