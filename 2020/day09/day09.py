@@ -13,20 +13,31 @@ lines = []
 with open(fname) as fh:
     lines = fh.readlines()
 
-def chk(num, pre):
-    for p1 in pre:
-        for p2 in pre:
-            if p1 != p2 and p1 + p2 == num:
-                return True
+#g1 = 0
+#g2 = 0
+
+def chk(limit, lines):
+    #global g1
+    #global g2
+    m = {}
+    for line in lines:
+        other = (limit - line)
+        #g1 += 1
+        #g2 += 1
+        if other in m:
+            return True
+        m[line] = True
     return False
 
 def ppart1(lines):
+    #global g1
     pre = []
     for line in lines:
         line = line.strip()
         cur = int(line)
         if len(pre) < cut:
             pre.append(cur)
+            #g1 += 1
         else:
             if not chk(cur, pre):
                 return cur
@@ -35,10 +46,12 @@ def ppart1(lines):
     return None
 
 def ppart2(target, lines):
+    #global g2
     cand = []
     for line in lines:
         line = line.strip()
         cur = int(line)
+        #g2 += 1
         if sum(cand) == target:
             return min(cand) + max(cand)
         while sum(cand) > target:
@@ -60,3 +73,5 @@ else:
     print("#", (end - start) * 1000)
     print(p2)
 
+#print(g1)
+#print(g2)
