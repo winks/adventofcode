@@ -11,7 +11,7 @@ lines = []
 with open(fname, "r") as fh:
     lines = fh.readlines()
 
-def ppart1(limit, line):
+def ppart1(limit, lines):
     m = {}
     for line in lines:
         line = int(line.strip())
