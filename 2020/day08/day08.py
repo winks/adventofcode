@@ -1,5 +1,4 @@
 import sys
-import re
 import timeit
 
 fname = '../input/day08/input.txt'
