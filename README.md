@@ -19,7 +19,11 @@
     * **Python**: 1+2
   * day08 - *Handheld Halting*
     * **Python**: 1+2
-  * day08 - *Encoding Error*
+  * day09 - *Encoding Error*
+    * **Python**: 1+2
+  * day10 - *Adapter Array*
+    * **Python**: 1+2
+  * day11 - *Seating System*
     * **Python**: 1+2
 
 ## 2019
