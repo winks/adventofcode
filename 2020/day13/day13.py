@@ -2,7 +2,6 @@ import sys
 import timeit
 
 fname = '../input/day13/input.txt'
-#fname = '../input/day13/test'
 
 part1 = True
 if len(sys.argv) > 1 and sys.argv[1] == '2':
@@ -15,62 +14,49 @@ with open(fname) as fh:
 
 def ppart1(lines):
     ts = int(lines[0])
-    #print(ts,lines[1].split(','))
     tt = list(lines[1].split(','))
-    print(ts, tt, len(tt))
     tt = list(map(int, filter(lambda s: s != 'x', tt)))
-    print(ts, tt)
 
     ts0 = ts
     while True:
         for t in tt:
-            #print("#",ts)
             if ts % t == 0:
                 return (t, ts-ts0)
         ts += 1
 
 def ppart2(lines):
-    tt = list(lines[1].split(','))
-    print(tt, len(tt))
-    #tt = list(map(int, filter(lambda s: s != 'x', tt)))
-    #tt = list(map(int, tt))
-    print(tt, len(tt))
-    tt = [17, 13, 19]
-    ts = 3400
-    tt = [67,7,59,61]
-    ts = 754018 - 3*67
-    tt = [1789,37,47,1889]
-    ts = 1202161486 - 2*1789
-    ts = 0
-    #tt = [67,'x',7,59,61]
-    print(tt, len(tt))
+    def conv(s):
+        if s == 'x':
+            return 0
+        return int(s)
     
+    tt0 = list(map(conv,lines[1].split(',')))
+    indi = []
+    i = 0
+    for x in tt0:
+        if x > 0:
+            indi.append((i, x))
+        i += 1
 
-    # x / t[0] == 0
-    # x % t[1] == len-1
-    # x % t[2] == len-2
-
-    # 754018 % 67 = 0
-    # 754018 % 7 = 6
-    # 754018 % 59 = 0
-    # 754018 % 61 = 0
-
-    n = len(tt)
-    
+    ts = 13561262363414 * 41 # 556...
+    ts0 = ts
+    rx = indi[0][1] * indi[1][1]
     while True:
-        print("ts", ts)
+        if ts % indi[0][1] == 0:
+            if (ts + indi[1][0]) % indi[1][1] == 0:
+                ts0 = ts
+                break
+        ts += indi[0][1]
+
+    while True:
+        ts += rx
         ok = True
-        for i in range(0, len(tt)):
-            if not ok:
-                continue
-            if i > 0 and ts % tt[i] != tt[i] - i:
-                print("nm:", ts, i, tt[i])
+        for i in indi[2:]:
+            if (ts + i[0]) % i[1] != 0:
                 ok = False
-            print(ts)
+                break
         if ok:
             return ts
-        ts += tt[0]
-        
     return 0
 
 
@@ -81,6 +67,22 @@ if part1:
     print("#", (end - start) * 1000)
     print(ts * mins)
 else:
+    #num = ppart2(["0", "7,13,x,x,59,x,31,19"])
+    #end = timeit.default_timer()
+    #print("#", (end - start) * 1000)
+
+    #print(num, num == 1068781)
+    #num = ppart2(["0", "67,7,59,61"])
+    #print(num, num == 754018)
+    #num = ppart2(["0", "67,7,x,59,61"])
+    #print(num, num == 1261476)
+    #num = ppart2(["0", "67,x,7,59,61"])
+    #print(num, num == 779210)
+    #num = ppart2(["0", "1789,37,47,1889"])
+    #print(num, num == 1202161486)
+    #num = ppart2(["0", "17,x,13,19"])
+    #print(num, num == 3417)
+
     num = ppart2(lines)
     end = timeit.default_timer()
     print("#", (end - start) * 1000)

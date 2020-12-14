@@ -25,6 +25,10 @@
     * **Python**: 1+2
   * day11 - *Seating System*
     * **Python**: 1+2
+  * day12 - *Rain Risk*
+    * **Python**: 1+2
+  * day13 - *Shuttle Search*
+    * **Python**: 1+2
 
 ## 2019
 
