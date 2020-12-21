@@ -17,35 +17,17 @@ with open(fname) as fh:
 
 def ppart1(lines):
     p = re.compile('(.*) \(contains (.*)\)$')
-    ai = {}
-    ia = {}
-    mul = []
     allall = set()
     xlines = []
     for line in lines:
         m = p.match(line)
         if not m:
             continue
-        #print("#", line, m.groups())
         ing = m.groups()[0].split(" ")
         alle = m.groups()[1].replace(",", "").split(" ")
-        #print(ing, alle)
         xlines.append((set(ing), alle))
         for a in alle:
             allall.add(a)
-
-        for i in ing:
-            if i not in ai:
-                ai[i] = set()
-            for a in alle:
-                ai[i].add(a)
-        if len(alle) == 1:
-            a = alle[0]
-            if a not in ia:
-                ia[a] = []
-            ia[a].append(ing)
-        else:
-            mul.append((alle, ing))
 
     dx = {}
     for a in allall:
@@ -56,18 +38,14 @@ def ppart1(lines):
                 dx[a] = []
             dx[a].append(xl[0])
 
-    dy = {}
     xx = {}
     xy = {}
     for a in dx.keys():
         if len(dx[a]) == 1:
             continue
-        tmp = set()
-        every = False
         common = set(dx[a][0])
         for li in range(1, len(dx[a])):
             common = common & dx[a][li]
-        #print(a, common)
         if len(common) == 1:
             xx[a] = common
         elif len(common) > 0:
@@ -77,15 +55,11 @@ def ppart1(lines):
     for k in xx.keys():
         elim = elim | xx[k]
 
-    #return
     todo = list(xy.keys()).copy()
     while True:
         k = todo.pop()
-        #print("k", k, elim, xy[k])
         tmp = xy[k] - elim
-        #print("k",k,tmp)
         if len(tmp) == 1:
-            #print("!!!")
             xx[k] = tmp
             elim = elim | tmp
             del xy[k]
@@ -97,14 +71,11 @@ def ppart1(lines):
     for a in dx.keys():
         if len(dx[a]) != 1:
             continue
-        #print(a, dx[a])
         for li in dx[a]:
-            #print(li)
             tmp = set()
             for i in li:
                 if i not in elim:
                     tmp.add(i)
-            #print(tmp)
             if len(tmp) == 1:
                 xx[a] = tmp
                 elim = elim | tmp
@@ -112,22 +83,26 @@ def ppart1(lines):
     rest = []
     for line in xlines:
         for item in line[0]:
-                if item not in elim:
-                    rest.append(item)
+            if item not in elim:
+                rest.append(item)
 
-    return len(rest)
+    return (len(rest), xx)
 
-def ppart2(lines):
-    pass
+def ppart2(xx):
+    rv = []
+    for kx in sorted(xx.keys()):
+        rv.append(xx[kx].pop())
+    return ",".join(rv)
 
 start = timeit.default_timer()
 if part1:
-    num = ppart1(lines)
+    (num, _) = ppart1(lines)
     end = timeit.default_timer()
     print("#", (end - start) * 1000)
     print(num)
 else:
-    num = ppart2(lines)
+    (_, foo) = ppart1(lines)
+    num = ppart2(foo)
     end = timeit.default_timer()
     print("#", (end - start) * 1000)
     print(num)
