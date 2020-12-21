@@ -4,7 +4,7 @@ import re
 from copy import deepcopy
 
 fname = '../input/day21/input.txt'
-fname = '../input/day21/test'
+#fname = '../input/day21/test'
 
 part1 = True
 if len(sys.argv) > 1 and sys.argv[1] == '2':
@@ -20,16 +20,20 @@ def ppart1(lines):
     ai = {}
     ia = {}
     mul = []
+    allall = set()
     xlines = []
     for line in lines:
         m = p.match(line)
         if not m:
             continue
-        print("#", line, m.groups())
+        #print("#", line, m.groups())
         ing = m.groups()[0].split(" ")
         alle = m.groups()[1].replace(",", "").split(" ")
-        print(ing, alle)
-        xlines.append(ing)
+        #print(ing, alle)
+        xlines.append((set(ing), alle))
+        for a in alle:
+            allall.add(a)
+
         for i in ing:
             if i not in ai:
                 ai[i] = set()
@@ -42,94 +46,76 @@ def ppart1(lines):
             ia[a].append(ing)
         else:
             mul.append((alle, ing))
-    print()
-    print(ai)
-    
-    print(ia)
-    print(mul)
-    print()
-    for m in mul:
-        xall = m[0]
-        xing = m[1]
-        cand = {}
-        for xi in xing:
-            some = False
-            for xa in xall:
-                #print(xi,"has", xa, ia[xa])
-                for tmp in ia[xa]:
-                    if xi in tmp:
-                        some = True
-                    #print(some)
-                if some:
-                    if xa not in cand:
-                        cand[xa] = []
-                    cand[xa].append(xi)
-            print()
-    print(cand)
-    print()
-    
-    elim = set()
-    ai2 = deepcopy(ai)
-    print(ai2)
-    for xi in ai2.keys():
-        for ca in cand.keys():
-            if ca in ai2[xi]:
-                ai2[xi].remove(ca)
-            for cc in cand[ca]:
-                elim.add(cc)
-    print(ai2)
-    print(elim)
 
-    cand2 = []
-    for k in ia.keys():
-        if k in cand:
+    dx = {}
+    for a in allall:
+        for xl in xlines:
+            if a not in xl[1]:
+                continue
+            if a not in dx:
+                dx[a] = []
+            dx[a].append(xl[0])
+
+    dy = {}
+    xx = {}
+    xy = {}
+    for a in dx.keys():
+        if len(dx[a]) == 1:
             continue
-        print(k, ia[k])
-        for li in ia[k]:
-            for ing in li:
-                if ing in elim:
-                    continue
-                cand2.append((ing, k))
-    print(cand2)
-    for c in cand2:
-        if c[0] in ai2 and c[1] in ai2[c[0]]:
-            elim.add(c[0])
-            ai2[c[0]].remove(c[1])
-            cand[c[1]] = [c[0]]
-    for k in ai2:
-        pass
-    print(cand)
-    print(ai2)
-    print(elim)
-    for k in cand.keys():
-        for x in ai2.keys():
-            if k in ai2[x]:
-                ai2[x].remove(k)
-    print(ai2)
-    print()
-    print(xlines)
+        tmp = set()
+        every = False
+        common = set(dx[a][0])
+        for li in range(1, len(dx[a])):
+            common = common & dx[a][li]
+        #print(a, common)
+        if len(common) == 1:
+            xx[a] = common
+        elif len(common) > 0:
+            xy[a] = common
+
+    elim = set()
+    for k in xx.keys():
+        elim = elim | xx[k]
+
+    #return
+    todo = list(xy.keys()).copy()
+    while True:
+        k = todo.pop()
+        #print("k", k, elim, xy[k])
+        tmp = xy[k] - elim
+        #print("k",k,tmp)
+        if len(tmp) == 1:
+            #print("!!!")
+            xx[k] = tmp
+            elim = elim | tmp
+            del xy[k]
+        else:
+            todo.insert(0, k)
+        if len(xy) == 0:
+            break
+
+    for a in dx.keys():
+        if len(dx[a]) != 1:
+            continue
+        #print(a, dx[a])
+        for li in dx[a]:
+            #print(li)
+            tmp = set()
+            for i in li:
+                if i not in elim:
+                    tmp.add(i)
+            #print(tmp)
+            if len(tmp) == 1:
+                xx[a] = tmp
+                elim = elim | tmp
+
     rest = []
     for line in xlines:
-        for item in line:
-            if item not in elim:
-                rest.append(item)
-    print(len(rest), rest)
+        for item in line[0]:
+                if item not in elim:
+                    rest.append(item)
 
-"""
-mxmxvkd kfcds sqjhc nhms (contains dairy, fish)
-trh fvjkl sbzzf mxmxvkd (contains dairy)
-sqjhc fvjkl (contains soy)
-sqjhc mxmxvkd sbzzf (contains fish)
-
-kfcds nhms
-trh fvjkl sbzzf
-fvjkl (contains soy)
-sbzzf 
-
-kfcds nhms
-trh sbzzf
-sbzzf 
-"""
+    return len(rest)
 
 def ppart2(lines):
     pass
