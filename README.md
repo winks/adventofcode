@@ -1,6 +1,11 @@
 # Advent of Code
 
+My solutions (without inputs) for [Advent of Code](https://adventofcode.com/)
+
 ## 2020
+
+My second year. This year I wanted to invest less time so I decided on one language (Python 3), 
+with the option to redo all of them in a second language, later.
 
   * day01 - *Report Repair*
     * **Bash**: 1+2
@@ -29,8 +34,34 @@
     * **Python**: 1+2
   * day13 - *Shuttle Search*
     * **Python**: 1+2
+  * day14 - *Docking Data*
+    * **Python**: 1
+  * day15 - *Rambunctious Recitation*
+    * **Python**: 1+2
+  * day16 - *Ticket Translation*
+    * **Python**: 1+2
+  * day17 - *Conway Cubes*
+    * **Python**: 1+2
+  * day18 - *Operation Order*
+    * **Python**: 1+2
+  * day19 - *Monster Messages*
+    * **Python**: 1
+  * day20 - *Jurassic Jigsaw*
+    * **Python**: 1
+  * day21 - *Allergen Assessment*
+    * **Python**: 1+2
+  * day22 - *Crab Combat*
+    * **Python**: 1
+  * day22 - *Crab Cups*
+    * **Python**: 1
 
 ## 2019
+
+My first year, I set out to use 25 different languages,
+but as I had overestimated the effort and complexity of the problems,
+in the end I settled with 20 languages. I finished with 45/50 stars, missing 2x part 2 and one full day.
+
+I wrote a long [blog post](https://f5n.org/blog/2019/advent-of-code-2019/) about it.
 
   * day01 - *The Tyranny of the Rocket Equation*
     * **C++** - 1+2
