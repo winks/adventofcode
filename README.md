@@ -52,8 +52,10 @@ with the option to redo all of them in a second language, later.
     * **Python**: 1+2
   * day22 - *Crab Combat*
     * **Python**: 1
-  * day22 - *Crab Cups*
+  * day23 - *Crab Cups*
     * **Python**: 1
+  * day24 - *Lobby Layout*
+    * **Python**: 1+2
 
 ## 2019
 

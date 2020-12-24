@@ -1,9 +1,10 @@
 import sys
 import timeit
 import re
+from copy import deepcopy
 
 fname = '../input/day24/input.txt'
-#fname = '../input/day24/test'
+fname = '../input/day24/test'
 
 part1 = True
 if len(sys.argv) > 1 and sys.argv[1] == '2':
@@ -14,26 +15,36 @@ with open(fname) as fh:
     lines = fh.readlines()
     lines = list(map(lambda s: s.strip(), lines))
 
-def pprint(g):
+def pprint(g, quiet=False):
     cb = 0
+    em = '. ' * len(g)
+    if not quiet:
+        print('#',em)
     for row in g:
         for t in row:
             if t == 'b':
                 cb += 1
-        print(' '.join(row).replace('w', '.'))
-    print("{} black tiles".format(cb))
+        if not quiet:
+            r = ' '.join(row).replace('w', '.')
+            if 'b' in r:
+                print("#", r)
+    if not quiet:
+        print('#',em)
+        print("# {} black tiles".format(cb))
     return cb
 
-def ppart1(lines):
-    OFF = 4
+def ppart1(lines, off=None):
+    OFF = 5
     if len(lines) > 50:
-        OFF = 15
+        OFF = 16
+    if off:
+        OFF = off
     ground = []
     for y in range(0, 3*OFF):
         ground.append([])
         for x in range(0, 3*OFF):
             ground[y].append('w')
-    pprint(ground)
+    #pprint(ground)
 
     ok = {'se': (1, -1), 'sw': (0, -1), 'nw': (-1, 1), 'ne': (0, 1), 'e': (1, 0), 'w': (-1, 0)}
     ins = []
@@ -72,9 +83,8 @@ def ppart1(lines):
         if len(bork) > 0:
             print("bork", bork)
         ins.append(dirs)
-    
-    xx = {}
 
+    xx = {}
     for tile in ins:
         pos = (OFF, OFF)
         for step in tile:
@@ -87,12 +97,46 @@ def ppart1(lines):
             ground[pos[0]][pos[1]] = 'b'
         elif ground[pos[0]][pos[1]] == 'b':
             ground[pos[0]][pos[1]] = 'w'
-        #break
     return (pprint(ground), ground)
 
+def neigh(tile):
+    ok = {'se': (1, -1), 'sw': (0, -1), 'nw': (-1, 1), 'ne': (0, 1), 'e': (1, 0), 'w': (-1, 0)}
+
+    ne = []
+    for k in ok.keys():
+        ne.append((tile[0] + ok[k][1], tile[1] + ok[k][0]))
+    return ne
+
+def flip(tile_color, neigh, grid):
+    b = 0
+    for ne in neigh:
+        if 0 <= ne[1] < len(grid) and 0 <= ne[0] < len(grid):
+            if grid[ne[1]][ne[0]] == 'b':
+                b += 1
+    if tile_color == 'b' and (b == 0 or b > 2):
+        return True
+    if tile_color == 'w' and b == 2:
+        return True
+    return False
 
 def ppart2(grid):
-    pass
+    rv = 0
+    for i in range(0, 100):
+        orig = deepcopy(grid)
+        for y in range(0, len(orig)):
+            for x in range(0, len(orig[0])):
+                nex = neigh((x, y))
+                will_flip = flip(orig[y][x], nex, orig)
+                if will_flip:
+                    if grid[y][x] == 'b':
+                        grid[y][x] = 'w'
+                    else:
+                        grid[y][x] = 'b'
+        rv = pprint(grid, True)
+        if i < 10 or i % 10 == 0:
+            print("#",i,'=',rv)
+    #pprint(grid)
+    return rv
 
 start = timeit.default_timer()
 if part1:
@@ -101,7 +145,11 @@ if part1:
     print("#", (end - start) * 1000)
     print(num)
 else:
-    (num, grid) = ppart1(grid)
+    off = 47
+    if len(lines) > 20:
+        off = 100
+    (_, grid) = ppart1(lines, off)
+    num = ppart2(grid)
     end = timeit.default_timer()
     print("#", (end - start) * 1000)
     print(num)
