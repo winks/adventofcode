@@ -3,7 +3,6 @@ import timeit
 import re
 
 fname = '../input/day18/input.txt'
-#fname = '../input/day18/test'
 
 part1 = True
 if len(sys.argv) > 1 and sys.argv[1] == '2':

@@ -2,7 +2,6 @@ import sys
 import timeit
 
 fname = '../input/day15/input.txt'
-#fname = '../input/day15/test'
 
 part1 = True
 if len(sys.argv) > 1 and sys.argv[1] == '2':

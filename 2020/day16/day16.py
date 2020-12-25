@@ -3,7 +3,6 @@ import timeit
 from itertools import permutations
 
 fname = '../input/day16/input.txt'
-#fname = '../input/day16/test2'
 
 part1 = True
 if len(sys.argv) > 1 and sys.argv[1] == '2':

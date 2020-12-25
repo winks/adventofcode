@@ -1,0 +1,101 @@
+# day01
+  Time (mean ± σ):      28.3 ms ±   2.4 ms    [User: 23.2 ms, System: 5.1 ms]
+  Time (mean ± σ):     516.4 ms ±  17.3 ms    [User: 510.0 ms, System: 6.1 ms]
+
+  Time (mean ± σ):      25.0 ms ±   2.9 ms    [User: 20.3 ms, System: 4.7 ms]
+  Time (mean ± σ):      25.5 ms ±   3.0 ms    [User: 20.4 ms, System: 5.1 ms]
+
+# day02
+  Time (mean ± σ):      26.4 ms ±   2.6 ms    [User: 21.6 ms, System: 4.7 ms]
+  Time (mean ± σ):      24.5 ms ±   2.7 ms    [User: 20.4 ms, System: 4.1 ms]
+
+# day03
+  Time (mean ± σ):      27.0 ms ±   2.7 ms    [User: 22.1 ms, System: 4.9 ms]
+  Time (mean ± σ):      25.2 ms ±   2.5 ms    [User: 21.1 ms, System: 4.1 ms]
+
+# day04
+  Time (mean ± σ):      28.4 ms ±   2.7 ms    [User: 23.6 ms, System: 4.8 ms]
+  Time (mean ± σ):      31.0 ms ±   2.5 ms    [User: 26.3 ms, System: 4.7 ms]
+
+# day05
+  Time (mean ± σ):      30.1 ms ±   2.6 ms    [User: 25.2 ms, System: 4.9 ms]
+  Time (mean ± σ):      31.8 ms ±   2.4 ms    [User: 26.0 ms, System: 5.7 ms]
+
+# day06
+  Time (mean ± σ):      35.0 ms ±   2.2 ms    [User: 29.3 ms, System: 5.6 ms]
+  Time (mean ± σ):      34.1 ms ±   2.6 ms    [User: 28.1 ms, System: 5.8 ms]
+
+# day07
+  Time (mean ± σ):      45.8 ms ±   2.6 ms    [User: 40.8 ms, System: 4.9 ms]
+  Time (mean ± σ):      29.7 ms ±   2.6 ms    [User: 25.1 ms, System: 4.6 ms]
+
+# day08
+  Time (mean ± σ):      28.1 ms ±   2.7 ms    [User: 23.1 ms, System: 4.9 ms]
+  Time (mean ± σ):      36.7 ms ±   2.5 ms    [User: 31.8 ms, System: 4.8 ms]
+
+# day09
+  Time (mean ± σ):      37.9 ms ±   2.6 ms    [User: 32.4 ms, System: 5.5 ms]
+  Time (mean ± σ):      35.5 ms ±   2.4 ms    [User: 30.5 ms, System: 5.0 ms]
+
+# day10
+  Time (mean ± σ):      27.1 ms ±   2.5 ms    [User: 21.0 ms, System: 6.0 ms]
+  Time (mean ± σ):      25.0 ms ±   3.1 ms    [User: 20.0 ms, System: 4.9 ms]
+
+# day11
+  Time (mean ± σ):      4.725 s ±  0.052 s    [User: 4.712 s, System: 0.009 s]
+  ~ 4min
+
+# day12
+  Time (mean ± σ):      26.3 ms ±   3.0 ms    [User: 21.6 ms, System: 4.6 ms]
+  Time (mean ± σ):      25.8 ms ±   2.8 ms    [User: 21.0 ms, System: 4.8 ms]
+
+# day13
+  Time (mean ± σ):      24.9 ms ±   2.9 ms    [User: 20.1 ms, System: 4.7 ms]
+  ~ 15s
+
+# day14
+  Time (mean ± σ):      30.6 ms ±   2.5 ms    [User: 25.9 ms, System: 4.6 ms]
+  dnf
+
+# day15
+  Time (mean ± σ):      26.8 ms ±   2.8 ms    [User: 20.6 ms, System: 6.1 ms]
+  Time (mean ± σ):     60.491 s ±  1.071 s    [User: 59.699 s, System: 0.752 s]
+
+# day16
+  Time (mean ± σ):      48.1 ms ±   1.8 ms    [User: 42.7 ms, System: 5.2 ms]
+  Time (mean ± σ):      61.3 ms ±   2.5 ms    [User: 56.0 ms, System: 5.1 ms]
+
+# day17
+  Time (mean ± σ):      2.007 s ±  0.013 s    [User: 2.002 s, System: 0.004 s]
+  Time (mean ± σ):     96.812 s ±  1.368 s    [User: 96.667 s, System: 0.085 s]
+
+# day18
+  Time (mean ± σ):      38.9 ms ±   2.1 ms    [User: 33.6 ms, System: 5.1 ms]
+  Time (mean ± σ):      39.9 ms ±   2.5 ms    [User: 34.5 ms, System: 5.3 ms]
+
+# day19
+  Time (mean ± σ):      50.3 ms ±   2.3 ms    [User: 44.8 ms, System: 5.4 ms]
+  dnf
+
+# day20
+  Time (mean ± σ):      34.9 ms ±   2.3 ms    [User: 28.5 ms, System: 6.1 ms]
+  dnf
+
+# day21
+  Time (mean ± σ):      30.1 ms ±   2.6 ms    [User: 24.8 ms, System: 5.1 ms]
+  Time (mean ± σ):      29.8 ms ±   2.5 ms    [User: 23.9 ms, System: 5.7 ms]
+
+# day22
+  Time (mean ± σ):      27.6 ms ±   3.1 ms    [User: 22.4 ms, System: 5.0 ms]
+  dnf
+
+# day23
+  Time (mean ± σ):      34.5 ms ±   0.7 ms    [User: 25.5 ms, System: 8.8 ms]
+  dnf
+
+# day24
+  Time (mean ± σ):      34.3 ms ±   2.5 ms    [User: 28.4 ms, System: 5.8 ms]
+  ~ 37s
+
+# day25
+ ~ 15s

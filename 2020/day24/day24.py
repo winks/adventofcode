@@ -4,7 +4,6 @@ import re
 from copy import deepcopy
 
 fname = '../input/day24/input.txt'
-fname = '../input/day24/test'
 
 part1 = True
 if len(sys.argv) > 1 and sys.argv[1] == '2':
