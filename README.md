@@ -56,7 +56,7 @@ with the option to redo all of them in a second language, later.
     * **Python**: 1
   * day24 - *Lobby Layout*
     * **Python**: 1+2
-  * day24 - *Combo Breaker*
+  * day25 - *Combo Breaker*
     * **Python**: 1
 
 ## 2019

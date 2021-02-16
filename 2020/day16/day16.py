@@ -43,14 +43,11 @@ def ppart1(lines):
     invalid = []
     invalid_tickets = []
     for near in t_near:
-        valid = 0
         tmp = {}
         for n in near:
             for i in range(0, len(rules)):
                 rule = rules[i]
-                if (rule[1][0] <= n <= rule[1][1]) or (rule[2][0] <= n <= rule[2][1]):
-                    valid += 1
-                else:
+                if not ((rule[1][0] <= n <= rule[1][1]) or (rule[2][0] <= n <= rule[2][1])):
                     if n not in tmp:
                         tmp[n] = 1
                     else:
@@ -60,10 +57,7 @@ def ppart1(lines):
                 invalid.append(k)
                 invalid_tickets.append(near)
                 break
-    r = 0
-    for i in invalid:
-        r += i
-    return (r, invalid_tickets, rules, t_you, t_near)
+    return (sum(invalid), invalid_tickets, rules, t_you, t_near)
 
 
 def ppart2(inv, rules, t_you, t_near):
@@ -82,9 +76,7 @@ def ppart2(inv, rules, t_you, t_near):
     def ck(ticket, rule):
         r = []
         for i in range(0, len(ticket)):
-            if (rule[0][0] <= ticket[i] <= rule[0][1]) or (rule[1][0] <= ticket[i] <= rule[1][1]):
-                pass
-            else:
+            if not ((rule[0][0] <= ticket[i] <= rule[0][1]) or (rule[1][0] <= ticket[i] <= rule[1][1])):
                 r.append(i)
         return r
 

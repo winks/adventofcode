@@ -39,7 +39,7 @@ def ppart1(item):
     todo = [item]
     while len(todo) > 0:
         to = todo.pop()
-        for k,v in bags.items():
+        for (k, v) in bags.items():
             if v is None:
                 continue
             for b in v.keys():

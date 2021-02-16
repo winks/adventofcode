@@ -1,8 +1,14 @@
+### Benchmarks
+
+2020 solutions benchmarked on an i5-3570K, Python 3.6.9
+
+Mostly ran with `hyperfine "python3 dayXX.py"`, unless >10s, then `-M 4`.
+
 # day01
   Time (mean ± σ):      28.3 ms ±   2.4 ms    [User: 23.2 ms, System: 5.1 ms]
   Time (mean ± σ):     516.4 ms ±  17.3 ms    [User: 510.0 ms, System: 6.1 ms]
 
-  Time (mean ± σ):      25.0 ms ±   2.9 ms    [User: 20.3 ms, System: 4.7 ms]
+  Time (mean ± σ):      23.2 ms ±   2.3 ms    [User: 19.0 ms, System: 4.1 ms]
   Time (mean ± σ):      25.5 ms ±   3.0 ms    [User: 20.4 ms, System: 5.1 ms]
 
 # day02
@@ -51,7 +57,7 @@
 
 # day13
   Time (mean ± σ):      24.9 ms ±   2.9 ms    [User: 20.1 ms, System: 4.7 ms]
-  ~ 15s
+  Time (mean ± σ):     16.397 s ±  0.421 s    [User: 16.371 s, System: 0.013 s]
 
 # day14
   Time (mean ± σ):      30.6 ms ±   2.5 ms    [User: 25.9 ms, System: 4.6 ms]
@@ -63,7 +69,7 @@
 
 # day16
   Time (mean ± σ):      48.1 ms ±   1.8 ms    [User: 42.7 ms, System: 5.2 ms]
-  Time (mean ± σ):      61.3 ms ±   2.5 ms    [User: 56.0 ms, System: 5.1 ms]
+  Time (mean ± σ):      58.0 ms ±   2.4 ms    [User: 52.9 ms, System: 5.1 ms]
 
 # day17
   Time (mean ± σ):      2.007 s ±  0.013 s    [User: 2.002 s, System: 0.004 s]
@@ -95,7 +101,9 @@
 
 # day24
   Time (mean ± σ):      34.3 ms ±   2.5 ms    [User: 28.4 ms, System: 5.8 ms]
-  ~ 37s
+  Time (mean ± σ):     15.207 s ±  0.024 s    [User: 15.177 s, System: 0.016 s]
+
+  Time (mean ± σ):      34.7 ms ±   2.2 ms    [User: 28.9 ms, System: 5.7 ms]
 
 # day25
- ~ 15s
+ Time (mean ± σ):     15.207 s ±  0.024 s    [User: 15.177 s, System: 0.016 s]

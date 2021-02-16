@@ -10,11 +10,11 @@ if len(sys.argv) > 1 and sys.argv[1] == '2':
 lines = []
 with open(fname, "r") as fh:
     lines = fh.readlines()
+    lines = list(map(lambda s: int(s.strip()), lines))
 
 def ppart1(limit, lines):
     m = {}
     for line in lines:
-        line = int(line.strip())
         other = (limit - line)
         if other in m:
             return (line * other)
@@ -25,7 +25,6 @@ def ppart2(limit, lines):
     m = {}
     n = {}
     for line in lines:
-        line = int(line.strip())
         if len(m) < 2:
             m[line] = line
             continue
