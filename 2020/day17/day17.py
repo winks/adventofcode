@@ -3,7 +3,6 @@ import timeit
 from copy import deepcopy
 
 fname = '../input/day17/input.txt'
-#fname = '../input/day17/test'
 
 part1 = True
 if len(sys.argv) > 1 and sys.argv[1] == '2':

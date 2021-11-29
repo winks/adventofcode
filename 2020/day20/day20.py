@@ -4,7 +4,6 @@ from copy import deepcopy
 import math
 
 fname = '../input/day20/input.txt'
-#fname = '../input/day20/test'
 
 part1 = True
 if len(sys.argv) > 1 and sys.argv[1] == '2':
@@ -46,7 +45,7 @@ def flip(tiles):
         rv.append(tile)
     return rv
 
-def get_tiles(lines):
+def get_tiles(lines, full=False):
     cur = 0
     tiles = {}
     tmp = []
@@ -56,12 +55,16 @@ def get_tiles(lines):
             cur = int(line[5:].replace(':',''))
             if len(tmp) > 0:
                 tile = tiler2(tmp)
+                if full:
+                    tile.append(tmp)
                 tiles[last] = tile
             tmp = []
         elif len(line) > 0:
             tmp.append(line)
 
     tile = tiler2(tmp)
+    if full:
+        tile.append(tmp)
     tiles[cur] = tile
     return tiles
 
@@ -95,6 +98,24 @@ def get_parts(allx):
                 cnt[k] += 1
     return cnt
 
+def rot_full(tmp, num):
+    rv = []
+    n = len(tmp)
+    row = []
+    for j in range(0, n):
+        row.append("o")
+    for i in range(0, n):
+        rv.append(row)
+
+    for i in range(0, n):
+        for j in range(0, n):
+            if num == 1:
+                pass
+                #rv[] = tmp[i][j]
+
+
+    return rv
+
 def ppart1(lines):
     tiles = get_tiles(lines)
     allx = get_combos(tiles)
@@ -113,7 +134,20 @@ def ppart1(lines):
     return rv
 
 def ppart2(lines):
-    pass
+    tiles = get_tiles(lines)
+    allx = get_combos(tiles)
+    cnt = get_parts(allx)
+
+    corners = list(filter(lambda s: cnt[s] == 2, cnt.keys()))
+    sides = list(filter(lambda s: cnt[s] == 3, cnt.keys()))
+
+    tiles = get_tiles(lines, full=True)
+    for t in tiles.keys():
+        if t in corners:
+            print(t, tiles[t])
+
+    cur = corners.pop()
+
 
 start = timeit.default_timer()
 if part1:

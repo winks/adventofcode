@@ -1,17 +1,15 @@
 package org.f5n.aoc2020.days;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
-import org.f5n.aoc2020.utils.Day;
-import org.f5n.aoc2020.utils.Input;
-import org.f5n.aoc2020.utils.IntResult;
-import org.f5n.aoc2020.utils.Result;
-import org.f5n.aoc2020.utils.Utils;
+
+import org.f5n.aoc2020.utils.*;
+
 
 public class Day01 extends Day {
-	protected ArrayList<Integer> input;
+	protected List<Integer> input;
 
-	public Day01(ArrayList<Integer> input) {
+	public Day01(List<Integer> input) {
 		this.input = input;
 	}
 

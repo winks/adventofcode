@@ -12,6 +12,15 @@ with open(fname) as fh:
     lines = fh.readlines()
     lines = list(map(lambda s: s.strip(), lines))
 
+lx = []
+for line in lines:
+    tmp = []
+    for c in line:
+        tmp.append(c)
+    lx.append(tmp)
+lines = lx
+#print(lines)
+
 def neigh(lines, y, x):
     occ = 0
     ne = []
@@ -86,44 +95,60 @@ def eq(l1,l2):
             return False
     return True
 
-def run1(lines):
+def run1(lines): #, l2):
     l2 = lines.copy()
+    changed = False
     for y in range(0, len(lines)):
         for x in range(0, len(lines[y])):
             if lines[y][x] == '.':
                 continue
             ne = neigh(lines, y, x)
             if ne[0] == 0 and lines[y][x] == 'L':
-                l2[y] = l2[y][0:x] + '#' + l2[y][x+1:]
+                #l2[y] = l2[y][0:x] + '#' + l2[y][x+1:]
+                l2[y][x] = '#'
+                changed = True
             if ne[0] >= 4 and lines[y][x] == '#':
-                l2[y] = l2[y][0:x] + 'L' + l2[y][x+1:]
+                #l2[y] = l2[y][0:x] + 'L' + l2[y][x+1:]
+                l2[y][x] = 'L'
+                changed = True
 
-    return l2
+    return (l2, changed)
 
-def run2(lines):
+def run2(lines): #, l2):
     l2 = lines.copy()
+    changed = False
     for y in range(0, len(lines)):
         for x in range(0, len(lines[y])):
             ne = neigh2(lines, y, x)
             if lines[y][x] == '.':
                 continue
             if ne[0] == 0 and lines[y][x] == 'L':
-                l2[y] = l2[y][0:x] + '#' + l2[y][x+1:]
+                #l2[y] = l2[y][0:x] + '#' + l2[y][x+1:]
+                l2[y][x] = '#'
+                changed = True
             if ne[0] >= 5 and lines[y][x] == '#':
-                l2[y] = l2[y][0:x] + 'L' + l2[y][x+1:]
+                #l2[y] = l2[y][0:x] + 'L' + l2[y][x+1:]
+                l2[y][x] = 'L'
+                changed = True
 
-    return l2
+    return (l2, changed)
 
-def ppart(lines,func):
+def ppart(lines, func):
     l0 = lines.copy()
-    l1 = func(lines.copy())
-    it = 1
+    it = 0
+    fmt(l0)
 
-    while not eq(l1, l0):
+    while True:
+        (l1, c) = func(l0)
+        fmt(l1)
+        if it > 0 and c:#eq(l0, l1):
+            break
+        if it > 0:
+            break
         l0 = l1
-        l1 = func(l0)
         it += 1
 
+    print(l1)
     print("# After",it,"runs:")
     return cnt(l1, '#')
 

@@ -16,9 +16,10 @@ public class Day00 extends Day {
 	}
 
 	protected Result part1(Input limit) {
-        return new IntResult();
-    }
-    protected Result part2(Input limit) {
-        return new IntResult();
-    }
+		return new IntResult();
+	}
+
+	protected Result part2(Input limit) {
+		return new IntResult();
+	}
 }

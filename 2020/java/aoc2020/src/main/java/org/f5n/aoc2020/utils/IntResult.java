@@ -2,6 +2,7 @@ package org.f5n.aoc2020.utils;
 
 import org.f5n.aoc2020.utils.Result;
 
+
 public class IntResult extends Result {
 	public long value = 0;
 

@@ -120,13 +120,26 @@ def flip(tile_color, neigh, grid):
 
 def ppart2(grid):
     rv = 0
-    for i in range(0, 100):
+    ymin = 200
+    ymax = 0
+    xmin = 200
+    xmax = 0
+    for i in range(0, 5): #100
         orig = deepcopy(grid)
+        print("y:",ymin, ymax," - x:",xmin,xmax)
         for y in range(0, len(orig)):
             for x in range(0, len(orig[0])):
                 nex = neigh((x, y))
                 will_flip = flip(orig[y][x], nex, orig)
                 if will_flip:
+                    if y < ymin:
+                        ymin = y
+                    if y > ymax:
+                        ymax = y
+                    if x < xmin:
+                        xmin = x
+                    if x > xmax:
+                        xmax = x
                     if grid[y][x] == 'b':
                         grid[y][x] = 'w'
                     else:

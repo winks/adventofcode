@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
 public class Utils {
 	public static final String userdir = System.getProperty("user.dir");
 	public static final String path1 = "/../../input/day";
