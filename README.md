@@ -2,6 +2,10 @@
 
 My solutions (without inputs) for [Advent of Code](https://adventofcode.com/)
 
+## 2021
+
+Third year. No special topic, giving Go another spin.
+
 ## 2020
 
 My second year. This year I wanted to invest less time so I decided on one language (Python 3), 
