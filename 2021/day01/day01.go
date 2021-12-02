@@ -73,20 +73,19 @@ func main() {
 		return
 	}
 	lines := getLines(argv[1])
-	fmt.Printf("## %d\n", len(lines))
+	fmt.Printf("# Inputs  %d\n", len(lines))
 	elapsed := time.Since(timeStart)
-	fmt.Printf("# elapsed %s\n", elapsed)
+	fmt.Printf("# Parsing %s\n", elapsed)
 	timeStart1 := time.Now()
-
-	cnt1 := part1(lines)
+	p1 := part1(lines)
 	elapsed1 := time.Since(timeStart1)
-	fmt.Printf("# elapsed %s\n", elapsed1)
+	fmt.Printf("# Part1   %s\n", elapsed1)
 	timeStart2 := time.Now()
-
-	cnt2 := part2(lines)
+	p2 := part2(lines)
 	elapsed2 := time.Since(timeStart2)
-	fmt.Printf("# elapsed %s\n", elapsed2)
+	fmt.Printf("# Part2   %s\n", elapsed2)
+	fmt.Printf("# Total   %s\n", time.Since(timeStart))
 
-	fmt.Printf("%d\n", cnt1)
-	fmt.Printf("%d\n", cnt2)
+	fmt.Printf("Part 1: %d\n", p1)
+	fmt.Printf("Part 2: %d\n", p2)
 }
