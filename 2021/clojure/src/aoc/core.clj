@@ -3,6 +3,7 @@
   (:require [clojure.string :as str])
   (:require [aoc.day01 :as day01])
   (:require [aoc.day02 :as day02])
+  (:require [aoc.day03 :as day03])
   (:gen-class))
 
 (def cli-options
