@@ -38,8 +38,7 @@ func getLines(filename string) []string {
 	return lines
 }
 
-func draw(floor [1000][1000]int, start []string, end []string) [1000][1000]int {
-//func draw(floor [10][10]int, start []string, end []string) [10][10]int {
+func draw(floor [][]int, start []string, end []string) [][]int {
 	x1, err := strconv.Atoi(start[0])
 	check(err)
 	x2, err := strconv.Atoi(end[0])
@@ -49,16 +48,12 @@ func draw(floor [1000][1000]int, start []string, end []string) [1000][1000]int {
 	y2, err := strconv.Atoi(end[1])
 	check(err)
 	if (x2 < x1) {
-		tmp := x1
-		x1 = x2
-		x2 = tmp
+		x1, x2 = x2, x1
 	}
 	if (y2 < y1) {
-		tmp := y1
-		y1 = y2
-		y2 = tmp
+		y1, y2 = y2, y1
 	}
-	for x :=x1; x <= x2; x++ {
+	for x := x1; x <= x2; x++ {
 		for y := y1; y <= y2; y++ {
 			floor[y][x] += 1
 		}
@@ -66,8 +61,7 @@ func draw(floor [1000][1000]int, start []string, end []string) [1000][1000]int {
 	return floor
 }
 
-//func draw2(floor [10][10]int, start []string, end []string) [10][10]int {
-func draw2(floor [1000][1000]int, start []string, end []string) [1000][1000]int {
+func draw2(floor [][]int, start []string, end []string) [][]int {
 	x1, err := strconv.Atoi(start[0])
 	check(err)
 	x2, err := strconv.Atoi(end[0])
@@ -78,7 +72,6 @@ func draw2(floor [1000][1000]int, start []string, end []string) [1000][1000]int 
 	check(err)
 	
 	stops := []int{}
-	
 	stops = append(stops, x1)
 	stops = append(stops, y1)
 	
@@ -102,13 +95,10 @@ func draw2(floor [1000][1000]int, start []string, end []string) [1000][1000]int 
 		y := stops[i+1]
 		floor[y][x] += 1
 	}
-
-	//fmt.Printf("## %v\n", stops)
 	return floor
 }
 
-func count(floor [1000][1000]int) int {
-//func count(floor [10][10]int) int {
+func count(floor [][]int) int {
 	rv := 0
 	for y, _ := range(floor) {
 		for x, _ := range(floor) {
@@ -120,45 +110,38 @@ func count(floor [1000][1000]int) int {
 	return rv
 }
 
-func part1(lines []string) int {
-	//floor := make([][]int, len(lines))
-	//for i, _ := range(lines) {
-	//	floor[i] = make([]int, len(lines))
-	//}
-	floor := [1000][1000]int{}
-	//fmt.Printf("# %v\n", floor)
+func run(lines []string, part1x bool) int {
+	size := 1000
+	floor := make([][]int, size)
+	for i := 0; i < size; i++ {
+		floor[i] = make([]int, size)
+	}
 	for _, v := range(lines) {
 		line := strings.Split(v, " -> ")
-		//fmt.Printf("%v\n", line)
 		start := strings.Split(line[0], ",")
 		end := strings.Split(line[1], ",")
-		if start[0] != end[0] && start[1] != end[1] {
-			continue
+		if (part1x) {
+			if start[0] != end[0] && start[1] != end[1] {
+				continue
+			}
+			floor = draw(floor, start, end)
+		} else {
+			if start[0] != end[0] && start[1] != end[1] {
+				floor = draw2(floor, start, end)
+			} else {
+				floor = draw(floor, start, end)
+			}
 		}
-		floor = draw(floor, start, end)
 	}
-	//fmt.Printf("# %v\n", floor)
 	return count(floor)
 }
 
+func part1(lines []string) int {
+	return run(lines, true)
+}
+
 func part2(lines []string) int {
-	floor := [1000][1000]int{}
-	//fmt.Printf("# %v\n", floor)
-	for _, v := range(lines) {
-		line := strings.Split(v, " -> ")
-		//fmt.Printf("%v\n", line)
-		start := strings.Split(line[0], ",")
-		end := strings.Split(line[1], ",")
-		
-		if start[0] != end[0] && start[1] != end[1] {
-			floor = draw2(floor, start, end)
-		} else {
-			floor = draw(floor, start, end)
-		}
-		
-	}
-	//fmt.Printf("# %v\n", floor)
-	return count(floor)
+	return run(lines, false)
 }
 
 func main() {
