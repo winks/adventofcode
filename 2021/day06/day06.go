@@ -72,6 +72,7 @@ func run(lines []string, days int) int {
 		}
 		day +=1
 		if day >= days {
+			//fmt.Printf("### %v", len(fish))
 			return count(fish)
 		}
 	}

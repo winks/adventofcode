@@ -31,7 +31,7 @@ func getLines(filename string) []string {
 	return lines
 }
 
-func part1(lines []string) int {
+func run(lines []string, runPart1 bool) int {
 	lines2 := strings.Split(lines[0], ",")
 	nums := []int{}
 	nmin := 0
@@ -40,7 +40,6 @@ func part1(lines []string) int {
 		n, err := strconv.Atoi(v)
 		check(err)
 		nums = append(nums, n)
-
 		if n < nmin {
 			nmin = n
 		}
@@ -48,63 +47,26 @@ func part1(lines []string) int {
 			nmax = n
 		}
 	}
-	fmt.Printf("%d %d | %v\n", nmin, nmax, nums)
 
 	fuel_min := 0.0
 	for i := nmin; i <= nmax; i++ {
 		fuel := 0.0
 		for _, v := range(nums) {
-			fuel += math.Abs( float64(v) - float64(i) )
-		}
-		//fmt.Printf("# %d %d\n", i, fuel)
-		if fuel_min < 0.01 {
-			fuel_min = fuel
-		}
-		if fuel_min > 0 && fuel < fuel_min {
-			fuel_min = fuel
-		}
-		//fmt.Printf("########\n")
-	}
-
-	return int(fuel_min)
-}
-
-func part2(lines []string) int {
-	lines2 := strings.Split(lines[0], ",")
-	nums := []int{}
-	nmin := 0
-	nmax := 0
-	for _, v := range(lines2) {
-		n, err := strconv.Atoi(v)
-		check(err)
-		nums = append(nums, n)
-
-		if n < nmin {
-			nmin = n
-		}
-		if n > nmax {
-			nmax = n
-		}
-	}
-	fmt.Printf("%d %d | %v\n", nmin, nmax, nums)
-
-	fuel_min := 0.0
-	for i := nmin; i <= nmax; i++ {
-		fuel := 0.0
-		for _, v := range(nums) {
-			diff := math.Abs( float64(v) - float64(i) )
-			for d := 1.0; d <= diff; d += 1.0 {
-				fuel += d
+			if runPart1 {
+				fuel += math.Abs( float64(v) - float64(i) )
+			} else {
+				diff := math.Abs( float64(v) - float64(i) )
+				for d := 1.0; d <= diff; d += 1.0 {
+					fuel += d
+				}
 			}
 		}
-		fmt.Printf("# %d %d\n", i, fuel)
 		if fuel_min < 0.01 {
 			fuel_min = fuel
 		}
-		if fuel_min > 0 && fuel < fuel_min {
+		if fuel < fuel_min {
 			fuel_min = fuel
 		}
-		fmt.Printf("########\n")
 	}
 
 	return int(fuel_min)
@@ -124,11 +86,11 @@ func main() {
 	elapsed := time.Since(timeStart)
 	fmt.Printf("# Parsing %s\n", elapsed)
 	timeStart1 := time.Now()
-	p1 := part1(lines)
+	p1 := run(lines, true)
 	elapsed1 := time.Since(timeStart1)
 	fmt.Printf("# Part1   %s\n", elapsed1)
 	timeStart2 := time.Now()
-	p2 := part2(lines)
+	p2 := run(lines, false)
 	elapsed2 := time.Since(timeStart2)
 	fmt.Printf("# Part2   %s\n", elapsed2)
 	fmt.Printf("# Total   %s\n", time.Since(timeStart))
