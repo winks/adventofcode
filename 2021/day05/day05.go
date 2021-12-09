@@ -70,11 +70,11 @@ func draw2(floor [][]int, start []string, end []string) [][]int {
 	check(err)
 	y2, err := strconv.Atoi(end[1])
 	check(err)
-	
+
 	stops := []int{}
 	stops = append(stops, x1)
 	stops = append(stops, y1)
-	
+
 	for x1 != x2 && y1 != y2 {
 		if (x2 > x1)  {
 			x1 += 1

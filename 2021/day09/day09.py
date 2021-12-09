@@ -1,4 +1,5 @@
 import sys
+import timeit
 
 def adj(x, y, lines):
 	r = []
@@ -58,6 +59,7 @@ def adj2(x, y, lines):
 
 
 with open(sys.argv[1], "r") as f:
+	start = timeit.default_timer()
 	lines = f.readlines()
 	lines2 = []
 	for li in lines:
@@ -65,6 +67,7 @@ with open(sys.argv[1], "r") as f:
 	lines = lines2
 	rv = []
 	l2 = []
+	start1 = timeit.default_timer()
 	for y in range(len(lines)):
 		for x in range(len(lines[0])):
 			p = int(lines[y][x])
@@ -77,6 +80,7 @@ with open(sys.argv[1], "r") as f:
 				rv.append(p+1)
 				l2.append((x, y))
 	print("p1", sum(rv))
+	end1 = timeit.default_timer()
 	rv2 = []
 	for p2 in l2:
 		ad2 = []
@@ -93,3 +97,7 @@ with open(sys.argv[1], "r") as f:
 		rv2.append(len(ad2))
 	s = sorted(rv2)[-3:]
 	print("p2", s[0] * s[1] * s[2])
+	end2 = timeit.default_timer()
+	print("# read ", (start1-start) * 1000)
+	print("# p1   ", (end1-start1) * 1000)
+	print("# p2   ", (end2-end1) * 1000)

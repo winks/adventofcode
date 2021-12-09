@@ -31,6 +31,10 @@ func getLines(filename string) []string {
 	return lines
 }
 
+func triang(n float64) float64 {
+	return (n + n * n) / 2.0
+}
+
 func run(lines []string, runPart1 bool) int {
 	lines2 := strings.Split(lines[0], ",")
 	nums := []int{}
@@ -55,10 +59,7 @@ func run(lines []string, runPart1 bool) int {
 			if runPart1 {
 				fuel += math.Abs( float64(v) - float64(i) )
 			} else {
-				diff := math.Abs( float64(v) - float64(i) )
-				for d := 1.0; d <= diff; d += 1.0 {
-					fuel += d
-				}
+				fuel += triang(math.Addabs(float64(v) - float64(i)))
 			}
 		}
 		if fuel_min < 0.01 {
