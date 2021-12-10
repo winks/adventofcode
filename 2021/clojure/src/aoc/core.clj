@@ -4,6 +4,7 @@
   (:require [aoc.day01 :as day01])
   (:require [aoc.day02 :as day02])
   (:require [aoc.day03 :as day03])
+  (:require [aoc.day10 :as day10])
   (:gen-class))
 
 (def cli-options
