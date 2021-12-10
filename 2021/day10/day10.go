@@ -38,19 +38,13 @@ func part1(lines []string) (int, []string) {
 	vals["]"] = 57
 	vals["}"] = 1197
 	vals[">"] = 25137
-	for i, li := range lines {
-		fmt.Printf("# %d %v\n", i, li)
+	for _, li := range lines {
 		rvl := 0
-		// ( [ { <
-		data := [4]int{}
 		tmp := ""
 		for j, c := range(li) {
-			err := false
 			if c == '(' {
-				data[0] += 1
 				tmp += string(c)
 			} else if c == ')' {
-				data[0] -= 1
 				if tmp[len(tmp)-1] == '(' {
 					tmp = strings.TrimSuffix(tmp, string('('))
 				} else if j < len(li)-1 {
@@ -58,10 +52,8 @@ func part1(lines []string) (int, []string) {
 					break
 				}
 			} else if c == '[' {
-				data[1] += 1
 				tmp += string(c)
 			} else if c == ']' {
-				data[1] -= 1
 				if tmp[len(tmp)-1] == '[' {
 					tmp = strings.TrimSuffix(tmp, string('['))
 				} else if j < len(li)-1 {
@@ -69,10 +61,8 @@ func part1(lines []string) (int, []string) {
 					break
 				}
 			} else if c == '{' {
-				data[2] += 1
 				tmp += string(c)
 			} else if c == '}' {
-				data[2] -= 1
 				if len(tmp) > 0 && tmp[len(tmp)-1] == '{' {
 					tmp = strings.TrimSuffix(tmp, string('{'))
 				} else if j < len(li)-1 {
@@ -80,10 +70,8 @@ func part1(lines []string) (int, []string) {
 					break
 				}
 			} else if c == '<' {
-				data[3] += 1
 				tmp += string(c)
 			} else if c == '>' {
-				data[3] -= 1
 				if tmp[len(tmp)-1] == '<' {
 					tmp = strings.TrimSuffix(tmp, string('<'))
 				} else if j < len(li)-1 {
@@ -91,29 +79,18 @@ func part1(lines []string) (int, []string) {
 					break
 				}
 			}
-			fmt.Printf("## %v %s %s\n", data, string(c), tmp)
-			if err {
-				break
-			}
 		}
-		if rvl > 0 {
-			fmt.Printf("_rvl %d %v\n ", i, rvl)
-		} else {
+		if rvl < 1 {
 			good = append(good, tmp)
 		}
 		rv += rvl
-		fmt.Printf("  %v\n\n ", data)
 	}
-	fmt.Printf("_  %v\n ", rv)
-
 	return rv, good
 }
 
 func part2(lines []string) int {
-	fmt.Printf("_ %d  %v\n", len(lines), lines)
 	rvs := []int{}
 	for _, line := range(lines) {
-		fmt.Printf("### %v\n", line)
 		score := 0
 		for len(line) > 0 {
 			c := line[len(line)-1]
@@ -128,11 +105,9 @@ func part2(lines []string) int {
 			} else if c == '<' {
 				score += 4
 			}
-			fmt.Printf("__ %d\n", score)
 		}
 		rvs = append(rvs, score)
 	}
-	fmt.Printf("# %v\n", rvs)
 	sort.Ints(rvs)
 	return rvs[len(rvs)/2]
 }
