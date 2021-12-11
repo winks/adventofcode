@@ -1,5 +1,4 @@
 (ns aoc.day06
-  (:require [clojure.string :as str])
   (:require [aoc.lib :as lib]))
 
 (defn prep [tank fish]
@@ -22,7 +21,7 @@
     (help (tick tank) (dec runs))))
 
 (defn part1 [lines runs]
-  (let [fish (map #(Integer/parseInt %) (str/split (first lines) #","))
+  (let [fish (lib/csv (first lines))
         tank (prep (vec (repeat 8 0)) fish)]
     (help tank runs)))
 
@@ -30,7 +29,7 @@
   (let [lines (lib/lines-str filename)]
     (time (println "Part 1: " (part1 lines 80)))
     (time (println "Part 2: " (part1 lines 256)))
-    (let [fish (map #(Integer/parseInt %) (str/split (first lines) #","))
+    (let [fish (lib/csv (first lines))
           tank (prep (vec (repeat 8 0)) fish)]
       (time (println (help tank 80)))
       (time (println (help tank 256)))

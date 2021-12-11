@@ -7,3 +7,5 @@
 (defn lines-int [file]
   (map (fn [x] (Integer/parseInt x)) (str/split-lines (slurp file))))
 
+(defn csv [x]
+  (map #(Integer/parseInt %) (clojure.string/split x #",")))
