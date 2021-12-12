@@ -38,20 +38,34 @@ func contains(w []string, s string) bool {
 	return false
 }
 
-func contains2(w []string, s string) bool {
-	c := 0
-	for _, a := range w {
-		if a == s {
-			c += 1
-			if c > 1 {
-				return false
+func contains3(w []string, s string) (bool, map[string]int) {
+	b := map[string]int{}
+	w2 := make([]string, len(w))
+	copy(w2, w)
+	w2 = append(w2, s)
+	for _, a1 := range w2 {
+		if a1[0] < 97 || a1[0] > 122 {
+			continue
+		}
+		for _, a2 := range w2 {
+			if a2 == a1 {
+				b[a1] += 1
+				if b[a1] > 4 {
+					return true, b
+				}
 			}
 		}
 	}
-	return c < 2
+	bad := 0
+	for _, a := range b {
+		if a > 1 {
+			bad += 1
+		}
+	}
+	return bad > 1, b
 }
 
-func part1(lines []string) int {
+func part(lines []string, runPart1 bool) int {
 	//caves := make(map[string]int)
 	paths := [][]string{}
 	ways := [][]string{}
@@ -75,14 +89,14 @@ func part1(lines []string) int {
 	//fmt.Printf("caves %v\n", caves)
 	//fmt.Printf("A Z %d %d\n", 'A', 'Z')
 	//fmt.Printf("a z %d %d\n", 'a', 'z')
-	fmt.Printf("ways  %v\n", ways)
-	fmt.Printf("paths %v\n", paths)
+	//fmt.Printf("ways  %v\n", ways)
+	//fmt.Printf("paths %v\n", paths)
 	
 	cur := []string{}
 	for len(ways) > 0 {
 		cur = ways[0]
 		ways = ways[1:]
-		fmt.Printf("\nway  %v -- %v\n", cur, ways)
+		////fmt.Printf("\nway  %v -- %v\n", cur, ways)
 		for _, p := range paths {
 			//fmt.Printf("  look %v + %v\n", cur, p)
 			if p[0] == cur[len(cur)-1] {
@@ -106,15 +120,21 @@ func part1(lines []string) int {
 				} else {
 					// lowercase only once
 					if p[1][0] >= 97 && p[1][0] <= 122 {
-						//fmt.Printf("    cur lc %v + %s = %d\n", cur, p, contains(cur, p[1]))
-						if !contains(cur, p[1]) {
+						cc := false
+						if (runPart1) {
+							cc = contains(cur, p[1])
+						} else {
+							cc, _ = contains3(cur, p[1])
+						}
+						////fmt.Printf("    cur lc %v + %s = %d %v\n", cur, p, cc, cd)
+						if !cc {
 							//fmt.Printf("    lW   %d . %v\n", len(ways), ways)
 							tmpx := make([]string, len(cur))
 							copy(tmpx, cur)
 							//fmt.Printf("    lW    %v - %v\n", tmpx, cur)
 							tmpx = append(tmpx, p[1])
 							ways = append(ways, tmpx)
-							//fmt.Printf("    lW   %d . %v\n", len(ways), ways)
+							////fmt.Printf("    lW   %d . %v\n", len(ways), ways)
 						} else {
 							//fmt.Printf("   weird %v + %v\n", cur, p)
 						}
@@ -133,7 +153,6 @@ func part1(lines []string) int {
 			}
 		}
 	}
-	fmt.Printf("R %d %v\n", len(done), done)
 	return len(done)
 }
 
@@ -155,11 +174,11 @@ func main() {
 	elapsed := time.Since(timeStart)
 	fmt.Printf("# Parsing %s\n", elapsed)
 	timeStart1 := time.Now()
-	p1 := part1(lines)
+	p1 := part(lines, true)
 	elapsed1 := time.Since(timeStart1)
 	fmt.Printf("# Part1   %s\n", elapsed1)
 	timeStart2 := time.Now()
-	p2 := part2(lines)
+	p2 := part(lines, false)
 	elapsed2 := time.Since(timeStart2)
 	fmt.Printf("# Part2   %s\n", elapsed2)
 	fmt.Printf("# Total   %s\n", time.Since(timeStart))
