@@ -35,22 +35,19 @@ func getLines(filename string) []string {
 	return lines
 }
 
-//func pp(p [15][11]rune) {
-func pp(p [895][1311]rune) {
+func pp(p [][]rune) {
 	for y := 0; y < len(p); y++ {
 		for x := 0; x < len(p[0]); x++ {
 			fmt.Printf("%v", string(p[y][x]))
 		}
 		fmt.Printf("\n")
 	}
-	fmt.Printf("//////////////////////////////////////////\n")
 }
 
-//func counte(p [15][11]rune, ym int, xm int) int {
-func counte(p [895][1311]rune, ym int, xm int) int {
+func count(p [][]rune) int {
 	rv := 0
-	for y := 0; y < ym; y++ {
-		for x := 0; x < xm; x++ {
+	for y := 0; y < len(p); y++ {
+		for x := 0; x < len(p[0]); x++ {
 			if p[y][x] == '#' {
 				rv++
 			}
@@ -59,19 +56,29 @@ func counte(p [895][1311]rune, ym int, xm int) int {
 	return rv
 }
 
-func part1(lines []string) int {
-	sizex := 11
-	sizey := 15
-	sizex = 1311
-	sizey = 895
-	//paper := [15][11]rune{}
-	paper := [895][1311]rune{}
-	for y := 0; y < sizey; y++ {
-		for x := 0; x < sizex; x++ {
-			paper[y][x] = '.'
+func resize(orig [][]rune, ny int, nx int) [][]rune {
+	rv := [][]rune{}
+	if ny > 0 {
+		for y := 0; y < ny; y++ {
+			rv = append(rv, []rune{})
+			for x := 0; x < len(orig[0]); x++ {
+				rv[y] = append(rv[y], orig[y][x])
+			}
 		}
+		return rv
+	} else if nx > 0 {
+		for y := 0; y < len(orig); y++ {
+			rv = append(rv, []rune{})
+			for x := 0; x < nx; x++ {
+				rv[y] = append(rv[y], orig[y][x])
+			}
+		}
+		return rv
 	}
-	//pp(paper)
+	return rv
+}
+
+func part(lines []string, runPart1 bool) int {
 	folds := []Fold{}
 	xmax := 0
 	ymax := 0
@@ -80,12 +87,10 @@ func part1(lines []string) int {
 			continue
 		}
 		if line[0] == 'f' {
-			f1a := rune(line[11])
 			f1 := line[13:]
 			f1n, err := strconv.Atoi(f1)
 			check(err)
-			ff := Fold {f1a, f1n}
-			folds = append(folds, ff)
+			folds = append(folds, Fold {rune(line[11]), f1n})
 			continue
 		}
 		li := strings.Split(line, ",")
@@ -102,13 +107,15 @@ func part1(lines []string) int {
 	}
 	xmax++
 	ymax++
-	fmt.Printf("xx: %d yy: %d\n", xmax, ymax)
-	for i, ff := range folds {
-		fmt.Printf("# fold %d : %s=%d\n", i, string(ff.xy), ff.val)
+
+	paper := [][]rune{}
+	for y := 0; y < ymax; y++ {
+		paper = append(paper, []rune{})
+		for x := 0; x < xmax; x++ {
+			paper[y] = append(paper[y], '.')
+		}
 	}
 
-	//folds = []Fold{ folds[0] }
-	//pp(paper)
 	for _, line := range lines {
 		if len(line) < 1 || line[0] == 'f' {
 			continue
@@ -120,6 +127,7 @@ func part1(lines []string) int {
 		check(err)
 		paper[y][x] = '#'
 	}
+
 	for _, fold := range folds {
 		if fold.xy == 'y' {
 			for x := 0; x < len(paper[0]); x++ {
@@ -133,6 +141,8 @@ func part1(lines []string) int {
 					}
 				}
 			}
+			paper = resize(paper, fold.val, 0)
+			ymax = ymax/2
 		} else if fold.xy == 'x' {
 			for y := 0; y < len(paper); y++ {
 				paper[y][fold.val] = '|'
@@ -145,15 +155,17 @@ func part1(lines []string) int {
 					}
 				}
 			}
+			paper = resize(paper, 0, fold.val)
+			xmax = xmax/2
+		}
+		if runPart1 {
+			return count(paper)
+		} else {
+			//fmt.Printf("fi: %d xx: %d yy: %d\n", fi, len(paper[0]), len(paper))
 		}
 	}
+
 	pp(paper)
-
-	//return counte(paper, folds[0].val, len(paper[0]))
-	return counte(paper, len(paper), folds[0].val)
-}
-
-func part2(lines []string) int {
 	return 0
 }
 
@@ -171,11 +183,11 @@ func main() {
 	elapsed := time.Since(timeStart)
 	fmt.Printf("# Parsing %s\n", elapsed)
 	timeStart1 := time.Now()
-	p1 := part1(lines)
+	p1 := part(lines, true)
 	elapsed1 := time.Since(timeStart1)
 	fmt.Printf("# Part1   %s\n", elapsed1)
 	timeStart2 := time.Now()
-	p2 := part2(lines)
+	p2 := part(lines, false)
 	elapsed2 := time.Since(timeStart2)
 	fmt.Printf("# Part2   %s\n", elapsed2)
 	fmt.Printf("# Total   %s\n", time.Since(timeStart))

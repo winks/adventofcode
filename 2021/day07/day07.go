@@ -59,7 +59,7 @@ func run(lines []string, runPart1 bool) int {
 			if runPart1 {
 				fuel += math.Abs( float64(v) - float64(i) )
 			} else {
-				fuel += triang(math.Addabs(float64(v) - float64(i)))
+				fuel += triang(math.Abs(float64(v) - float64(i)))
 			}
 		}
 		if fuel_min < 0.01 {
