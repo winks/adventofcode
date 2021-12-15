@@ -13,26 +13,6 @@ type Point struct {
 	y int
 	x int
 	v int
-	f bool
-}
-
-type Way struct {
-	path []Point
-	cost int
-}
-
-type ppp []Point
-
-func (p ppp) Len() int {
-	return len(p)
-}
-
-func (p ppp) Swap(i, j int) {
-	p[i], p[j] = p[j], p[i]
-}
-
-func (p ppp) Less(i, j int) bool {
-	return p[i].v < p[j].v
 }
 
 func check(e error) {
@@ -63,9 +43,6 @@ func pp(m [][]Point, print bool) int {
 			if print {
 				fmt.Printf("%d ", m[y][x].v)
 			}
-			//if m[y][x].v > 9 && !m[y][x].f {
-			//	c += 1
-			//}
 		}
 		if print {
 			fmt.Printf("\n")
@@ -102,17 +79,16 @@ func sum(way []Point) int {
 	return rv
 }
 
-func get_path(visi map[Point]Point, cur Point, end Point) []Point {
+func getPath(visi map[Point]Point, cur Point, end Point) []Point {
 	tp := []Point{cur}
-	cur2 := cur
 	for {
-		v, ok := visi[cur2]
+		v, ok := visi[cur]
 		if ok {
-			cur2 = v
-			if cur2.y == end.y && cur2.x == end.x {
+			cur = v
+			if cur.y == end.y && cur.x == end.x {
 				break
 			}
-			tp = append([]Point{cur2}, tp...)
+			tp = append([]Point{cur}, tp...)
 		} else {
 			break
 		}
@@ -138,8 +114,7 @@ func cave1(lines []string) [][]Point {
 		for x := 0; x < len(line); x++ {
 			v, err := strconv.Atoi(string(line[x]))
 			check(err)
-			p := Point{y, x, v, false}
-			cave[y] = append(cave[y], p)
+			cave[y] = append(cave[y], Point{y, x, v})
 		}
 	}
 	return cave
@@ -155,7 +130,7 @@ func cave2(lines []string) [][]Point {
 		for x := 0; x < len(line); x++ {
 			v, err := strconv.Atoi(string(line[x]))
 			check(err)
-			p := Point{y, x, v, false}
+			p := Point{y, x, v}
 			cave[y] = append(cave[y], p)
 		}
 	}
@@ -214,19 +189,17 @@ func part(lines []string, runPart1 bool) int {
 	} else {
 		cave = cave2(lines)
 	}
-	pos := cave[0][0]
-	start := pos
+	start := cave[0][0]
 	goal := cave[len(cave)-1][len(cave[0])-1]
-	fmt.Printf("S %v\n", pos)
-	fmt.Printf("E %v\n", goal)
+	//fmt.Printf("# START %v END %v\n", start, goal)
 	open := make([]Point, 0)
-	open = append(open, pos)
+	open = append(open, start)
 	way := make([]Point, 0)
 	cameFrom := make(map[Point]Point, 0)
 	gscore := make(map[Point]int, 0)
-	gscore[pos] = 0
+	gscore[start] = 0
 	fscore := make(map[Point]float64)
-	fscore[pos] = h(pos, goal)
+	fscore[start] = h(start, goal)
 	for len(open) > 0 {
 		mmin := -1
 		mi := 0
@@ -238,7 +211,7 @@ func part(lines []string, runPart1 bool) int {
 		}
 		cur := open[mi]
 		if cur.y == goal.y && cur.x == goal.x {
-			way = get_path(cameFrom, cur, start)
+			way = getPath(cameFrom, cur, start)
 			break
 		}
 		if len(open) > 1 {
@@ -269,10 +242,6 @@ func part(lines []string, runPart1 bool) int {
 	}
 
 	return sum(way)
-}
-
-func part2(lines []string) int {
-	return 0
 }
 
 func main() {
