@@ -104,23 +104,15 @@ func sum(way []Point) int {
 
 func get_path(visi map[Point]Point, cur Point, end Point) []Point {
 	tp := []Point{cur}
-	//fmt.Printf("GP %v %v\n", len(visi), visi)
-	//for aa, vv := range visi {
-	//fmt.Printf("__ (%v,%v) (%v,%v)\n", aa.y, aa.x, vv.y, vv.x)
-	//}
 	cur2 := cur
 	for {
 		v, ok := visi[cur2]
-		//fmt.Printf("GP. %v %v %v\n", cur2, ok, v)
 		if ok {
 			cur2 = v
 			if cur2.y == end.y && cur2.x == end.x {
 				break
 			}
 			tp = append([]Point{cur2}, tp...)
-			//delete(visi, cur2)
-			//fmt.Printf("GP %v\n", len(visi))
-			//fmt.Printf("TP %v -- %v\n", len(tp), tp)
 		} else {
 			break
 		}
@@ -131,7 +123,6 @@ func get_path(visi map[Point]Point, cur Point, end Point) []Point {
 func h(p1 Point, p2 Point) float64 {
 	dx := p1.x - p2.x
 	dy := p1.y - p2.y
-	//fmt.Printf("Ps %v %v %v\n", dx, dy, (dy*dy)+(dx*dx))
 	s := math.Sqrt(float64((dy * dy) + (dx * dx)))
 	if s < 0 {
 		return -1 * s
@@ -139,7 +130,7 @@ func h(p1 Point, p2 Point) float64 {
 	return s
 }
 
-func part1(lines []string) int {
+func cave1(lines []string) [][]Point {
 	cave := make([][]Point, 0)
 	for y := 0; y < len(lines); y++ {
 		cave = append(cave, []Point{})
@@ -151,7 +142,78 @@ func part1(lines []string) int {
 			cave[y] = append(cave[y], p)
 		}
 	}
-	pp(cave, true)
+	return cave
+}
+
+func cave2(lines []string) [][]Point {
+	cave := make([][]Point, 0)
+	cave2 := make([][]Point, 0)
+	cave3 := make([][]Point, 0)
+	for y := 0; y < len(lines); y++ {
+		cave = append(cave, []Point{})
+		line := lines[y]
+		for x := 0; x < len(line); x++ {
+			v, err := strconv.Atoi(string(line[x]))
+			check(err)
+			p := Point{y, x, v, false}
+			cave[y] = append(cave[y], p)
+		}
+	}
+	my := len(lines)
+	for y := 0; y < my; y++ {
+		cave2 = append(cave2, []Point{})
+		line := []Point{}
+		last := cave[y%my]
+		cur := []Point{}
+		for yy := 0; yy < 5; yy++ {
+			if yy < 1 {
+				line = append(line, last...)
+			} else {
+				cur = []Point{}
+				for _, v := range last {
+					old := v
+					old.v += 1
+					if old.v > 9 {
+						old.v = 1
+					}
+					cur = append(cur, old)
+				}
+				line = append(line, cur...)
+				last = cur
+			}
+		}
+		cave2[y] = line
+	}
+	for yy := 0; yy < 5; yy++ {
+		for y := 0; y < len(lines); y++ {
+			cave3 = append(cave3, []Point{})
+			if yy < 1 {
+				cave3[y] = cave2[y]
+			} else {
+				ny := y + yy*len(lines)
+				for xx, vv := range cave3[ny-len(lines)] {
+					np := vv
+					np.y = ny
+					np.x = xx
+					np.v += 1
+					if np.v > 9 {
+						np.v = 1
+					}
+					cave3[ny] = append(cave3[ny], np)
+				}
+			}
+		}
+	}
+	return cave3
+}
+
+func part(lines []string, runPart1 bool) int {
+	cave := make([][]Point, 0)
+	if runPart1 {
+		cave = cave1(lines)
+	} else {
+		cave = cave2(lines)
+	}
 	pos := cave[0][0]
 	start := pos
 	goal := cave[len(cave)-1][len(cave[0])-1]
@@ -159,16 +221,12 @@ func part1(lines []string) int {
 	fmt.Printf("E %v\n", goal)
 	open := make([]Point, 0)
 	open = append(open, pos)
-	fmt.Printf("OS %d - %v\n\n", len(open), open)
 	way := make([]Point, 0)
 	cameFrom := make(map[Point]Point, 0)
 	gscore := make(map[Point]int, 0)
 	gscore[pos] = 0
 	fscore := make(map[Point]float64)
 	fscore[pos] = h(pos, goal)
-
-	fmt.Printf("FS %d - %v\n\n", len(fscore), fscore)
-
 	for len(open) > 0 {
 		mmin := -1
 		mi := 0
@@ -178,12 +236,9 @@ func part1(lines []string) int {
 				mi = ii
 			}
 		}
-		//cur := open[0]
 		cur := open[mi]
 		if cur.y == goal.y && cur.x == goal.x {
-			fmt.Printf("### FOUND %v\n", cur)
 			way = get_path(cameFrom, cur, start)
-			fmt.Printf("### FOUND %v\n", way)
 			break
 		}
 		if len(open) > 1 {
@@ -191,14 +246,7 @@ func part1(lines []string) int {
 		} else {
 			open = []Point{}
 		}
-		//open = open[1:]
 		ne := getne(cur, cave)
-
-		//fmt.Printf("P %v -- %v\n", cur, open)
-		//fmt.Printf("  NE %d - %v\n", len(ne), ne)
-		//mmin := 10
-		//mp := Point{0, 0, 10, false}
-		//sort.Sort(ppp(ne))
 		for _, v := range ne {
 			gtmp := gscore[cur] + v.v
 			vx, ok := gscore[v]
@@ -213,14 +261,11 @@ func part1(lines []string) int {
 						break
 					}
 				}
-				//fmt.Printf("  GT %v gs:%v fs:%v f:%v\n", v, gscore[v], fscore[v], found)
 				if !found {
 					open = append(open, v)
 				}
 			}
 		}
-		//fmt.Printf("  W %d - %v\n", len(ways), ways)
-		//fmt.Printf("  D %d - %v\n", len(done), done)
 	}
 
 	return sum(way)
@@ -244,11 +289,11 @@ func main() {
 	elapsed := time.Since(timeStart)
 	fmt.Printf("# Parsing %s\n", elapsed)
 	timeStart1 := time.Now()
-	p1 := part1(lines)
+	p1 := part(lines, true)
 	elapsed1 := time.Since(timeStart1)
 	fmt.Printf("# Part1   %s\n", elapsed1)
 	timeStart2 := time.Now()
-	p2 := part2(lines)
+	p2 := part(lines, false)
 	elapsed2 := time.Since(timeStart2)
 	fmt.Printf("# Part2   %s\n", elapsed2)
 	fmt.Printf("# Total   %s\n", time.Since(timeStart))
