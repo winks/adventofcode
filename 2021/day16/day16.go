@@ -63,9 +63,9 @@ func parseLit(bits []uint64) (Packet, int) {
 		}
 	}
 
-	rv := 0
+	val := 0
 	parts := []int{}
-	done := true
+	done := false
 	for {
 		i := idx
 		if i+4 > len(bits)-1 {
@@ -76,8 +76,7 @@ func parseLit(bits []uint64) (Packet, int) {
 
 		for ii := i + 4; ii > i; ii-- {
 			j := bits[ii]
-			idxx := ii - i
-			xa += float64(j) * math.Pow(float64(2), float64(4-idxx))
+			xa += float64(j) * math.Pow(float64(2), float64(i+4-ii))
 		}
 		parts = append(parts, int(xa))
 		idx += 5
@@ -88,9 +87,9 @@ func parseLit(bits []uint64) (Packet, int) {
 	}
 	if done {
 		for m, p := range parts {
-			rv += (p << ((len(parts) - m - 1) * 4))
+			val += (p << ((len(parts) - m - 1) * 4))
 		}
-		return Packet{int(vers), int(tid), rv, 0, false, false, []Packet{}}, idx
+		return Packet{int(vers), int(tid), val, 0, false, false, []Packet{}}, idx
 	}
 	fmt.Printf("xerr %v %v -- %v \n", idx, bits, bits[idx:])
 	panic(3)
@@ -154,70 +153,45 @@ func parse1(bits []uint64, start int) ([]Packet, int) {
 	p, pos := parseLit(bits[start:])
 	if p.typeId == 4 {
 		//mt.Printf(":: basic %v\n", p)
-		rv0 := []Packet{p}
-		return rv0, pos
-	} else if p.opLen {
+		return []Packet{p}, pos
+	} else {
 		pos += 1
-		xa := 0.0
-		for i := pos + 14; i > pos; i-- {
-			j := bits[start+i]
-			idx := i - pos
-			xa += float64(j) * math.Pow(float64(2), float64(14-idx))
+		offset := 10
+		if p.opLen {
+			offset += 4
 		}
-		num := int(xa)
-		pos += 15
-		//fmt.Printf(":: opLen with %v, pos is %v -- %v\n", num, pos, p)
-		n0 := 0
-		rv0 := []Packet{p}
-		for {
+		xa := 0.0
+		for i := pos + offset; i > pos; i-- {
+			j := bits[start+i]
+			xa += float64(j) * math.Pow(float64(2), float64(pos+offset-i))
+		}
+		rle := int(xa)
+		pos += offset + 1
+		//fmt.Printf(":: opNum with %v, pos is %v -- %v\n", num, pos, p
+		bRead := 0
+		for i := 0; i < rle; i++ {
 			pp, n := parse1(bits[start+pos:], 0)
-			n0 += n
+			//fmt.Printf("  :: subNum %v %v -- %v , %v @ %v\n", i, rv[0], pp, n, pos)
 			pos += n
-			//fmt.Printf("  :: subLen %v %v -- %v,%v @ %v\n", rv0[0], pp, n, n0, pos)
-			rv0[0].sub = append(rv0[0].sub, pp...)
-			if n0 == num {
+			bRead += n
+			p.sub = append(p.sub, pp...)
+			if bRead == rle {
 				break
 			}
 		}
-		rv0[0].value = cho(rv0[0].typeId, rv0[0].value, rv0[0].sub)
-		for _, k := range rv0[0].sub {
-			rv0[0].versub += k.version + k.versub
-		}
-		//fmt.Printf("retLen %v\n", rv0)
-		return rv0, pos
-	} else if p.opNum {
-		pos += 1
-		xa := 0.0
-		for i := pos + 10; i > pos; i-- {
-			j := bits[start+i]
-			idx := i - pos
-			xa += float64(j) * math.Pow(float64(2), float64(10-idx))
-		}
-		num := int(xa)
-		pos += 11
-		//fmt.Printf(":: opNum with %v, pos is %v -- %v\n", num, pos, p)
-		rv0 := []Packet{p}
-		for i := 0; i < num; i++ {
-			pp, n := parse1(bits[start+pos:], 0)
-			//fmt.Printf("  :: subNum %v %v -- %v , %v @ %v\n", i, rv0[0], pp, n, pos)
-			pos += n
-			rv0[0].sub = append(rv0[0].sub, pp...)
-		}
-		rv0[0].value = cho(rv0[0].typeId, rv0[0].value, rv0[0].sub)
-		for _, k := range rv0[0].sub {
-			rv0[0].versub += k.version + k.versub
+		p.value = cho(p.typeId, p.value, p.sub)
+		for _, k := range p.sub {
+			p.versub += k.version + k.versub
 		}
 		//fmt.Printf("retNum %v\n", rv0)
-		return rv0, pos
+		return []Packet{p}, pos
 	}
-	return []Packet{}, 0
 }
 
 func conv(lines []string) []uint64 {
-	line := lines[0]
-	fmt.Printf("# %v, %v\n", line, len(line))
+	//fmt.Printf("# %v, %v\n", lines[0], len(lines[0]))
 	bits := []uint64{}
-	for _, ch := range line {
+	for _, ch := range lines[0] {
 		val, err := strconv.ParseUint(string(ch), 16, 4)
 		check(err)
 		bits2 := []uint64{}
@@ -225,8 +199,7 @@ func conv(lines []string) []uint64 {
 			bits2 = append([]uint64{val & 0x1}, bits2...)
 			val = val >> 1
 		}
-		bits2 = bits2[4:]
-		bits = append(bits, bits2...)
+		bits = append(bits, bits2[4:]...)
 	}
 	//fmt.Printf("# %v - %v\n", bits, len(bits))
 	return bits
@@ -234,42 +207,35 @@ func conv(lines []string) []uint64 {
 
 func part1(lines []string) int {
 	bits := conv(lines)
-	versions := 0
-	idx := 0
-	for {
-		pp, idx := parse1(bits, idx)
-		for _, p := range pp {
-			versions += p.version + p.versub
-		}
-		rest := bits[idx:]
-		sum := 0
-		for _, r := range rest {
-			sum += int(r)
-		}
-		if idx == 0 || sum < 1 {
-			return versions
-		}
+	pp, pos := parse1(bits, 0)
+	rv := pp[0].version + pp[0].versub
+	if pos == len(bits) {
+		return rv
 	}
+	sum := 0
+	for _, r := range bits[pos:] {
+		sum += int(r)
+	}
+	if sum < 1 {
+		return rv
+	}
+	return 0
 }
 
 func part2(lines []string) int {
 	bits := conv(lines)
-	rv := 0
-	for {
-		pp, idx := parse1(bits, 0)
-		for _, p := range pp {
-			rv += p.value
-		}
-		rv = pp[0].value
-		rest := bits[idx:]
-		sum := 0
-		for _, r := range rest {
-			sum += int(r)
-		}
-		if idx == 0 || sum < 1 || idx == len(bits) {
-			return rv
-		}
+	pp, pos := parse1(bits, 0)
+	if pos == len(bits) {
+		return pp[0].value
 	}
+	sum := 0
+	for _, r := range bits[pos:] {
+		sum += int(r)
+	}
+	if sum < 1 {
+		return pp[0].value
+	}
+	return 0
 }
 
 func main() {
