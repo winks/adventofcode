@@ -5,6 +5,7 @@ def h(p1, p2):
     dy = (p1[0] - p2[0])
     dx = (p1[1] - p2[1])
     return abs(math.sqrt(abs((dx*dx) - (dy*dy))))
+    #return math.floor(abs(math.sqrt(abs((dx*dx) - (dy*dy)))))
 
 def get_path(pts, p1, p2):
     rv = [p1]
@@ -40,10 +41,12 @@ def qadd(p, cost, pts):
     pts[cost].append(p)
     return pts
 
-def  qget(pts):
-    for k in sorted(pts.keys()):
-        if len(pts[k]) > 0 :
+def  qget(pts, max_cost):
+    for k in range(1, max_cost + 1):
+        if k in pts and len(pts[k]) > 0:
             p = pts[k].pop()
+            if len(pts[k]) < 1:
+                del pts[k]
             return (p, pts)
     return None
 
@@ -70,12 +73,14 @@ def solve(fname, p1 = True):
         p_end = (my-1, mx-1,  cave2(my-1, mx-1, cave))
     p_start = (0, 0, cave[0][0])
     #print(p_start, p_end, my, mx)
-    xopen = { p_start[2]: [p_start]}
+    max_cost = p_start[2]
+    xopen = {max_cost : [p_start]}
     xfrom = {}
     gscore = {p_start : 0}
+    #fscore = {p_start : h(p_start, p_end)}
 
     while len(xopen) > 0:
-        (cur, xopen) = qget(xopen)
+        (cur, xopen) = qget(xopen, max_cost)
         if cur[:2] == p_end[:2]:
             w = get_path(xfrom, cur, p_start)
             return sum([x[2] for x in w]) - p_start[2]
@@ -85,8 +90,14 @@ def solve(fname, p1 = True):
             if v not in gscore or gs < gscore[v] :
                 xfrom[v] = cur
                 gscore[v] = gs
+                #fscore[v] = gs + h(v, p_end)
                 if v not in xopen:
                     qadd(v, gs, xopen)
+                    #qadd(v, fscore[v], xopen)
+                    if gs > max_cost:
+                        max_cost = gs
+                    #if fscore[v] > max_cost:
+                    #    max_cost = fscore[v]
 
 print(solve(sys.argv[1]))
 print(solve(sys.argv[1], False))
