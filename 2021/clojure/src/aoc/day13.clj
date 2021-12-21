@@ -2,7 +2,7 @@
   (:require [aoc.lib :as lib]))
 
 (defn pp [paper]
-  (doall (for [line paper] (println (apply str line)))))
+  (doall (for [line paper] (println (clojure.string/replace (apply str line) #"\.+$" "")))))
 
 (defn cc [points paper px py]
   (if (empty? points)
@@ -14,12 +14,10 @@
           yy (- (second point) ny (* ny py))
           xx2 (if (= 1 (mod nx 2)) (- px xx 1) xx)
           yy2 (if (= 1 (mod ny 2)) (- py yy 1) yy)
-          paper2 (for [fy (range 0 py)]
-            (if (= yy2 fy)
-              (concat (take xx2 (nth paper fy)) ["#"] (take-last (- px xx2 1) (nth paper fy)))
-              (nth paper fy)))]
-
-    (cc (rest points) paper2 px py))))
+          mid (str (subs (nth paper yy2) 0 xx2) "#" (subs (nth paper yy2) (inc xx2)))
+          tlx (take-last (dec (- py yy2)) (take py paper))
+          paper2 (into (into (vec (take yy2 paper)) [mid]) tlx)]
+      (cc (rest points) paper2 px py))))
 
 (defn calc [lines p1]
   (let [all-folds (filter #(= \f (first %)) lines)
@@ -33,10 +31,11 @@
         ffy (reduce * (repeat folds-y 2))
         part-x (dec (/ (inc max-x) ffx))
         part-y (dec (/ (inc max-y) ffy))
-        paper2 (take max-y (repeat (take max-x (repeat "."))))
-        ;lll (println "LL" part-x part-y)
+        paper2 (repeat max-y (apply str(repeat max-x ".")))
         paper3 (cc points paper2 part-x part-y)]
-  (if p1 (count (filter #(= "#" %) (flatten paper3))) (do (pp paper3) ""))))
+  (if p1
+    (count (filter #(= \# %) (apply str (flatten paper3))))
+    (do (pp paper3) ""))))
 
 (defn run [filename]
   (let [lines (filter #(> (count %) 0) (lib/lines-str filename))]
