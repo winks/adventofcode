@@ -87,7 +87,7 @@ func part1(lines []string) int {
 	}
 	i := 1
 	for {
-		sea0 := xcopy(sea)
+		changed := 0
 		//fmt.Printf("STEP %v\n", i)
 		sea2 := xcopy(sea)
 		for turn := 1; turn <= 2; turn++ {
@@ -99,7 +99,7 @@ func part1(lines []string) int {
 						nb := getNbEast(sea, x, y)
 						cont := false
 						for _, pp := range moved {
-							if (nb.y == pp.y && nb.x == pp.x) || (y == pp.y && x == pp.x) {
+							if y == pp.y && x == pp.x {
 								cont = true
 								break
 							}
@@ -111,6 +111,7 @@ func part1(lines []string) int {
 							sea2[nb.y][nb.x].val = ">"
 							sea2[y][x].val = "."
 							moved = append(moved, sea2[nb.y][nb.x])
+							changed++
 						} else {
 							sea2[y][x].val = sea[y][x].val
 						}
@@ -123,7 +124,7 @@ func part1(lines []string) int {
 						nb := getNbSouth(sea, x, y)
 						cont := false
 						for _, pp := range moved {
-							if (nb.y == pp.y && nb.x == pp.x) || (y == pp.y && x == pp.x) {
+							if y == pp.y && x == pp.x {
 								cont = true
 								break
 							}
@@ -135,6 +136,7 @@ func part1(lines []string) int {
 							sea2[nb.y][nb.x].val = "v"
 							sea2[y][x].val = "."
 							moved = append(moved, sea2[nb.y][nb.x])
+							changed++
 						} else {
 							sea2[y][x].val = sea[y][x].val
 						}
@@ -143,20 +145,9 @@ func part1(lines []string) int {
 			}
 			sea = xcopy(sea2)
 		}
-		// check eq
-		eqc := 0
-		for yc1 := range sea0 {
-			for xc1 := range sea0[0] {
-				if sea0[yc1][xc1] == sea[yc1][xc1] {
-					eqc++
-				}
-			}
-		}
-
-		if eqc == len(sea)*len(sea[0]) {
+		if changed == 0 {
 			return i
 		}
-		//pp(sea, true)
 		i++
 	}
 }
