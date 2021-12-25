@@ -48,7 +48,7 @@ func part2(lines []string) int {
 	cnt := 0
 	cur := 0
 	for i, x := range lines {
-		if i > 1 && i < (len(lines) - 1) {
+		if i > 1 && i < len(lines)-1 {
 			a, err := strconv.Atoi(x)
 			check(err)
 			b, err := strconv.Atoi(lines[i-1])

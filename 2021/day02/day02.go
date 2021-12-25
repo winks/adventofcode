@@ -15,14 +15,6 @@ func check(e error) {
 	}
 }
 
-func numArg(s string, def int) int {
-	stx, err := strconv.Atoi(s)
-	if err != nil {
-		return def
-	}
-	return stx
-}
-
 func getLines(filename string) []string {
 	fh, err := os.OpenFile(filename, os.O_RDONLY, os.ModePerm)
 	check(err)
@@ -38,28 +30,11 @@ func getLines(filename string) []string {
 	return lines
 }
 
-func getLinesInt(filename string) []int {
-	fh, err := os.OpenFile(filename, os.O_RDONLY, os.ModePerm)
-	check(err)
-	defer fh.Close()
-
-	lines := make([]int, 0)
-	sc := bufio.NewScanner(fh)
-	for sc.Scan() {
-		line := sc.Text()
-		num, err := strconv.Atoi(line)
-		check(err)
-		lines = append(lines, num)
-	}
-	check(sc.Err())
-	return lines
-}
-
 func part1(lines []string) int {
 	hp := 0
 	d := 0
 
-	for _, s := range(lines) {
+	for _, s := range lines {
 		p := strings.Split(s, " ")
 		arg, err := strconv.Atoi(p[1])
 		check(err)
@@ -81,7 +56,7 @@ func part2(lines []string) int {
 	d := 0
 	aim := 0
 
-	for _, s := range(lines) {
+	for _, s := range lines {
 		p := strings.Split(s, " ")
 		arg, err := strconv.Atoi(p[1])
 		check(err)
@@ -109,7 +84,6 @@ func main() {
 		fmt.Printf("Usage: %v /path/to/file\n", argv[0])
 		return
 	}
-
 	lines := getLines(argv[1])
 	fmt.Printf("# Inputs  %d\n", len(lines))
 	elapsed := time.Since(timeStart)

@@ -1,0 +1,25 @@
+5 - 12
+  start   0
+  read    4.2915344238281E-5
+  points  1.8119812011719E-5
+  lines   5.0067901611328E-6
+  board   3.0994415283203E-6
+  cross1  2.8610229492188E-6
+  cross2  1.0967254638672E-5
+5092 - 20484
+  start   0
+  read    7.1048736572266E-5
+  points  0.00068378448486328
+  lines   0.022459030151367
+  board   0.024285078048706
+  cross1  0.0382080078125
+  cross2  0.10621190071106
+
+Fatal error: Uncaught Error: Call to undefined function opcache_get_status() in /aoc/day05a.php:178
+Stack trace:
+#0 {main}
+  thrown in /aoc/day05a.php on line 178
+Command exited with non-zero status 255
+real	0m 0.23s
+user	0m 0.15s
+sys	0m 0.07s

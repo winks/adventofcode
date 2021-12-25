@@ -11,7 +11,7 @@ import (
 
 type Field struct {
 	number string
-	done bool
+	done   bool
 }
 
 func check(e error) {
@@ -38,7 +38,7 @@ func getLines(filename string) []string {
 func makeBoard(cur string) []Field {
 	board := []Field{}
 	c1 := strings.Split(cur, " ")
-	for _, v := range(c1) {
+	for _, v := range c1 {
 		v = strings.Trim(v, " ")
 		if len(v) < 1 {
 			continue
@@ -62,11 +62,9 @@ func won(board []Field) bool {
 }
 
 func update(board []Field, num string) []Field {
-	for i, f := range(board) {
+	for i, f := range board {
 		if f.number == num {
-			//fmt.Printf("__ %v\n", board)
 			board[i].done = true
-			//fmt.Printf("__ %v\n", board)
 			return board
 		}
 	}
@@ -75,7 +73,7 @@ func update(board []Field, num string) []Field {
 
 func calc(board []Field) int {
 	rv := 0
-	for _, f := range(board) {
+	for _, f := range board {
 		if !f.done {
 			x, err := strconv.Atoi(f.number)
 			check(err)
@@ -87,8 +85,6 @@ func calc(board []Field) int {
 
 func prep(lines []string) ([]string, [][]Field) {
 	nums := strings.Split(lines[0], ",")
-	//fmt.Printf("%v\n", nums)
-
 	boards := [][]Field{}
 	cur := ""
 	for i := 1; i < len(lines); i++ {
@@ -106,17 +102,14 @@ func prep(lines []string) ([]string, [][]Field) {
 		cur += line
 	}
 	boards = append(boards, makeBoard(cur))
-	//fmt.Printf("%d %v\n", len(boards), boards)
-
-	return  nums, boards
+	return nums, boards
 }
 
 func part1(lines []string) int {
 	nums, boards := prep(lines)
 
-	for _, draw := range(nums) {
-		//fmt.Printf("# Drew %s\n", draw)
-		for i, b := range(boards) {
+	for _, draw := range nums {
+		for i, b := range boards {
 			b = update(b, draw)
 			if won(b) {
 				d, err := strconv.Atoi(draw)
@@ -137,15 +130,14 @@ func contains(arr []int, i int) bool {
 		}
 	}
 	return false
- }
+}
 
 func part2(lines []string) int {
 	nums, boards := prep(lines)
 	done_boards := []int{}
 
-	for _, draw := range(nums) {
-		//fmt.Printf("# Drew %s\n", draw)
-		for i, b := range(boards) {
+	for _, draw := range nums {
+		for i, b := range boards {
 			b = update(b, draw)
 			if won(b) {
 				d, err := strconv.Atoi(draw)
@@ -170,8 +162,6 @@ func main() {
 		fmt.Printf("Usage: %v /path/to/file\n", argv[0])
 		return
 	}
-	fmt.Printf("# Argv    %s\n", argv)
-
 	lines := getLines(argv[1])
 	fmt.Printf("# Inputs  %d\n", len(lines))
 	elapsed := time.Since(timeStart)

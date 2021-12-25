@@ -47,10 +47,10 @@ func draw(floor [][]int, start []string, end []string) [][]int {
 	check(err)
 	y2, err := strconv.Atoi(end[1])
 	check(err)
-	if x2 < x1 {
+	if (x2 < x1) {
 		x1, x2 = x2, x1
 	}
-	if y2 < y1 {
+	if (y2 < y1) {
 		y1, y2 = y2, y1
 	}
 	for x := x1; x <= x2; x++ {
@@ -76,7 +76,7 @@ func draw2(floor [][]int, start []string, end []string) [][]int {
 	stops = append(stops, y1)
 
 	for x1 != x2 && y1 != y2 {
-		if x2 > x1 {
+		if (x2 > x1)  {
 			x1 += 1
 		} else {
 			x1 -= 1
@@ -90,7 +90,7 @@ func draw2(floor [][]int, start []string, end []string) [][]int {
 		stops = append(stops, y1)
 	}
 
-	for i := 0; i < len(stops); i += 2 {
+	for i := 0; i< len(stops); i +=2 {
 		x := stops[i]
 		y := stops[i+1]
 		floor[y][x] += 1
@@ -100,8 +100,8 @@ func draw2(floor [][]int, start []string, end []string) [][]int {
 
 func count(floor [][]int) int {
 	rv := 0
-	for y := range floor {
-		for x := range floor[0] {
+	for y, _ := range(floor) {
+		for x, _ := range(floor) {
 			if floor[y][x] > 1 {
 				rv += 1
 			}
@@ -110,17 +110,17 @@ func count(floor [][]int) int {
 	return rv
 }
 
-func run(lines []string, runPart1 bool) int {
-	size := 1000
+func run(lines []string, part1x bool) int {
+	size := 10000
 	floor := make([][]int, size)
 	for i := 0; i < size; i++ {
 		floor[i] = make([]int, size)
 	}
-	for _, v := range lines {
+	for _, v := range(lines) {
 		line := strings.Split(v, " -> ")
 		start := strings.Split(line[0], ",")
 		end := strings.Split(line[1], ",")
-		if runPart1 {
+		if (part1x) {
 			if start[0] != end[0] && start[1] != end[1] {
 				continue
 			}

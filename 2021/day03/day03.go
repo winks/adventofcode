@@ -31,9 +31,9 @@ func getLines(filename string) []string {
 
 func part1(lines []string) (int, []int) {
 	r := make([]int, 0)
-	for i, s := range(lines) {
+	for i, s := range lines {
 		for j := 0; j < len(s); j++ {
-			if (i == 0) {
+			if i == 0 {
 				r = append(r, 0)
 			}
 			if s[j:j+1] == "1" {
@@ -44,7 +44,7 @@ func part1(lines []string) (int, []int) {
 	rvg := ""
 	rve := ""
 	for j := 0; j < len(r); j++ {
-		if r[j] > (len(lines)/2) {
+		if r[j] > (len(lines) / 2) {
 			rvg += "1"
 			rve += "0"
 		} else {
@@ -59,15 +59,15 @@ func part1(lines []string) (int, []int) {
 	return int(rvg1 * rve1), r
 }
 
-func part2(lines []string, r []int)  int {
+func part2(lines []string, r []int) int {
 	lines_o := []string{}
 	lines_c := []string{}
-	cutoff := float64(len(lines))/2.0
+	cutoff := float64(len(lines)) / 2.0
 
 	lines_tmp := lines
 	for true {
 		for j := 0; j < len(lines[0]); j++ {
-			for _, s := range(lines_tmp) {
+			for _, s := range lines_tmp {
 				if float64(r[j]) > cutoff && s[j:j+1] == "1" {
 					lines_o = append(lines_o, s)
 				} else if float64(r[j]) < cutoff && s[j:j+1] == "0" {
@@ -81,7 +81,7 @@ func part2(lines []string, r []int)  int {
 				break
 			}
 			lines_tmp = lines_o
-			cutoff = float64(len(lines_tmp))/2.0
+			cutoff = float64(len(lines_tmp)) / 2.0
 			_, r = part1(lines_tmp)
 			lines_o = []string{}
 		}
@@ -94,10 +94,10 @@ func part2(lines []string, r []int)  int {
 
 	lines_tmp = lines
 	_, r = part1(lines_tmp)
-	cutoff = float64(len(lines_tmp))/2.0
+	cutoff = float64(len(lines_tmp)) / 2.0
 	for true {
 		for j := 0; j < len(lines[0]); j++ {
-			for _, s := range(lines_tmp) {
+			for _, s := range lines_tmp {
 				if float64(r[j]) < cutoff && s[j:j+1] == "1" {
 					lines_c = append(lines_c, s)
 				} else if float64(r[j]) > cutoff && s[j:j+1] == "0" {
@@ -111,7 +111,7 @@ func part2(lines []string, r []int)  int {
 				break
 			}
 			lines_tmp = lines_c
-			cutoff = float64(len(lines_tmp))/2.0
+			cutoff = float64(len(lines_tmp)) / 2.0
 			_, r = part1(lines_tmp)
 			lines_c = []string{}
 		}
@@ -132,8 +132,6 @@ func main() {
 		fmt.Printf("Usage: %v /path/to/file\n", argv[0])
 		return
 	}
-	fmt.Printf("# Argv    %s\n", argv)
-
 	lines := getLines(argv[1])
 	fmt.Printf("# Inputs  %d\n", len(lines))
 	elapsed := time.Since(timeStart)
