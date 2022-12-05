@@ -2,14 +2,18 @@
 
 My solutions (without inputs) for [Advent of Code](https://adventofcode.com/)
 
+## 2022
+
+Rust
+
 ## 2021
 
-Third year. No special topic, giving Go another spin.
+Third year. No special topic, giving Go another spin. 44 stars.
 
 ## 2020
 
 My second year. This year I wanted to invest less time so I decided on one language (Python 3), 
-with the option to redo all of them in a second language, later.
+with the option to redo all of them in a second language, later. 44 stars.
 
   * day01 - *Report Repair*
     * **Bash**: 1+2
