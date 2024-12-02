@@ -24,10 +24,10 @@ class Day02 {
 	fun run(args: Array<String>, useDampener : Boolean = false) {
 		val lines = args[0].readLines().map { it.split(" ").map(String::toInt) }
 		var result = 0
-		lines.forEach {
-			if (isAsc(it) && !isTooWide(it)) result++
-			else if (isDesc(it) && !isTooWide(it)) result++
-			else if (useDampener) {
+		val (ok, nope) = lines.partition { !isTooWide(it) && (isAsc(it) || isDesc(it)) }
+		result += ok.size
+		if (useDampener) {
+			nope.forEach {
 				val perms : MutableList<List<Int>> = mutableListOf()
 				for (i in it.indices) {
 					val c = it.toMutableList().filterIndexed { index, _ -> index != i }.toList()
