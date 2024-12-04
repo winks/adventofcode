@@ -47,6 +47,9 @@ class Board(input: Array<String>) {
         }
     }
 
+    fun valid(p: Pos): Boolean {
+        return p.x in 0..<width && p.y in 0 ..<length
+    }
     fun peek(p: Pos): Char {
         return board[p.y][p.x]
     }
@@ -116,6 +119,19 @@ class Board(input: Array<String>) {
             } else {
                 return directionAll.SE
             }
+        }
+    }
+
+    fun getOpposite(p: Pos, dir: directionAll): Pos {
+        return when (dir) {
+            directionAll.N -> Pos(p.x, p.y + 1)
+            directionAll.E -> Pos(p.x - 1, p.y)
+            directionAll.S -> Pos(p.x, p.y - 1)
+            directionAll.W -> Pos(p.x + 1, p.y)
+            directionAll.NE -> Pos(p.x - 1, p.y + 1)
+            directionAll.SE -> Pos(p.x - 1, p.y - 1)
+            directionAll.SW -> Pos(p.x + 1, p.y - 1)
+            directionAll.NW -> Pos(p.x + 1, p.y + 1)
         }
     }
 }
