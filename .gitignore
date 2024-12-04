@@ -1,3 +1,9 @@
+tmp/
+/2019/input/
+/2020/input/
+/2021/input/
+/2022/input/
+/2023/input/
 /2024/input/
 /2024/build/
 .gradle/
