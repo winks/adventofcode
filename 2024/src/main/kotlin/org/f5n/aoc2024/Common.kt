@@ -26,6 +26,8 @@ class Board(input: Array<String>) {
     val width = input[0].length
     val length = input.size
     val board = Array(length) { Array(width) { ' ' } }
+    enum class direction { N, E, S, W }
+    enum class directionAll { N, E, S, W, NE, SE, SW, NW }
 
     init {
         for (y in 0 until length) {
@@ -64,5 +66,56 @@ class Board(input: Array<String>) {
             rv.add(Pos(p.x, p.y + 1))
         }
         return rv
+    }
+
+    fun getNeighborsAll(p: Pos): List<Pos> {
+        val rv = getNeighbors(p).toMutableList()
+        if (p.x > 0) {
+            if (p.y > 0) {
+                rv.add(Pos(p.x - 1, p.y - 1))
+            }
+            if (p.y < length - 1) {
+                rv.add(Pos(p.x - 1, p.y + 1))
+            }
+        }
+        if (p.x < width - 1) {
+            if (p.y > 0) {
+                rv.add(Pos(p.x + 1, p.y - 1))
+            }
+            if (p.y < length - 1) {
+                rv.add(Pos(p.x + 1, p.y + 1))
+            }
+        }
+        return rv
+    }
+
+    fun getDirection(p1: Pos, p2: Pos): directionAll {
+        if (p1.x == p2.x) {
+            if (p1.y > p2.y) {
+                return directionAll.N
+            } else {
+                return directionAll.S
+            }
+        }
+        if (p1.y == p2.y) {
+            if (p1.x > p2.x) {
+                return directionAll.W
+            } else {
+                return directionAll.E
+            }
+        }
+        if (p1.x > p2.x) {
+            if (p1.y > p2.y) {
+                return directionAll.NW
+            } else {
+                return directionAll.SW
+            }
+        } else {
+            if (p1.y > p2.y) {
+                return directionAll.NE
+            } else {
+                return directionAll.SE
+            }
+        }
     }
 }

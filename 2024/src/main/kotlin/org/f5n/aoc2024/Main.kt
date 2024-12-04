@@ -19,5 +19,8 @@ fun main(args: Array<String>) {
     } else if (args[0] == "day03") {
         val d = Day03()
         d.run(arrayOf(args[1]))
+    } else if (args[0] == "day04") {
+        val d = Day04()
+        d.run(arrayOf(args[1]))
     }
 }

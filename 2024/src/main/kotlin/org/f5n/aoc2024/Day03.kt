@@ -1,7 +1,7 @@
 package org.f5n.aoc2024
 
 class Day03 {
-	fun run(args: Array<String>, useDampener : Boolean = false) {
+	fun run(args: Array<String>) {
 		val lines = args[0].readLines()
 		var result1 = 0
 		var result2 = 0
