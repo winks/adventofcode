@@ -26,12 +26,16 @@ class Pos(val x: Int, val y: Int) {
         }
         return false
     }
+
+    override fun hashCode(): Int {
+        return x * 1000 + y
+    }
 }
 
 class Board(input: Array<String>) {
     val width = input[0].length
     val length = input.size
-    val board = Array(length) { Array(width) { ' ' } }
+    var board = Array(length) { Array(width) { ' ' } }
     enum class direction { N, E, S, W }
     enum class directionAll { N, E, S, W, NE, SE, SW, NW }
 
@@ -75,6 +79,15 @@ class Board(input: Array<String>) {
             rv.add(Pos(p.x, p.y + 1))
         }
         return rv
+    }
+
+    fun getNeighbor(p: Pos, dir: direction) : Pos {
+        return when (dir) {
+            direction.N -> Pos(p.x, p.y - 1)
+            direction.E -> Pos(p.x + 1, p.y)
+            direction.S -> Pos(p.x, p.y + 1)
+            direction.W -> Pos(p.x - 1, p.y)
+        }
     }
 
     fun getNeighborsAll(p: Pos): List<Pos> {
