@@ -20,6 +20,12 @@ class Pos(val x: Int, val y: Int) {
     override fun toString(): String {
         return "($x, $y)"
     }
+    override fun equals(other: Any?): Boolean {
+        if (other is Pos) {
+            return x == other.x && y == other.y
+        }
+        return false
+    }
 }
 
 class Board(input: Array<String>) {

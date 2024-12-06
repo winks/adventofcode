@@ -22,5 +22,11 @@ fun main(args: Array<String>) {
     } else if (args[0] == "day04") {
         val d = Day04()
         d.run(arrayOf(args[1]))
+    } else if (args[0] == "day05") {
+        val d = Day05()
+        d.run(arrayOf(args[1]))
+    } else if (args[0] == "day06") {
+        val d = Day06()
+        d.run(arrayOf(args[1]))
     }
 }
