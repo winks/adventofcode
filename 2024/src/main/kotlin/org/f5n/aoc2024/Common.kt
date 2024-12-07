@@ -154,3 +154,8 @@ class Board(input: Array<String>) {
         }
     }
 }
+
+fun <T> nonexhaustivePermutations(length: Int, components: List<T>): List<List<T>> =
+    if (components.isEmpty() || length <= 0) listOf(emptyList())
+    else nonexhaustivePermutations(length - 1, components)
+        .flatMap { sub -> components.map { sub + it } }
