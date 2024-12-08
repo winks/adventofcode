@@ -2,6 +2,7 @@ package org.f5n.aoc2024
 
 import java.io.File
 import java.io.InputStream
+import kotlin.math.abs
 
 fun String.readLines(): Array<String> =
     File(this).inputStream().bufferedReader().readLines().toTypedArray()
@@ -153,6 +154,94 @@ class Board(input: Array<String>) {
             directionAll.NW -> Pos(p.x + 1, p.y + 1)
         }
     }
+
+    fun getDistance(p: Pos, q: Pos): Int {
+        return abs(p.x - q.x) + abs(p.y - q.y)
+    }
+    fun getNonMatches(s: String): List<Pos> {
+        var rv: List<Pos> = emptyList<Pos>().toMutableList()
+        for (y in 0 until length) {
+            for (x in 0 until width) {
+                if (peek(Pos(x, y)) != s[0]) {
+                    rv = rv.plus(Pos(x, y))
+                }
+            }
+        }
+        return rv.toList()
+    }
+
+    fun getLine(p: Pos, q: Pos) : Pair<Int, Int> {
+        return Pair(p.x - q.x, p.y - q.y)
+    }
+
+    fun getLineAll(p: Pos, q: Pos) : Set<Pos> {
+        val line = getLine(p, q)
+        val rv = mutableListOf<Pos>()
+        var cur = p
+        while(valid(cur)) {
+            cur = Pos(cur.x + line.first, cur.y + line.second)
+            if (valid(cur)) {
+                rv.add(cur)
+            }
+        }
+        cur = p
+        while(valid(cur)) {
+            cur = Pos(cur.x - line.first, cur.y - line.second)
+            if (valid(cur)) {
+                rv.add(cur)
+            }
+        }
+        cur = q
+        while(valid(cur)) {
+            cur = Pos(cur.x + line.first, cur.y + line.second)
+            if (valid(cur)) {
+                rv.add(cur)
+            }
+        }
+        cur = q
+        while(valid(cur)) {
+            cur = Pos(cur.x - line.first, cur.y - line.second)
+            if (valid(cur)) {
+                rv.add(cur)
+            }
+        }
+        return rv.plus(p).plus(q).toSet()
+    }
+
+    fun getMatches(s: String) : List<Pos> {
+        var rv: List<Pos> = emptyList<Pos>().toMutableList()
+        for (y in 0 until length) {
+            for (x in 0 until width) {
+                if (peek(Pos(x, y)) == s[0]) {
+                    rv = rv.plus(Pos(x, y))
+                }
+            }
+        }
+        return rv.toList()
+    }
+}
+
+fun <T> perms(length: Int, components: List<T>) : List<List<T>> {
+    val rv = mutableSetOf<List<T>>()
+    nonexhaustivePermutations(length, components)
+        .map { it.toSet() }
+        .filter { it.size == length }
+        .forEach { rv.add(it.toList()) }
+    return rv.toList()
+}
+
+fun getAlnum() : List<String> {
+    val rv = mutableListOf<String>()
+    for (i in 0..9) {
+        rv.add(i.toString())
+    }
+    for (a in 'a'..'z') {
+        rv.add(a.toString())
+    }
+    for (a in 'A'..'Z') {
+        rv.add(a.toString())
+    }
+    return rv.toList()
 }
 
 fun <T> nonexhaustivePermutations(length: Int, components: List<T>): List<List<T>> =
