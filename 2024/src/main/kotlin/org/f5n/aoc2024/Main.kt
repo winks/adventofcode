@@ -44,6 +44,15 @@ fun main(args: Array<String>) {
         } else if (day == "day09") {
             val d = Day09()
             d.run(arrayOf(inputFile))
+            // p2 needs 11 min
+            //d.run2(arrayOf(inputFile))
+            val d2 = Day09c()
+            // p1 is not implemented
+            d2.run2(arrayOf(inputFile))
+        } else if (day == "day09c") {
+            val d = Day09c()
+            d.run(arrayOf(inputFile))
+//            d.run2(arrayOf(inputFile))
         }
     }.let { println(it) }
 }

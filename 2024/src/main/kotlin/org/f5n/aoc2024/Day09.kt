@@ -1,9 +1,8 @@
 package org.f5n.aoc2024
 
 class Day09 {
-    fun run(args: Array<String>) {
+    private fun li(args: Array<String>): MutableList<Long> {
         val line = args[0].readLines()[0]
-        println(line)
         var file = true
         var id = 0
         val fs = emptyList<Long>().toMutableList()
@@ -19,8 +18,11 @@ class Day09 {
             if(file) id++
             file = !file
         }
-        println(fs)
-        val fs2 = fs.toMutableList()
+        return fs
+    }
+
+    fun run(args: Array<String>) {
+        val fs = li(args)
 
         val hasSpace = fun(x: List<Long>): Boolean {
             val sp = x.indexOfFirst { it == -1L }
@@ -38,6 +40,18 @@ class Day09 {
             fs[pos] = x2
             fs[last] = -1L
         }
+        var p1 = 0L
+        for (c in fs.indices) {
+            if (fs.elementAt(c) != -1L) {
+                p1 += c * fs.elementAt(c)
+            }
+        }
+        println()
+        println("p1: $p1")
+   }
+
+   fun run2(args: Array<String>) {
+         val fs2 = li(args)
 
         val findBlock = fun(x: List<Long>, endx: Int) : Pair<Int,Int> {
             val end = x.take(endx).indexOfLast { it != -1L }
@@ -66,62 +80,61 @@ class Day09 {
             //println("space from $start to $end = ${end-start+1} skipped $startx")
             return Pair(start, end)
         }
-        var i = fs2.size
-        var ss = 0
-        var ee = fs.size
-        var lastBlock : Long = 0
-        while (i > 0) {
-            val b = findBlock(fs2, ee)
-            if (fs[b.first] == 0L) {
+        var doneIndex = fs2.size
+        var searchIndex = 0
+        var endIndex = fs2.size
+        val lastNums = emptySet<Long>().toMutableList()
+        while (doneIndex > 0) {
+            val b = findBlock(fs2, endIndex)
+            if (fs2[b.first] == 0L) {
                 break
             }
-            if (fs[b.first] != lastBlock) {
-                ss = 0
-                lastBlock = fs[b.first]
+            if (lastNums.contains(fs2[b.first])) {
+                endIndex = b.first
+                continue
             }
-            val s = findSpace(fs2, ss)
+            if (fs2[b.first] >= endIndex) {
+                searchIndex = 0
+            }
+            val s = findSpace(fs2, searchIndex)
             if (s.second-s.first+1 < b.second-b.first+1) {
-                ss = s.second+1
-                //println("no space $ss ${fs.size}")
-                if (ss >= fs.size) {
-                    ss = 0
-                    ee = b.first
-                    lastBlock = fs[b.first]
+                searchIndex = s.second+1
+//                println("no space at $searchIndex / ${fs.size}")
+                if (searchIndex >= fs2.size) {
+                    searchIndex = 0
+                    endIndex = b.first
                 }
                 continue
-            } else if (s.first >= b.second) {
-                ee = b.first
-                ss = 0
+            } else if (s.first >= b.first) {
+                endIndex = b.first
+                searchIndex = 0
                 continue
-            }
-            if (b.second - b.first + 1 <= s.second - s.first + 1) {
-                //println("found space")
+            } else if (s.second - s.first + 1 >= b.second - b.first + 1) {
+//                println("found space at ${s.first}")
+                lastNums.add(fs2[b.first])
                 for (sx in s.first..(s.first+b.second-b.first)) {
                     fs2[sx] = fs2[b.first]
                 }
                 for (bx in b.first..b.second) {
                     fs2[bx] = -1
                 }
-                i = b.first
-                ss = 0
-                ee = b.first
+                doneIndex = b.first
+                searchIndex = 0
+                endIndex = b.first
             }
-            //println(fs2)
+//            println(fs2)
         }
-        var p1 = 0L
+
         var p2 = 0L
-        for (c in fs.indices) {
-            if (fs.elementAt(c) != -1L) {
-                p1 += c * fs.elementAt(c)
-            }
+        for (c in fs2.indices) {
             if (fs2.elementAt(c) != -1L) {
                 p2 += c * fs2.elementAt(c)
             }
         }
-        println(fs)
-        println(fs2)
+//        println(line)
+//        println(fs)
+//        println(fs2)
         println()
-        println("p1: $p1")
         println("p2: $p2")
 
     }

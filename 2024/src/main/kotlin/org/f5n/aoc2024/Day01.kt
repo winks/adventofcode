@@ -2,7 +2,6 @@ package org.f5n.aoc2024
 
 import kotlin.math.abs
 
-
 class Day01 {
 	fun run(args: Array<String>) {
 		val lines = args[0].readLines()

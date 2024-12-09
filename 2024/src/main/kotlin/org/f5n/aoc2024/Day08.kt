@@ -1,6 +1,5 @@
 package org.f5n.aoc2024
 
-
 class Day08 {
     fun run(args: Array<String>) {
         val board = Board(args[0].readLines())
