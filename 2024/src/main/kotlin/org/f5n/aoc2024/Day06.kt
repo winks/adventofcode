@@ -1,7 +1,5 @@
 package org.f5n.aoc2024
 
-import java.nio.file.attribute.PosixFileAttributes
-
 class Day06 {
 	private var multi = emptyMap<Pos, List<Pos>>().toMutableMap()
 
