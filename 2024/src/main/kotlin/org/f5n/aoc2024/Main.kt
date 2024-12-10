@@ -55,8 +55,13 @@ fun main(args: Array<String>) {
 //            d.run2(arrayOf(inputFile))
         } else if (day == "day10") {
             val d = Day10()
-            d.run(arrayOf(inputFile))
-            d.run2(arrayOf(inputFile))
+            d.parse(arrayOf(inputFile))
+            measureTime {
+            d.run()
+            d.run2()
+        }.let { it2 -> println(it2) }
+        println(d.result1)
+        println(d.result2)
         }
     }.let { println(it) }
 }

@@ -1,6 +1,16 @@
 package org.f5n.aoc2024
 
+import kotlin.time.measureTime
+
 class Day10 {
+	var lines: Array<String> = listOf("").toTypedArray()
+	var board: Board = Board(lines)
+	var result1 = 0
+	var result2 = 0
+	fun parse(args: Array<String>) {
+		this.lines = args[0].readLines()
+		this.board = Board(lines)
+	}
 	fun dfs(board: Board, p: Pos, visited: MutableSet<Pos>): MutableSet<Pos> {
 		visited.add(p)
 		val ne = board.getNeighbors(p)
@@ -34,11 +44,10 @@ class Day10 {
 		}
 		return trails
 	}
-	fun run(args: Array<String>) {
-		val lines = args[0].readLines()
-		val board = Board(lines)
+	fun run() {
+		
+		//val board = Board(lines)
 //		board.print()
-		var result = 0
 		for (y in 0 until board.length) {
 			for (x in 0 until board.width) {
 				val p = Pos(x, y)
@@ -46,16 +55,15 @@ class Day10 {
 				if (board.value(p) == 0) {
 //					println("trailhead at $p")
 					val a = dfs(board, p, mutableSetOf())
-					result += a.filter { board.value(it) == 9 }.size
+					result1 += a.filter { board.value(it) == 9 }.size
 				}
 			}
 		}
-		println("p1: $result")
 	}
-	fun run2(args: Array<String>) {
-		val lines = args[0].readLines()
-		val board = Board(lines)
-		var result = 0
+	fun run2() {
+		//val lines = args[0].readLines()
+		//val board = Board(lines)
+
 		for (y in 0 until board.length) {
 			for (x in 0 until board.width) {
 				val p = Pos(x, y)
@@ -65,10 +73,9 @@ class Day10 {
 					val a = dfs2(board, p, mutableSetOf(), mutableListOf(), mutableListOf(mutableListOf(p)))
 						.filter { it.size > 1 }
 //					println(a)
-					result += a.size
+					result2 += a.size
 				}
 			}
 		}
-		println("p2: $result")
 	}
 }
