@@ -53,6 +53,10 @@ fun main(args: Array<String>) {
             val d = Day09c()
             d.run(arrayOf(inputFile))
 //            d.run2(arrayOf(inputFile))
+        } else if (day == "day10") {
+            val d = Day10()
+            d.run(arrayOf(inputFile))
+            d.run2(arrayOf(inputFile))
         }
     }.let { println(it) }
 }

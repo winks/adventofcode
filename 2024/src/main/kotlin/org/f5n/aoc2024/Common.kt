@@ -64,6 +64,9 @@ class Board(input: Array<String>) {
     fun peek(p: Pos): Char {
         return board[p.y][p.x]
     }
+    fun value(p: Pos): Int {
+        return board[p.y][p.x].toString().toInt()
+    }
 
     fun getNeighbors(p: Pos): List<Pos> {
         val rv = mutableListOf<Pos>()
