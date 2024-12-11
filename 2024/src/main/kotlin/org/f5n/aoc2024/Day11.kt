@@ -1,32 +1,32 @@
 package org.f5n.aoc2024
 
-
-class Day11 {
-	fun loop(line2: MutableList<Long>) : MutableList<Long> {
-		var k = 0
-		var line : MutableList<Long> = line2.toMutableList()
-		while (k < line.size) {
-			if (line[k] == 0L) {
-				line[k] = 1
-				k++
-			} else if (line[k].toString().length % 2 == 0 ) {
-				val (a, b) = line[k].toString().chunked(line[k].toString().length / 2)
-				line[k] = a.toLong()
-				line.add(k+1, b.toLong())
-				k += 2
-			} else {
-				line[k] = 2024 * line[k]
-				k++
+class Day11b {
+	fun run(args: Array<String>, num: Long) {
+		val line2 = args[0].readLines().get(0).split(' ').map(String::toLong)
+		var line = emptyMap<Long, Long>().toMutableMap()
+		line2.forEach { line[it] = 1 }
+//		println(line2)
+		for (i in 0 until num) {
+			val ln = emptyMap<Long, Long>().toMutableMap()
+			for (k in line.keys) {
+				if (k == 0L) {
+					val n = 1L
+					if (!ln.containsKey(n)) ln[n] = 0
+					ln[n] = ln[n]!! + line[k]!!
+				} else if (k.toString().length % 2 == 0 ) {
+					val (a, b) = k.toString().chunked(k.toString().length / 2).map(String::toLong)
+					if (!ln.containsKey(a)) ln[a] = 0
+					ln[a] = ln[a]!! + line[k]!!
+					if (!ln.containsKey(b)) ln[b] = 0
+					ln[b] = ln[b]!! + line[k]!!
+				} else {
+					val n = 2024 * k
+					if (!ln.containsKey(n)) ln[n] = 0
+					ln[n] = ln[n]!! + line[k]!!
+				}
 			}
+			line = ln.toMutableMap()
 		}
-		return line
-	}
-	fun run(args: Array<String>) {
-		val line = args[0].readLines().get(0).split(' ').map(String::toLong)
-		var line2 = line.toMutableList()
-		for (i in 0 until 25) {
-			line2 = loop(line2)
-		}
-		println("p1: ${line2.size}")
+		println("result $num: ${line.map{ it.value }.sum()}")
 	}
 }
