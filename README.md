@@ -2,18 +2,110 @@
 
 My solutions (without inputs) for [Advent of Code](https://adventofcode.com/)
 
+## 2024
+
+Fifth year, Kotlin, in progress
+
+## 2023
+
+I skipped this year :/
+
 ## 2022
 
-Rust
+Rust. 41 stars, 2 missing days.
 
 ## 2021
 
-Third year. No special topic, giving Go another spin. 44 stars.
+Third year. No special topic, giving Go another spin. 44 stars, 2 missing days.
 
 ## 2020
 
 My second year. This year I wanted to invest less time so I decided on one language (Python 3), 
-with the option to redo all of them in a second language, later. 44 stars.
+with the option to redo all of them in a second language, later. 44 stars, no missing days.
+
+## 2019
+
+My first year, I set out to use 25 different languages,
+but as I had overestimated the effort and complexity of the problems,
+in the end I settled with 20 languages. I finished with 45/50 stars, missing 2x part 2 and one full day.
+
+I wrote a long [blog post](https://f5n.org/blog/2019/advent-of-code-2019/) about it.
+
+## 2024 - Details
+
+  * day01 - *Historian Hysteria*
+  * day02 - *Red-Nosed Reports*
+  * day03 - *Mull It Over*
+  * day04 - *Ceres Search*
+  * day05 - *Print Queue*
+  * day06 - *Guard Gallivant*
+  * day07 - *Bridge Repair*
+  * day08 - *Resonant Collinearity*
+  * day09 - *Disk Fragmenter*
+  * day10 - *Hoof It*
+
+## 2023 - Details
+
+Nope.
+
+## 2022 - Details
+
+  * day01 - *Calorie Counting*
+  * day02 - *Rock Paper Scissors*
+  * day03 - *Rucksack Reorganization*
+  * day04 - *Camp Cleanup*
+  * day05 - *Supply Stacks*
+  * day06 - *Tuning Trouble*
+  * day07 - *No Space Left On Device*
+  * day08 - *Treetop Tree House*
+  * day09 - *Rope Bridge* - p1 only
+  * day10 - *Cathode-Ray Tube*
+  * day11 - *Monkey in the Middle* - p1 only
+  * day12 - *Hill Climbing Algorithm*
+  * day13 - *Distress Signal*
+  * day14 - *Regolith Reservoir*
+  * day15 - *Beacon Exclusion Zone*
+  * day16 - *Proboscidea Volcanium* - none
+  * day17 - *Pyroclastic Flow* - p1 only
+  * day18 - *Boiling Boulders* - p1 only
+  * day19 - *Not Enough Minerals* - none
+  * day20 - *Grove Positioning System*
+  * day21 - *Monkey Math*
+  * day22 - *Monkey Map*
+  * day23 - *Unstable Diffusion*
+  * day24 - *Blizzard Basin*
+  * day25 - *Full of Hot Air*
+
+## 2021 - Details
+
+  * day01 - *Sonar Sweep*
+  * day02 - *Dive!*
+  * day03 - *Binary Diagnostic*
+  * day04 - *Giant Squid*
+  * day05 - *Hydrothermal Venture*
+  * day06 - *Lanternfish*
+  * day07 - *The Treachery of Whales*
+  * day08 - *Seven Segment Search*
+  * day09 - *Smoke Basin*
+  * day10 - *Syntax Scoring*
+  * day11 - *Dumbo Octopus*
+  * day12 - *Passage Pathing*
+  * day13 - *Transparent Origami*
+  * day14 - *Extended Polymerization*
+  * day15 - *Chiton*
+  * day16 - *Packet Decoder*
+  * day17 - *Trick Shot*
+  * day18 - *Snailfish*
+  * day19 - *Beacon Scanner*
+  * day20 - *Trench Map*
+  * day21 - *Dirac Dice*
+  * day22 - *Reactor Reboot* - p1 only
+  * day23 - *Amphipod* - none
+  * day24 - *Arithmetic Logic Unit* - none
+  * day25 - *Sea Cucumber*
+
+
+## 2020 - Details
 
   * day01 - *Report Repair*
     * **Bash**: 1+2
@@ -67,13 +159,7 @@ with the option to redo all of them in a second language, later. 44 stars.
   * day25 - *Combo Breaker*
     * **Python**: 1
 
-## 2019
-
-My first year, I set out to use 25 different languages,
-but as I had overestimated the effort and complexity of the problems,
-in the end I settled with 20 languages. I finished with 45/50 stars, missing 2x part 2 and one full day.
-
-I wrote a long [blog post](https://f5n.org/blog/2019/advent-of-code-2019/) about it.
+## 2019 - Details
 
   * day01 - *The Tyranny of the Rocket Equation*
     * **C++** - 1+2
