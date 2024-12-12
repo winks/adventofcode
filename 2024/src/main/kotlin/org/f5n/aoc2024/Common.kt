@@ -48,6 +48,27 @@ class Board(input: Array<String>) {
         }
     }
 
+    fun from(pl: List<Pos>) : Board {
+        var minx = pl.minByOrNull { it.x }!!.x
+        var maxx = pl.maxByOrNull { it.x }!!.x
+        var miny = pl.minByOrNull { it.y }!!.y
+        var maxy = pl.maxByOrNull { it.y }!!.y
+
+        var lines = mutableListOf<String>()
+        for (y in (miny-1)..(maxy+1)) {
+            var line = ""
+            for (x in (minx-1)..(maxx+1)) {
+                line += if (pl.contains(Pos(x, y))) {
+                    "A"
+                } else {
+                    "."
+                }
+            }
+            lines.add(line)
+        }
+        return Board(lines.toTypedArray())
+    }
+
     fun print(wide: Boolean = true) {
         for (y in 0 until length) {
             for (x in 0 until width) {
@@ -56,6 +77,31 @@ class Board(input: Array<String>) {
             }
             println()
         }
+    }
+
+    fun getCluster(p: Pos): Set<Pos> {
+        val rv = mutableSetOf<Pos>()
+        val c = peek(p)
+        val q = mutableListOf(p)
+        while (q.isNotEmpty()) {
+            val cur = q.removeAt(0)
+            if (peek(cur) == c) {
+                rv.add(cur)
+                getNeighbors(cur).forEach {
+                    if (peek(it) == c && !rv.contains(it)) {
+                        q.add(it)
+                    }
+                }
+            }
+        }
+        if (rv.isEmpty()) {
+            println("cluster rv empty $p")
+            val ne = getNeighborsAll(p)
+            if (ne.filter { peek(it) == '.' }.size == 8) {
+                rv.add(p)
+            }
+        }
+        return rv
     }
 
     fun valid(p: Pos): Boolean {

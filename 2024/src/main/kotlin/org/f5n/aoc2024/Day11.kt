@@ -1,6 +1,6 @@
 package org.f5n.aoc2024
 
-class Day11b {
+class Day11 {
 	fun run(args: Array<String>, num: Long) {
 		val line2 = args[0].readLines().get(0).split(' ').map(String::toLong)
 		var line = emptyMap<Long, Long>().toMutableMap()

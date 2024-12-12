@@ -59,9 +59,11 @@ fun main(args: Array<String>) {
             d.run2(arrayOf(inputFile))
         } else if (day == "day11") {
             val d = Day11()
-            d.run(arrayOf(inputFile))
             d.run(arrayOf(inputFile), 25)
             d.run(arrayOf(inputFile), 75)
+        } else if (day == "day12") {
+            val d = Day12()
+            d.run(arrayOf(inputFile))
         }
     }.let { println(it) }
 }
