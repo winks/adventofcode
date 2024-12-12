@@ -48,7 +48,7 @@ class Board(input: Array<String>) {
         }
     }
 
-    fun from(pl: List<Pos>) : Board {
+    fun from(pl: List<Pos>, c: String = "A") : Board {
         var minx = pl.minByOrNull { it.x }!!.x
         var maxx = pl.maxByOrNull { it.x }!!.x
         var miny = pl.minByOrNull { it.y }!!.y
@@ -59,7 +59,7 @@ class Board(input: Array<String>) {
             var line = ""
             for (x in (minx-1)..(maxx+1)) {
                 line += if (pl.contains(Pos(x, y))) {
-                    "A"
+                    c
                 } else {
                     "."
                 }
@@ -82,9 +82,10 @@ class Board(input: Array<String>) {
     fun getCluster(p: Pos): Set<Pos> {
         val rv = mutableSetOf<Pos>()
         val c = peek(p)
-        val q = mutableListOf(p)
+        val q = mutableSetOf(p)
         while (q.isNotEmpty()) {
-            val cur = q.removeAt(0)
+            val cur = q.first()
+            q.remove(cur)
             if (peek(cur) == c) {
                 rv.add(cur)
                 getNeighbors(cur).forEach {
@@ -94,6 +95,7 @@ class Board(input: Array<String>) {
                 }
             }
         }
+        println("asd")
         if (rv.isEmpty()) {
             println("cluster rv empty $p")
             val ne = getNeighborsAll(p)

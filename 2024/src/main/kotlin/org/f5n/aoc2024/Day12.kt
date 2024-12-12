@@ -28,6 +28,54 @@ class Day12 {
 		}
 		return peri
 	}
+	fun run1(args: Array<String>) {
+		val lines = args[0].readLines()
+		val board = Board(lines)
+		val visited = emptySet<Pos>().toMutableSet()
+		val clusters = emptySet<Set<Pos>>().toMutableSet()
+		println("length ${board.length} width ${board.width}")
+		for (y in 0 until board.length) {
+			for (x in 0 until board.width) {
+				val pos = Pos(x, y)
+//				println(pos)
+				if (visited.contains(pos)) continue
+				val cl = board.getCluster(pos)
+//				println(cl)
+//				println(cl.size)
+				val bb = board.from(cl.toList(), board.peek(pos).toString())
+				bb.print()
+				visited.addAll(cl)
+				if (!clusters.contains(cl)) clusters.add(cl)
+			}
+			println("row $y done")
+		}
+		println("clusters: ${clusters.size}")
+		var p1 = 0
+		var p2 = 0
+		for (c in clusters) {
+			val b = board.from(c.toList())
+			val area = getArea(b)
+			val peri = getPeri(b, area)
+			var ps = peri.size
+			var ps2 = peri.size
+			peri.forEach { p ->
+				val ne = b.getNeighbors(p)
+//				println("$p ${ne.filter { b.valid(it) }}")
+//				println("$p ${ne.filter { b.valid(it) && b.peek(it) == ks[0] }}")
+				val s =  ne.filter { b.valid(it) && b.peek(it) == 'A' }.size
+				if (s > 1) {
+					ps += (s-1)
+				}
+			}
+			println("area ${area.size} peri ${ps}")
+			p1 += area.size * ps
+			p2 += area.size * ps2
+		}
+		println(clusters.size)
+		println("p1: $p1")
+		println("p2: $p2")
+
+	}
 	fun run(args: Array<String>) {
 		val lines = args[0].readLines()
 		val board = Board(lines)
