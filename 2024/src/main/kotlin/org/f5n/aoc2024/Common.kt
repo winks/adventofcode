@@ -95,9 +95,7 @@ class Board(input: Array<String>) {
                 }
             }
         }
-        println("asd")
         if (rv.isEmpty()) {
-            println("cluster rv empty $p")
             val ne = getNeighborsAll(p)
             if (ne.filter { peek(it) == '.' }.size == 8) {
                 rv.add(p)

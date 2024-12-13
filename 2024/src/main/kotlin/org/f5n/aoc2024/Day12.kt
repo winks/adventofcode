@@ -47,7 +47,6 @@ class Day12 {
 				visited.addAll(cl)
 				if (!clusters.contains(cl)) clusters.add(cl)
 			}
-			println("row $y done")
 		}
 		println("clusters: ${clusters.size}")
 		var p1 = 0
