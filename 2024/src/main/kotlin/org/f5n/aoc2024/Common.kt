@@ -7,6 +7,9 @@ import kotlin.math.abs
 fun String.readLines(): Array<String> =
     File(this).inputStream().bufferedReader().readLines().toTypedArray()
 
+fun String.readAll(): String =
+    File(this).inputStream().bufferedReader().readLines().joinToString("\n")
+
 fun String.readLinesToInt(): Array<Int> {
     val stream: InputStream = File(this).inputStream()
     val lines = mutableListOf<Int>()
