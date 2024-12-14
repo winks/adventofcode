@@ -271,6 +271,54 @@ class Board(input: Array<String>) {
         }
         return rv.toList()
     }
+
+    companion object {
+        fun fromDim(w: Long, h: Long) : Board {
+            var lines = mutableListOf<String>()
+            for (y in 0 until h) {
+                var line = ""
+                for (x in 0 until w) {
+                    line += "."
+                }
+                lines.add(line)
+            }
+            return Board(lines.toTypedArray())
+        }
+    }
+}
+
+
+class Board2<T>(w: Int, h: Int) {
+    val width = w
+    val length = h
+    var board = Array(length) { Array(width) { emptyList<T>().toMutableList() } }
+
+    enum class direction { N, E, S, W }
+    enum class directionAll { N, E, S, W, NE, SE, SW, NW }
+
+    fun peek(p: Pos): List<T> {
+        return board[p.y][p.x]
+    }
+    fun valid(p: Pos): Boolean {
+        return p.x in 0..<width && p.y in 0 ..<length
+    }
+    fun print(wide: Boolean = true) {
+        for (y in 0 until length) {
+            for (x in 0 until width) {
+                val s = board[y][x].size
+                print(if (s > 0) s else "." )
+                if (wide) print(" ")
+            }
+            println()
+        }
+    }
+    fun copyFrom(o: Board2<T>) {
+        for (y in 0 until length) {
+            for (x in 0 until width) {
+                board[y][x] = o.board[y][x].toMutableList()
+            }
+        }
+    }
 }
 
 fun <T> perms(length: Int, components: List<T>) : List<List<T>> {
