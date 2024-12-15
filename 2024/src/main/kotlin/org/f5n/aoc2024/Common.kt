@@ -348,3 +348,23 @@ fun <T> nonexhaustivePermutations(length: Int, components: List<T>): List<List<T
     if (components.isEmpty() || length <= 0) listOf(emptyList())
     else nonexhaustivePermutations(length - 1, components)
         .flatMap { sub -> components.map { sub + it } }
+
+fun findLCM(a: Long, b: Long): Long {
+    val larger = if (a > b) a else b
+    val maxLcm = a * b
+    var lcm = larger
+    while (lcm <= maxLcm) {
+        if (lcm % a == 0L && lcm % b == 0L) {
+            return lcm
+        }
+        lcm += larger
+    }
+    return maxLcm
+}
+
+fun gcd(n1: Long, n2: Long): Long {
+    if (n2 == 0L) {
+        return n1
+    }
+    return gcd(n2, n1 % n2)
+}
