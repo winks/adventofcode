@@ -319,6 +319,50 @@ class Board2<T>(w: Int, h: Int) {
             }
         }
     }
+    fun getNeighbors(p: Pos): List<Pos> {
+        val rv = mutableListOf<Pos>()
+        if (p.x > 0) {
+            rv.add(Pos(p.x - 1, p.y))
+        }
+        if (p.x < width - 1) {
+            rv.add(Pos(p.x + 1, p.y))
+        }
+        if (p.y > 0) {
+            rv.add(Pos(p.x, p.y - 1))
+        }
+        if (p.y < length - 1) {
+            rv.add(Pos(p.x, p.y + 1))
+        }
+        return rv
+    }
+    fun getDirection(p1: Pos, p2: Pos): direction {
+        if (p1.x == p2.x) {
+            if (p1.y > p2.y) {
+                return direction.N
+            } else {
+                return direction.S
+            }
+        }
+        if (p1.y == p2.y) {
+            if (p1.x > p2.x) {
+                return direction.W
+            } else {
+                return direction.E
+            }
+        }
+        return direction.N
+    }
+    companion object {
+        fun <T> from(lines: Array<String>, consFn: (Char) -> T) : Board2<T> {
+            val board = Board2<T>(lines[0].length, lines.size)
+            for (y in lines.indices) {
+                for (x in 0 until lines[0].length) {
+                    board.board[y][x] = mutableListOf(consFn(lines[y][x]))
+                }
+            }
+            return board
+        }
+    }
 }
 
 fun <T> perms(length: Int, components: List<T>) : List<List<T>> {
