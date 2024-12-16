@@ -3,7 +3,6 @@ package org.f5n.aoc2024
 typealias Robot14 = Pair<Pos, Pos>
 
 class Day14 {
-	data class Pos2(val x: Long, val y: Long)
 	fun run(args: Array<String>) {
 		val robots = args[0].readLines()
 			.map { it.split(" ") }
@@ -15,13 +14,15 @@ class Day14 {
 		val ww = 101
 		val hh = 103
 		var b = Board2<Robot14>(ww, hh)
+		var b1 = Board2<Robot14>(ww, hh)
 		var b2 = Board2<Robot14>(ww, hh)
-		b.print()
+//		b.print()
 		robots.forEach {
-			println("[$it]")
+//			println("[$it]")
 			b.board[it.first.y][it.first.x].add(it)
 		}
-		for (tick in 0 until 8000) {
+		var p2 = 0
+		for (tick in 1 until 10000) {
 			b2 = Board2<Robot14>(ww, hh)
 			for (y in 0 until b.length) {
 				for (x in 0 until b.width) {
@@ -42,49 +43,58 @@ class Day14 {
 					}
 				}
 			}
-			if (tick > 7900) {
-				println()
-				println("tick: $tick")
-				b2.print()
-
+			if (tick == 100) b1.copyFrom(b2)
+			if (tick > 7000) {
+				val x = b2.getNeighbors(Pos(35, 25)).filter { b2.board[it.y][it.x].isNotEmpty() }
+				if (x.size == 4) {
+//					println("tick: $tick")
+					for (y in 16 until 51) {
+						for (x in 19 until 50) {
+							val s = b2.board[y][x].size
+							if(s > 0) print("$s ") else print("  ")
+							p2 = tick
+						}
+						println()
+					}
+					break
+				}
 			}
 			b.copyFrom(b2)
 		}
-		println()
-		b.print()
 
-		val w2 = b.width / 2
-		val h2 = b.length / 2
-		var p1 = emptyList<Int>().toMutableList()
+		val w2 = b1.width / 2
+		val h2 = b1.length / 2
+		val p1 = emptyList<Int>().toMutableList()
 		var tmp = 0
 		for (y in 0 until h2) {
 			for (x in 0 until w2) {
-				tmp += b.board[y][x].size
+				tmp += b1.board[y][x].size
 			}
 		}
 		p1.add(tmp)
 		tmp = 0
 		for (y in 0 until h2) {
 			for (x in w2+1 until b.width) {
-				tmp += b.board[y][x].size
+				tmp += b1.board[y][x].size
 			}
 		}
 		p1.add(tmp)
 		tmp = 0
-		for (y in h2+1 until b.length) {
+		for (y in h2+1 until b1.length) {
 			for (x in 0 until w2) {
-				tmp += b.board[y][x].size
+				tmp += b1.board[y][x].size
 			}
 		}
 		p1.add(tmp)
 		tmp = 0
-		for (y in h2+1 until b.length) {
-			for (x in w2+1 until b.width) {
-				tmp += b.board[y][x].size
+		for (y in h2+1 until b1.length) {
+			for (x in w2+1 until b1.width) {
+				tmp += b1.board[y][x].size
 			}
 		}
 		p1.add(tmp)
-		println(p1)
+//		println(p1)
 		println("p1 : ${p1.reduce {a, b -> a * b}}")
+		println("p2 : ${p2}")
 	}
 }
