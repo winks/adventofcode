@@ -1,7 +1,5 @@
 package org.f5n.aoc2024
 
-import kotlin.math.abs
-
 typealias PosDir = Pair<Pos, Board2.direction>
 typealias Path = List<PosDir>
 
@@ -46,24 +44,20 @@ class Day16 {
 		val start = getMatches('S', board).first()
 		val end = getMatches('E', board).first()
 		println("start: $start end: $end")
-
 		val (cf, cost) = aStar(board, Pair(start, Board2.direction.E), end)
-//		println(cf)
-//		println(cost)
 		val lowest = low(end, cost)
-		var final = lowest.second
-		var p2l = getPath(cf, start, final)
-		println(p2l)
-		var x = senksp(board, p2l, lowest.first)
-		for (xx in x) println(xx)
+		val p2l = getPath(cf, start, lowest.second)
+//		println(p2l)
+		val x = senksp(board, p2l, lowest.first)
+//		for (xx in x) println(xx)
 		println("p1: ${lowest.first}")
 		val p2 = x.map { it.map { it.first } }.flatten().toSet().size
-		println("p2: ${x.size} / $p2")
+		println("p2: $p2")
 	}
 
-	fun getPath(cf: Map<PosDir, PosDir?>, start: Pos, final: PosDir) : List<PosDir> {
-		var p2l = emptyList<PosDir>().toMutableList()
-		var final = final
+	private fun getPath(cf: Map<PosDir, PosDir?>, start: Pos, final1: PosDir) : List<PosDir> {
+		val p2l = emptyList<PosDir>().toMutableList()
+		var final = final1
 		while (cf.containsKey(final) && cf[final] != null) {
 			p2l.add(final)
 			final = cf[final]!!
@@ -72,14 +66,13 @@ class Day16 {
 		return p2l.reversed()
 	}
 
-	fun low(end: Pos, cost: Map<PosDir, Int>): Pair<Int, PosDir> {
+	private fun low(end: Pos, cost: Map<PosDir, Int>): Pair<Int, PosDir> {
 		var lowest = 0
 		var final = Pair(end, Board2.direction.E)
 		for (dd in listOf(Board2.direction.N, Board2.direction.E, Board2.direction.S, Board2.direction.S)) {
 			var cur1 = Pair(end, dd)
 			if(cost[cur1] != null) {
 				val r = cost[cur1]!!
-//				println("co1 $dd $cur1 ${r}")
 				if (r < lowest || lowest == 0) {
 					lowest = r
 					final = cur1
@@ -89,8 +82,10 @@ class Day16 {
 		return Pair(lowest, final)
 	}
 
-	fun senksp(board: Board2<Tile>, ksp1: Path, minCost: Int) : List<Path> {
-		var found = listOf(ksp1).toMutableList()
+	// this doesn't even work with both examples (44 instead of 45), but it works with the input
+	// and yes, it's a terrible pun on Yen's k-shortest path algorithm
+	private fun senksp(board: Board2<Tile>, ksp1: Path, minCost: Int) : List<Path> {
+		val found = listOf(ksp1).toMutableList()
 
 		for (i in ksp1.indices) {
 			if (i == 0) continue
@@ -99,8 +94,8 @@ class Day16 {
 			board.board[nope.first.y][nope.first.x] = listOf(Tile('#', nope.second)).toMutableList()
 			val (cf, cost) = aStar(board, ksp1[0], ksp1[ksp1.size - 1].first)
 			board.board[nope.first.y][nope.first.x] = listOf(Tile('.', nope.second)).toMutableList()
-			var lowest = low(ksp1[ksp1.size - 1].first, cost)
-			var p = getPath(cf, ksp1[0].first, lowest.second)
+			val lowest = low(ksp1[ksp1.size - 1].first, cost)
+			val p = getPath(cf, ksp1[0].first, lowest.second)
 			if (lowest.first == minCost && !found.contains(p)) {
 				found.add(p)
 			}
@@ -108,9 +103,9 @@ class Day16 {
 		return found
 	}
 
-	fun aStar(board: Board2<Tile>, start: PosDir, end: Pos): Pair<Map<PosDir,PosDir?>, Map<PosDir, Int>> {
+	private fun aStar(board: Board2<Tile>, start: PosDir, end: Pos): Pair<Map<PosDir,PosDir?>, Map<PosDir, Int>> {
 		val frontier = mutableMapOf<Int,List<PosDir>>()
-		frontier.put(0, listOf(start))
+		frontier[0] = listOf(start)
 		val cameFrom = emptyMap<PosDir, PosDir?>().toMutableMap()
 		val costSoFar = emptyMap<PosDir, Int>().toMutableMap()
 		cameFrom[start] = null
@@ -121,7 +116,7 @@ class Day16 {
 			val currentList = frontier.remove(low)
 			val current = currentList!!.first()
 			if (currentList.size > 1) {
-				frontier.put(low, currentList.drop(1))
+				frontier[low] = currentList.drop(1)
 			}
 			if (current.first == end) {
 				break
