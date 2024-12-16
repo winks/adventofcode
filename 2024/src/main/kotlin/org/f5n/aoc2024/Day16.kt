@@ -3,6 +3,7 @@ package org.f5n.aoc2024
 import kotlin.math.abs
 
 typealias PosDir = Pair<Pos, Board2.direction>
+typealias Path = List<PosDir>
 
 class Day16 {
 	data class Tile(val value: Char, val direction: Board2.direction = Board2.direction.E)
@@ -49,22 +50,62 @@ class Day16 {
 		val (cf, cost) = aStar(board, Pair(start, Board2.direction.E), end)
 //		println(cf)
 //		println(cost)
+		val lowest = low(end, cost)
+		var final = lowest.second
+		var p2l = getPath(cf, start, final)
+		println(p2l)
+		var x = senksp(board, p2l, lowest.first)
+		for (xx in x) println(xx)
+		println("p1: ${lowest.first}")
+		val p2 = x.map { it.map { it.first } }.flatten().toSet().size
+		println("p2: ${x.size} / $p2")
+	}
+
+	fun getPath(cf: Map<PosDir, PosDir?>, start: Pos, final: PosDir) : List<PosDir> {
+		var p2l = emptyList<PosDir>().toMutableList()
+		var final = final
+		while (cf.containsKey(final) && cf[final] != null) {
+			p2l.add(final)
+			final = cf[final]!!
+		}
+		p2l.add(Pair(start, Board2.direction.E))
+		return p2l.reversed()
+	}
+
+	fun low(end: Pos, cost: Map<PosDir, Int>): Pair<Int, PosDir> {
+		var lowest = 0
+		var final = Pair(end, Board2.direction.E)
 		for (dd in listOf(Board2.direction.N, Board2.direction.E, Board2.direction.S, Board2.direction.S)) {
 			var cur1 = Pair(end, dd)
 			if(cost[cur1] != null) {
 				val r = cost[cur1]!!
-				println("co1 $dd $cur1 ${r}")
-//				while (cf.containsKey(cur1) && cf[cur1] != null) {
-//					println("$cur1 <- ${cf[cur1]} (${cost[cur1]})")
-//					cur1 = cf[cur1]!!
-//				}
-//				println("co1 $dd ${r}")
+//				println("co1 $dd $cur1 ${r}")
+				if (r < lowest || lowest == 0) {
+					lowest = r
+					final = cur1
+				}
 			}
 		}
+		return Pair(lowest, final)
 	}
 
-	fun heuristic(p1: Pos, p2: Pos): Int {
-		return abs(p1.x - p2.x) + abs(p1.y - p2.y)
+	fun senksp(board: Board2<Tile>, ksp1: Path, minCost: Int) : List<Path> {
+		var found = listOf(ksp1).toMutableList()
+
+		for (i in ksp1.indices) {
+			if (i == 0) continue
+			if (i == ksp1.size - 1) continue
+			val nope = ksp1[i]
+			board.board[nope.first.y][nope.first.x] = listOf(Tile('#', nope.second)).toMutableList()
+			val (cf, cost) = aStar(board, ksp1[0], ksp1[ksp1.size - 1].first)
+			board.board[nope.first.y][nope.first.x] = listOf(Tile('.', nope.second)).toMutableList()
+			var lowest = low(ksp1[ksp1.size - 1].first, cost)
+			var p = getPath(cf, ksp1[0].first, lowest.second)
+			if (lowest.first == minCost && !found.contains(p)) {
+				found.add(p)
+			}
+		}
+		return found
 	}
 
 	fun aStar(board: Board2<Tile>, start: PosDir, end: Pos): Pair<Map<PosDir,PosDir?>, Map<PosDir, Int>> {
