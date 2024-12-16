@@ -113,7 +113,7 @@ class Day15 {
                     board.board[nxt.y][nxt.x] = '@'
                 }
                 UP, DOWN -> {
-                    println("free $free - robot $robot")
+//                    println("free $free - robot $robot")
                     val todo = mutableSetOf(robot)
                     var loop_start = if (step == UP) robot.y-1 else robot.y+1
                     var loop_end = if (step == UP) 0 else board.length
@@ -121,52 +121,69 @@ class Day15 {
                     var yy = loop_start
                     while (yy != loop_end) {
                         val li = todo.toList().sortedBy { it.x }.filter { it.y == yy+offset }
-                        println("prep: $yy ($loop_start, $loop_end) li $li")
+//                        println("prep: $yy ($loop_start, $loop_end) li $li")
                         if (abs(yy - robot.y) == 1) {
                             if (board.board[yy][robot.x] == BOXL) {
-                                println(12301)
                                 todo.add(Pos(robot.x, yy))
                             } else {
-                                println(12302)
                                 todo.add(Pos(robot.x-1, yy))
                             }
                             todo.remove(robot)
-                            println("robot todo $todo")
+//                            println("robot todo $todo")
                         } else {
                             for(ll in li) {
-                                println("${ll} : $li")
                                 // []
                                 // []
                                 if (board.board[yy][ll.x] == BOXL) {
-                                    println(9982)
                                     todo.add(Pos(ll.x, yy))
                                 }
                                 // []
                                 //  []
                                 if (board.board[yy][ll.x] == BOXR ) {
-                                    println(9983)
                                     todo.add(Pos(ll.x-1, yy))
                                 }
                                 //  []
                                 // []
                                 if (board.board[yy][ll.x+1] == BOXL) {
-                                    println(9984)
                                     todo.add(Pos(ll.x+1, yy))
                                 }
                             }
                         }
                         if (step == UP) yy-- else yy++
                     }
-                    val d1 = todo.sortedBy { it.y }.first().y
-                    val d2 = todo.sortedBy { it.y }.last().y
-                    println("end todo $todo diff:${abs(d1-d2)}")
+//                    println("end todo $todo")
+                    // start test run
+                    var canDo = true
                     loop_start = if (step == DOWN) board.length else 0
                     loop_end = if (step == DOWN) robot.y+1 else robot.y-offset
                     yy = loop_start
                     while (yy != loop_end) {
-                        println("print: $yy ($loop_start, $loop_end)")
                         val li = todo.toList().filter { it.y == yy+offset }
-                        println("li $li")
+                        for(a in li) {
+                            if (board.board[yy][a.x] == WALL || board.board[yy][a.x+1] == WALL) {
+                                println("abort1: wall at ${a.x}, ${yy} during $step")
+                                canDo = false
+                            }
+                            if (board.board[yy][a.x+1] == BOXL && !todo.contains(Pos(a.x+1, yy))) {
+                                println("abort2: box at ${a.x+1}, ${yy} during $step")
+                                canDo = false
+                            }
+                            if (board.board[yy][a.x] == BOXR && !todo.contains(Pos(a.x-1, yy))) {
+                                println("abort3: box at ${a.x+1}, ${yy} during $step")
+                                canDo = false
+                            }
+                        }
+                        if (step == UP) yy++ else yy--
+                    }
+                    if (!canDo) return board
+                    // end test run
+                    loop_start = if (step == DOWN) board.length else 0
+                    loop_end = if (step == DOWN) robot.y+1 else robot.y-offset
+                    yy = loop_start
+                    while (yy != loop_end) {
+//                        println("print: $yy ($loop_start, $loop_end)")
+                        val li = todo.toList().filter { it.y == yy+offset }
+//                        println("li $li")
                         for(a in li) {
                             if (board.board[yy][a.x] == WALL || board.board[yy][a.x+1] == WALL) {
                                 println("abort1: wall at ${a.x}, ${yy} during $step")
@@ -193,12 +210,10 @@ class Day15 {
                     board.board[nxt.y][nxt.x] = '@'
                 }
                 else -> {
-
                 }
             }
             return board
         }
-        return board
     }
 
     fun run(args: Array<String>) {
@@ -227,12 +242,11 @@ class Day15 {
         var board = Board(line.split("\n").toTypedArray())
         board.print()
         var i = 0
-        for (step in lines[1].replace("\n", "")) {
-            println("step: $step step $i")
+        val steps = lines[1].replace("\n", "")
+        println("steps: ${steps.length}")
+        for (step in steps) {
+//            println("step: $step step $i")
             board = move(board, step, ::box2)
-            println()
-            // 1558309 too low
-            // 1548973 too low
             i++
         }
         board.print()
