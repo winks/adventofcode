@@ -271,6 +271,15 @@ class Board(input: Array<String>) {
         }
         return rv.toList()
     }
+    fun copy() :Board {
+        val b2 = Board.fromDim(width.toLong(), length.toLong())
+        for (y in 0 until length) {
+            for (x in 0 until width) {
+                b2.board[y][x] = this.board[y][x]
+            }
+        }
+        return b2
+    }
 
     companion object {
         fun fromDim(w: Long, h: Long) : Board {
