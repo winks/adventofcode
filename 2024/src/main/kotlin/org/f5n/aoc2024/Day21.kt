@@ -81,30 +81,37 @@ class Day21 {
                     x2accAll2.add(y)
                 }
             }
+            xacc.add(x2accAll2)
 //            println("a2 ${x2accAll2.size} ${x2accAll2.first().size}")
-            var s3 = dpad.getMatches(vEnter).first()
-            val min = x2accAll2.minOfOrNull { it.size } ?: 0
-            x2accAll2.forEach { x2acc ->
-                val mut3 = emptyList<List<List<Direction>>>().toMutableList()
-                if (x2acc.size == min) {
-                    x2acc.forEach { l3 ->
-                        val e3 = dpad.getMatches(vals[l3.toString()]!!).first()
-                        val (cf3, co3) = aStar(dpad, s3, e3)
-                        val x3 = co3[e3]!! + 1
-                        val p3 = getPath(cf3, s3, e3)
-                        val ksp3 = senksp(keypad, p3, x3).toMutableList()
-                        s3 = e3
-                        val ksp33 = emptyList<List<Direction>>().toMutableList()
-                        for (xp in ksp3.indices) {
-                            val xpx = ksp3[xp].windowed(2)
-                                .map { this.translate(it[0], it[1], keypad) }
-                                .plus(Direction.ENTER)
-                            ksp33.add(xpx)
+            for (idx in 1..1) {
+                var s3 = dpad.getMatches(vEnter).first()
+                val min = xacc[idx-1].minOfOrNull { it.size } ?: 0
+                println("idx $idx min $min")
+                xacc[idx-1].forEach { x2acc ->
+                    val mut3 = emptyList<List<List<Direction>>>().toMutableList()
+                    if (x2acc.size == min) {
+                        x2acc.forEach { l3 ->
+                            val e3 = dpad.getMatches(vals[l3.toString()]!!).first()
+                            val (cf3, co3) = aStar(dpad, s3, e3)
+                            val x3 = co3[e3]!! + 1
+                            val p3 = getPath(cf3, s3, e3)
+                            val ksp3 = senksp(keypad, p3, x3).toMutableList()
+                            s3 = e3
+                            val ksp33 = emptyList<List<Direction>>().toMutableList()
+                            for (xp in ksp3.indices) {
+                                val xpx = ksp3[xp].windowed(2)
+                                    .map { this.translate(it[0], it[1], keypad) }
+                                    .plus(Direction.ENTER)
+                                ksp33.add(xpx)
+                            }
+//                            println("ksp33 ${ksp33.size} ${ksp33.first().size}")
+                            mut3.add(ksp33)
                         }
-                        mut3.add(ksp33)
-                    }
-                    for (x in perm(mut3)) {
-                        x3accAll2.add(x.flatten())
+                        println("mut3 ${mut3.size} ${mut3.first().size}")
+                        println(mut3.first())
+                        for (x in perm(mut3.toList())) {
+                            x3accAll2.add(x.flatten())
+                        }
                     }
                 }
             }
@@ -124,26 +131,6 @@ class Day21 {
         println("p1: $p1")
     }
 
-    fun shorten(pp: List<Direction>, left: Boolean = true): List<Direction> {
-        val d = listOf(Direction.LEFT, Direction.DOWN, Direction.LEFT, Direction.ENTER)
-        val u = listOf(Direction.LEFT, Direction.UP, Direction.LEFT, Direction.ENTER)
-        val u2 = listOf(Direction.LEFT, Direction.UP, Direction.LEFT, Direction.UP, Direction.ENTER)
-        val u3 = listOf(Direction.LEFT, Direction.UP, Direction.ENTER)
-        if (pp == d) {
-            return listOf(Direction.LEFT, Direction.LEFT, Direction.DOWN, Direction.ENTER)
-        }
-        if (pp == u) {
-            return listOf(Direction.UP, Direction.LEFT, Direction.LEFT, Direction.ENTER)
-        }
-        if (pp == u2) {
-            return listOf(Direction.UP, Direction.UP, Direction.LEFT, Direction.LEFT, Direction.ENTER)
-        }
-        if (pp == u3) {
-            return listOf(Direction.UP, Direction.LEFT, Direction.ENTER)
-        }
-        return pp
-    }
-
     fun pp(x: List<Direction>): String {
         var s = ""
         for (xx in x) {
@@ -152,7 +139,7 @@ class Day21 {
         return s
     }
 
-    fun <T> perm(x: List<List<T>>): List<List<T>> {
+    private fun <T> perm(x: List<List<T>>): List<List<T>> {
         val len = x.size // 3
         val wid = x.maxOfOrNull { it.size } ?: 0 // 4
         val combo = x.map { it.size }.reduce(Int::times) // 4 * 1 * 3
