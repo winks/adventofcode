@@ -98,6 +98,9 @@ fun main(args: Array<String>) {
         } else if (day == "day22") {
             val d = Day22()
             d.run(arrayOf(inputFile))
+        } else if (day == "day23") {
+            val d = Day23()
+            d.run(arrayOf(inputFile))
         }
     }.let { println(it) }
 }
