@@ -4,8 +4,8 @@ class Day23 {
     fun run(args: Array<String>) {
         val lines = args[0].readLines().map { it.split("-") }
         val dir = emptyMap<String, MutableSet<String>>().toMutableMap()
-        val dir2 = emptyMap<Set<String>, Int>().toMutableMap()
-        val all = emptySet<String>().toMutableSet()
+        val dirSet = emptyMap<Set<String>, Int>().toMutableMap()
+        val dirSet2 = emptyMap<Set<String>, Int>().toMutableMap()
         lines.forEach {
             if (!dir.containsKey(it[0])) {
                 dir[it[0]] = emptySet<String>().toMutableSet()
@@ -15,45 +15,25 @@ class Day23 {
             }
             dir[it[0]]!!.add(it[1])
             dir[it[1]]!!.add(it[0])
-            dir2[setOf(it[0], it[1])] = 1
-            all.addAll(it)
+            dirSet[setOf(it[0], it[1])] = 1
         }
 
-        val tri = emptySet<Set<String>>().toMutableSet()
-        for (k1 in all) {
-            for (k2 in all) {
-                if (k1 == k2) continue
-                for (k3 in all) {
-                    if (k1 == k3) continue
+        for (k1 in dir.keys) {
+            val v = dir[k1]!!.toList()
+            for (k2 in v.indices) {
+                for (k3 in v.indices) {
                     if (k2 == k3) continue
-                    if (dir2.containsKey(setOf(k1, k2)) &&
-                        dir2.containsKey(setOf(k2, k3)) &&
-                        dir2.containsKey(setOf(k1, k3))
-                    ) {
-                        tri.add(setOf(k1, k2, k3))
+                    val d = setOf(v[k2], v[k3])
+                    if (dirSet.containsKey(d)) {
+                        dirSet2[d.plus(k1)] = 1
                     }
                 }
             }
         }
-        val p1 = tri.filter { it.any { x -> x.startsWith("t") } }
-        val p2 = bk(emptySet(), all, emptySet(), dir)
+        val p1 = dirSet2.keys.toSet().filter { it.any { it.startsWith("t") } }
         println("p1 ${p1.size}")
+        val p2 = bk(emptySet(), dir.keys, emptySet(), dir)
         println("p2 ${p2.maxByOrNull { it.size }?.sorted()?.joinToString(",")}")
-    }
-    private fun dfs(board: Map<String, Set<String>>, p: String, visited: MutableSet<String>): MutableSet<String> {
-        visited.add(p)
-        val ne = board[p]!!.filter { !visited.contains(it) }
-        if (p == "co") println("$p 1 $ne - [$visited]")
-        for (n in ne) {
-            var others = board[n]!!.filter { it != p }
-            //others = ne.filter { it != p }
-            if (p == "co") println("$p $n / $ne - $others - [$visited]")
-            if (board[n]!!.contains(p) && others.intersect(ne).size > 1) {
-                visited.add(n)
-            }
-            else dfs(board, n, visited)
-        }
-        return visited
     }
     // Bron-Kerbosch
     private fun bk(R: Set<String>, P: Set<String>, X: Set<String>, m: Map<String, Set<String>>) : Set<Set<String>> {
