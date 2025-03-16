@@ -5,4 +5,4 @@ authors = ["Florian Anderiasch <fa@art-core.org>"]
 edition = "2018"
 
 [dependencies]
-regex = "1.3.1"
+regex = "1.5.5"
