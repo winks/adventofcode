@@ -2,9 +2,14 @@
 
 My solutions (without inputs) for [Advent of Code](https://adventofcode.com/)
 
+## 2025
+
+Sixth year. Original plan was Gleam, but due to time constraints it's mostly Python for now.
+Some Gleam code was written though.
+
 ## 2024
 
-Fifth year, Kotlin, in progress
+Fifth year, Kotlin
 
 ## 2023
 
@@ -20,7 +25,7 @@ Third year. No special topic, giving Go another spin. 44 stars, 2 missing days.
 
 ## 2020
 
-My second year. This year I wanted to invest less time so I decided on one language (Python 3), 
+My second year. This year I wanted to invest less time so I decided on one language (Python 3),
 with the option to redo all of them in a second language, later. 44 stars, no missing days.
 
 ## 2019
