@@ -6,6 +6,7 @@ import gleam/list
 import gleam/string
 import day01
 import day02
+import day04
 import day05
 import day06
 
@@ -15,6 +16,8 @@ pub fn main() {
     ["day01b", file_name] -> day01.day01b(read_lines_strip(file_name))
     ["day02a", file_name] -> day02.day02a(read_lines_strip(file_name))
     ["day02b", file_name] -> day02.day02b(read_lines_strip(file_name))
+    ["day04a", file_name] -> day04.day04a(read_lines_strip(file_name))
+    ["day04b", file_name] -> day04.day04b(read_lines_strip(file_name))
     ["day05a", file_name] -> day05.day05a(read_lines_strip(file_name))
     ["day05b", file_name] -> day05.day05b(read_lines_strip(file_name))
     ["day06a", file_name] -> day06.day06a(read_lines_nocrlf(file_name))
