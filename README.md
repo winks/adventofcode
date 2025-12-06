@@ -7,6 +7,17 @@ My solutions (without inputs) for [Advent of Code](https://adventofcode.com/)
 Sixth year. Original plan was Gleam, but due to time constraints it's mostly Python for now.
 Some Gleam code was written though.
 
+| Day | Python | Python | Gleam | Gleam |
+| Day | P 1    | P2     | P1    | P2    |
+| - | - | - | - | - |
+| 1 | x | x | x | - |
+| 2 | x | x | x | - |
+| 3 | x | - | - | - |
+| 4 | x | x | - | - |
+| 5 | x | x | x | - |
+| 6 | x | x | x | x |
+
+
 ## 2024
 
 Fifth year, Kotlin
