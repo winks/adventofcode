@@ -16,6 +16,7 @@ Some Gleam code was written though.
 | 5 | x | x | x | x |
 | 6 | x | x | x | x |
 | 7 | x | x | - | - |
+| 8 | x | x | - | - |
 
 
 ## 2024
