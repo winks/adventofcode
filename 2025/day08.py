@@ -21,7 +21,7 @@ for line in lines:
     sp = line.split(',')
     p = list(map(lambda x: int(x), sp))
     pts.append(tuple(p))
-print(pts)
+#print(pts)
 
 
 mx = 1000
