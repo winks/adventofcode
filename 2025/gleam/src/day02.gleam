@@ -4,10 +4,10 @@ import gleam/regexp
 import gleam/string
 
 pub fn day02a(lines: List(String)) {
-  echo lines
+  //echo lines
   let assert Ok(line) = list.first(lines)
   let parts = string.split(line, on: ",")
-  echo parts
+  //echo parts
   echo a1(parts, 0)
   Nil
 }

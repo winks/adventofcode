@@ -91,7 +91,7 @@ fn run1(maze, y, x, x0, acc) {
 
 pub fn day04a(lines: List(String)) {
   let maze = list.reverse(split(lines, []))
-  pp(maze)
+  //pp(maze)
   let assert Ok(fx) = list.first(maze)
   let y = list.length(maze) - 1
   let x = list.length(fx) - 1
