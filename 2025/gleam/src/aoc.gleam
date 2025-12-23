@@ -1,17 +1,22 @@
 import argv
 import file_streams/file_stream
 import file_streams/text_encoding
+import gleam/float
 import gleam/io
 import gleam/list
 import gleam/string
+import gleam/time/duration
+import gleam/time/timestamp
 import day01
 import day02
 import day04
 import day05
 import day06
+import web
 
 pub fn main() {
-  case argv.load().arguments {
+  let rstart = start()
+  let rv = case argv.load().arguments {
     ["day01a", file_name] -> day01.day01a(read_lines_strip(file_name))
     ["day01b", file_name] -> day01.day01b(read_lines_strip(file_name))
     ["day02a", file_name] -> day02.day02a(read_lines_strip(file_name))
@@ -22,8 +27,18 @@ pub fn main() {
     ["day05b", file_name] -> day05.day05b(read_lines_strip(file_name))
     ["day06a", file_name] -> day06.day06a(read_lines_nocrlf(file_name))
     ["day06b", file_name] -> day06.day06b(read_lines_nocrlf(file_name))
-    _ -> io.println("Usage: aoc dayXX FILE")
+    ["web"] -> {
+      web.run()
+      ""
+    }
+    _ -> {
+      io.println("Usage: aoc dayXX FILE\n       aoc web")
+      ""
+    }
   }
+  let rstop = stop(rstart)
+  io.println(float.to_string(rstop) <> " s")
+  io.println(rv)
 }
 
 fn read_acc(fs, acc, strip) {
@@ -57,3 +72,14 @@ fn read_lines_strip(filename:String) -> List(String) {
 //fn read_lines(filename:String) -> List(String) {
 //  read_lines_x(filename, 0)
 //}
+
+fn start() -> timestamp.Timestamp {
+  let now = timestamp.system_time()
+  now
+}
+
+fn stop(ts: timestamp.Timestamp) {
+  let now = timestamp.system_time()
+  echo duration.to_iso8601_string(timestamp.difference(ts, now))
+  duration.to_seconds(timestamp.difference(ts, now))
+}

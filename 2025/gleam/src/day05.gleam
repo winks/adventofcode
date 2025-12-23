@@ -43,8 +43,7 @@ pub fn day05a(lines: List(String)) {
     a
   })
 
-  echo list.length(list.unique(h1(nums2, r2, [])))
-  Nil
+  int.to_string(list.length(list.unique(h1(nums2, r2, []))))
 }
 
 fn bb(lst, acc) {
@@ -102,6 +101,5 @@ pub fn day05b(lines: List(String)) {
     let #(a,b) = x
     b - a + 1
   })
-  echo list.fold(rv2, 0, fn(acc, x) { acc + x})
-  Nil
+  int.to_string(list.fold(rv2, 0, fn(acc, x) { acc + x }))
 }

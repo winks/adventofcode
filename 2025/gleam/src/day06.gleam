@@ -96,8 +96,7 @@ pub fn day06a(lines: List(String)) {
   let hx = list.reverse(h2(cols, ops, []))
   let hy = h3(hx, ops, [])
 
-  echo list.fold(hy, 0, fn(acc, a) { acc + a})
-  Nil
+  int.to_string(list.fold(hy, 0, fn(acc, a) { acc + a }))
 }
 
 fn gb(lst, acc, idx) {
@@ -140,6 +139,5 @@ pub fn day06b(lines: List(String)) {
   let hz = list.reverse(get_slice_b(hx, []))
   let hy = h3(hz, ops, [])
 
-  echo list.fold(hy, 0, fn(acc, a) { acc + a})
-  Nil
+  int.to_string(list.fold(hy, 0, fn(acc, a) { acc + a }))
 }

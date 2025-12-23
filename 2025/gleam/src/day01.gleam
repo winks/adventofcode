@@ -3,41 +3,37 @@ import gleam/list
 import gleam/string
 
 pub fn day01a(lines: List(String)) {
-  let rv1 = h01(lines, 50, 0)
-  echo rv1
-  Nil
+  int.to_string(aa(lines, 50, 0))
 }
 
 pub fn day01b(lines: List(String)) {
-  let rv = h01b(lines, 50, 0)
-  echo rv
-  Nil
+  int.to_string(bb(lines, 50, 0))
 }
 
-fn hh01up(cur: Int, num: Int, r: Int) {
+fn h2b_up(cur: Int, num: Int, r: Int) {
   //echo [cur, num, r]
   case cur, num {
     100, 0 -> [0, r+1]
     0, 0   -> [0, r+1]
     _, 0   -> [cur, r]
-    100, _ -> hh01up(0, num, r)
-    0, _   -> hh01up(1, num-1, r+1)
-    _, _   -> hh01up(cur+1, num-1, r)
+    100, _ -> h2b_up(0, num, r)
+    0, _   -> h2b_up(1, num-1, r+1)
+    _, _   -> h2b_up(cur+1, num-1, r)
   }
 }
-fn hh01dn(cur: Int, num: Int, r: Int) {
+fn h2b_dn(cur: Int, num: Int, r: Int) {
   //echo [cur, num, r]
   case cur, num {
     -100, 0 -> [0, r+1]
     0, 0    -> [0, r+1]
     _, 0    -> [cur, r]
-    -100, _ -> hh01dn(0, num, r)
-    0, _    -> hh01dn(-1, num+1, r+1)
-    _, _    -> hh01dn(cur-1, num+1, r)
+    -100, _ -> h2b_dn(0, num, r)
+    0, _    -> h2b_dn(-1, num+1, r+1)
+    _, _    -> h2b_dn(cur-1, num+1, r)
   }
 }
 
-fn h01b(lst: List(String), cur: Int, rv: Int) {
+fn bb(lst: List(String), cur: Int, rv: Int) {
   case lst {
     [] -> rv
     _ -> {
@@ -48,8 +44,8 @@ fn h01b(lst: List(String), cur: Int, rv: Int) {
       echo lst
       echo ed
       let change = case string.first(hd) {
-        Ok("R") -> hh01up(cur, ed, rv)
-        Ok("L") -> hh01dn(cur, 0 - ed, rv)
+        Ok("R") -> h2b_up(cur, ed, rv)
+        Ok("L") -> h2b_dn(cur, 0 - ed, rv)
         _ -> [0, 0]
       }
       echo change
@@ -58,23 +54,23 @@ fn h01b(lst: List(String), cur: Int, rv: Int) {
       let assert Ok(rv2) = list.first(rv22)
 
 
-      h01b(tl, c2, rv2)
+      bb(tl, c2, rv2)
     }
   }
 }
 
-fn hh01(n: Int, r: Int) {
+fn aa2(n: Int, r: Int) {
   case n {
-    x if x > 100 -> hh01(n-100, r)
-    y if y < 0 -> hh01(n+100, r)
+    x if x > 100 -> aa2(n-100, r)
+    y if y < 0 -> aa2(n+100, r)
     z0 if z0 == 0 -> [0, r+1]
-    z1 if z1 == 100 -> hh01(0, r)
-    z2 if z2 == -100 -> hh01(0, r)
+    z1 if z1 == 100 -> aa2(0, r)
+    z2 if z2 == -100 -> aa2(0, r)
     _ -> [n, r]
   }
 }
 
-fn h01(lst: List(String), s: Int, rv: Int) {
+fn aa(lst: List(String), s: Int, rv: Int) {
   case lst {
     [] -> rv
     _ -> {
@@ -88,14 +84,11 @@ fn h01(lst: List(String), s: Int, rv: Int) {
         Ok("L") -> s - ed2
         _ -> 0
       }
-      let h = hh01(n, 0)
-      let assert Ok(n2) = list.first(h)
+      let h = aa2(n, 0)
       let assert Ok(rv11) = list.rest(h)
       let assert Ok(rv1) = list.first(rv11)
-      echo [n, n2, rv1]
-      echo tl
 
-      h01(tl, n, rv+rv1)
+      aa(tl, n, rv+rv1)
     }
   }
 }

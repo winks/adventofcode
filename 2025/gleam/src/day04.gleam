@@ -1,4 +1,4 @@
-//import gleam/int
+import gleam/int
 import gleam/io
 import gleam/list
 import gleam/string
@@ -96,10 +96,9 @@ pub fn day04a(lines: List(String)) {
   let y = list.length(maze) - 1
   let x = list.length(fx) - 1
   let r = run1(maze, y, x, x, 0)
-  echo r
-  Nil
+  int.to_string(r)
 }
 
 pub fn day04b(_lines: List(String)) {
-  Nil
+  ""
 }
