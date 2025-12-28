@@ -35,6 +35,18 @@ def a(line, start):
     acc = map(lambda a: int(a), acc.keys())
     return sorted(acc)[-1]
 
+def b(bank, k):
+    pos = 0
+    rv = []
+    for rem in range(k, 0, -1):
+        end = len(bank) - rem + 1
+        top = max(bank[pos:end])
+        b2 = bank[pos:end]
+        pos = bank.index(top, pos, end) + 1
+        rv.append(top)
+        print(b2, top, pos, end)
+    return int(''.join(map(lambda x: str(x), rv)))
+
 if part1:
     rv1 = 0
     for line in lines:
@@ -44,4 +56,10 @@ if part1:
         rv1 += int(m)
     print(rv1)
 else:
+    rv2 = 0
+    for line in lines:
+        bank = [int(n) for n in line]
+        #bx = b(bank, 12)
+        bx = b(bank, 2)
+        rv2 += bx
     print(rv2)

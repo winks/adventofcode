@@ -1,18 +1,18 @@
 import gleam/int
-import gleam/io
+//import gleam/io
 import gleam/list
 import gleam/string
 
-fn pp(m) {
-  case list.first(m) {
-    Error(_) -> Nil
-    Ok(line) -> {
-      io.println(list.fold(line, "", fn(acc, x) { acc <> x}))
-      let assert Ok(r) = list.rest(m)
-      pp(r)
-    }
-  }
-}
+//fn pp(m) {
+//  case list.first(m) {
+//    Error(_) -> Nil
+//    Ok(line) -> {
+//      io.println(list.fold(line, "", fn(acc, x) { acc <> x}))
+//      let assert Ok(r) = list.rest(m)
+//      pp(r)
+//    }
+//  }
+//}
 
 fn split(lines, acc) {
   case list.first(lines) {

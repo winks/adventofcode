@@ -10,11 +10,12 @@ import multipart_form
 import multipart_form/field
 import day01
 import day02
+import day03
 import day04
 import day05
 import day06
 
-const days = ["01a", "02a", "04a", "05a", "05b", "06a", "06b"]
+const days = ["01a", "02a", "03a", "03b", "04a", "05a", "05b", "06a", "06b"]
 
 const index = "<html>
 <head>
@@ -100,6 +101,8 @@ fn handle_form(req: Request(Connection)) -> Response(ResponseData) {
         "day01b" -> day01.day01b(list.map(lines(txt), string.trim))
         "day02a" -> day02.day02a(list.map(lines(txt), string.trim))
         "day02b" -> day02.day02b(list.map(lines(txt), string.trim))
+        "day03a" -> day03.day03a(list.map(lines(txt), string.trim))
+        "day03b" -> day03.day03b(list.map(lines(txt), string.trim))
         "day04a" -> day04.day04a(list.map(lines(txt), string.trim))
         "day04b" -> day04.day04b(list.map(lines(txt), string.trim))
         "day05a" -> day05.day05a(list.map(lines(txt), string.trim))
