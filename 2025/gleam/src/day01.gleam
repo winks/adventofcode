@@ -41,18 +41,17 @@ fn bb(lst: List(String), cur: Int, rv: Int) {
       let assert Ok(tl) = list.rest(lst)
       let len = string.length(hd) - 1
       let assert Ok(ed) = int.parse(string.slice(from: hd, at_index: 1, length: len))
-      echo lst
-      echo ed
+      //echo lst
+      //echo ed
       let change = case string.first(hd) {
         Ok("R") -> h2b_up(cur, ed, rv)
         Ok("L") -> h2b_dn(cur, 0 - ed, rv)
         _ -> [0, 0]
       }
-      echo change
+      //echo change
       let assert Ok(c2) = list.first(change)
       let assert Ok(rv22) = list.rest(change)
       let assert Ok(rv2) = list.first(rv22)
-
 
       bb(tl, c2, rv2)
     }
