@@ -14,8 +14,9 @@ import day03
 import day04
 import day05
 import day06
+import day12
 
-const days = ["01a", "02a", "03a", "03b", "04a", "05a", "05b", "06a", "06b"]
+const days = ["01a", "02a", "03a", "03b", "04a", "05a", "05b", "06a", "06b", "12a"]
 
 const index = "<html>
 <head>
@@ -109,6 +110,7 @@ fn handle_form(req: Request(Connection)) -> Response(ResponseData) {
         "day05b" -> day05.day05b(list.map(lines(txt), string.trim))
         "day06a" -> day06.day06a(lines(txt))
         "day06b" -> day06.day06b(lines(txt))
+        "day12a" -> day12.day12a(lines(txt))
         _ -> ""
       }
     }

@@ -11,7 +11,7 @@ Some Gleam code was written though.
 | - | - | - | - | - |
 | 1 | x | x | x | - |
 | 2 | x | x | x | - |
-| 3 | x | - | - | - |
+| 3 | x | x | x | - |
 | 4 | x | x | x | - |
 | 5 | x | x | x | x |
 | 6 | x | x | x | x |
@@ -20,7 +20,7 @@ Some Gleam code was written though.
 | 9 | x | x | - | - |
 | 10 | x | x | - | - |
 | 11 | x | x | - | - |
-| 12 | x | . | - | . |
+| 12 | x | . | x | . |
 
 
 ## 2024

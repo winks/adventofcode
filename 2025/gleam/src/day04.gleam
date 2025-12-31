@@ -1,7 +1,20 @@
 import gleam/int
-//import gleam/io
 import gleam/list
 import gleam/string
+
+pub fn day04a(lines: List(String)) {
+  let maze = list.reverse(split(lines, []))
+  //pp(maze)
+  let assert Ok(fx) = list.first(maze)
+  let y = list.length(maze) - 1
+  let x = list.length(fx) - 1
+  let r = run1(maze, y, x, x, 0)
+  int.to_string(r)
+}
+
+pub fn day04b(_lines: List(String)) {
+  todo
+}
 
 //fn pp(m) {
 //  case list.first(m) {
@@ -87,18 +100,4 @@ fn run1(maze, y, x, x0, acc) {
     0, _ -> run1(maze, y,   x-1, x0, a)
     _, _ -> run1(maze, y,   x-1, x0, a)
   }
-}
-
-pub fn day04a(lines: List(String)) {
-  let maze = list.reverse(split(lines, []))
-  //pp(maze)
-  let assert Ok(fx) = list.first(maze)
-  let y = list.length(maze) - 1
-  let x = list.length(fx) - 1
-  let r = run1(maze, y, x, x, 0)
-  int.to_string(r)
-}
-
-pub fn day04b(_lines: List(String)) {
-  ""
 }

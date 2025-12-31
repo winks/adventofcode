@@ -1,7 +1,31 @@
 import gleam/int
-//import gleam/io
 import gleam/list
 import gleam/string
+
+pub fn day03a(lines: List(String)) {
+  let lines = list.map(lines, fn(x) {
+    list.map(string.split(x, ""), fn(y) {
+      let assert Ok(z) = int.parse(y)
+      z
+    })
+  })
+  let r11 = b(lines, 2, [])
+  let assert Ok(r1) = list.reduce(r11, fn(acc, x) { acc + x })
+  int.to_string(r1)
+}
+
+pub fn day03b(lines: List(String)) {
+  let lines = list.map(lines, fn(x) {
+    list.map(string.split(x, ""), fn(y) {
+      let assert Ok(z) = int.parse(y)
+      z
+    })
+  })
+  let r11 = b(lines, 12, [])
+  let assert Ok(r1) = list.reduce(r11, fn(acc, x) { acc + x })
+  //result is wrong
+  int.to_string(r1)
+}
 
 fn b2(bank: List(Int), idx: Int, pos: Int, acc: List(Int)) -> List(Int) {
   case idx {
@@ -30,28 +54,4 @@ fn b(banks: List(List(Int)), k: Int, acc: List(Int)) -> List(Int) {
       b(tl, k, list.append(acc, [x]))
     }
   }
-}
-
-pub fn day03a(lines: List(String)) {
-  let lines = list.map(lines, fn(x) {
-    list.map(string.split(x, ""), fn(y) {
-      let assert Ok(z) = int.parse(y)
-      z
-    })
-  })
-  let r11 = b(lines, 2, [])
-  let assert Ok(r1) = list.reduce(r11, fn(acc, x) { acc + x })
-  int.to_string(r1)
-}
-
-pub fn day03b(lines: List(String)) {
-  let lines = list.map(lines, fn(x) {
-    list.map(string.split(x, ""), fn(y) {
-      let assert Ok(z) = int.parse(y)
-      z
-    })
-  })
-  let r11 = b(lines, 12, [])
-  let assert Ok(r1) = list.reduce(r11, fn(acc, x) { acc + x })
-  int.to_string(r1)
 }

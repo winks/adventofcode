@@ -1,8 +1,39 @@
 import gleam/int
-//import gleam/io
 import gleam/list
-//import gleam/regexp
 import gleam/string
+
+pub fn day06a(lines: List(String)) {
+  let rev = list.reverse(lines)
+  let assert Ok(ops_s) = list.first(rev)
+  let foo = h1(ops_s, [], 0)
+  let assert Ok(foo2) = list.first(foo)
+  let ops = list.reverse([foo2, ..foo])
+  let cols = case list.rest(rev) {
+    Ok(x) -> list.reverse(x)
+    _ -> []
+  }
+  let hx = list.reverse(h2(cols, ops, []))
+  let hy = h3(hx, ops, [])
+
+  int.to_string(list.fold(hy, 0, fn(acc, a) { acc + a }))
+}
+
+pub fn day06b(lines: List(String)) {
+  let rev = list.reverse(lines)
+  let assert Ok(ops_s) = list.first(rev)
+  let foo = h1(ops_s, [], 0)
+  let assert Ok(foo2) = list.first(foo)
+  let ops = list.reverse([foo2, ..foo])
+  let cols = case list.rest(rev) {
+    Ok(x) -> list.reverse(x)
+    _ -> []
+  }
+  let hx = list.reverse(h2(cols, ops, []))
+  let hz = list.reverse(get_slice_b(hx, []))
+  let hy = h3(hz, ops, [])
+
+  int.to_string(list.fold(hy, 0, fn(acc, a) { acc + a }))
+}
 
 fn h1(s, acc, idx) {
   let le = string.length(s)
@@ -83,21 +114,6 @@ fn h3(rx, ops, acc) {
  }
 }
 
-pub fn day06a(lines: List(String)) {
-  let rev = list.reverse(lines)
-  let assert Ok(ops_s) = list.first(rev)
-  let foo = h1(ops_s, [], 0)
-  let assert Ok(foo2) = list.first(foo)
-  let ops = list.reverse([foo2, ..foo])
-  let cols = case list.rest(rev) {
-    Ok(x) -> list.reverse(x)
-    _ -> []
-  }
-  let hx = list.reverse(h2(cols, ops, []))
-  let hy = h3(hx, ops, [])
-
-  int.to_string(list.fold(hy, 0, fn(acc, a) { acc + a }))
-}
 
 fn gb(lst, acc, idx) {
   case idx {
@@ -124,20 +140,3 @@ fn get_slice_b(lst, acc) {
   }
 }
 
-pub fn day06b(lines: List(String)) {
-  let rev = list.reverse(lines)
-  let assert Ok(ops_s) = list.first(rev)
-  let foo = h1(ops_s, [], 0)
-  let assert Ok(foo2) = list.first(foo)
-  let ops = list.reverse([foo2, ..foo])
-  let cols = case list.rest(rev) {
-    Ok(x) -> list.reverse(x)
-    _ -> []
-  }
-  let hx = list.reverse(h2(cols, ops, []))
-
-  let hz = list.reverse(get_slice_b(hx, []))
-  let hy = h3(hz, ops, [])
-
-  int.to_string(list.fold(hy, 0, fn(acc, a) { acc + a }))
-}

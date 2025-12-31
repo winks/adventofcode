@@ -3,28 +3,6 @@ import gleam/list
 import gleam/result
 import gleam/string
 
-fn h1(a, p, rv) {
-  case a {
-    [] -> rv
-    _ -> {
-      let assert Ok(hd) = list.first(a)
-      let assert Ok(tl) = list.rest(a)
-      let p2 = p
-      let rv1 = list.map(p2, fn(x) {
-        let assert Ok(x1) = list.first(x)
-        let assert Ok(xr) = list.rest(x)
-        let assert Ok(x2) = list.first(xr)
-        case hd {
-          y if y >= x1 && y <= x2 -> hd
-          _ -> 0
-        }
-      })
-      let r = list.filter(rv1, fn(x) { x > 0 })
-      h1(tl, p, list.flatten([rv,r]))
-    }
-  }
-}
-
 pub fn day05a(lines: List(String)) {
   let ranges = list.filter(lines, fn(x) { string.contains(x, "-") })
   let r2 = list.map(ranges, fn(x) {
@@ -44,35 +22,6 @@ pub fn day05a(lines: List(String)) {
   })
 
   int.to_string(list.length(list.unique(h1(nums2, r2, []))))
-}
-
-fn bb(lst, acc) {
-  case list.first(lst) {
-    Error(_) -> acc
-    Ok(#(lo1, hi1)) -> {
-      let assert Ok(tl) = list.rest(lst)
-      case list.first(tl) {
-        Error(_) -> {
-          [#(lo1, hi1), ..acc]
-        }
-        Ok(#(lo2, hi2)) -> {
-          case lo2, hi2 {
-            x, y if x <= hi1 && y <= hi1 -> {
-              let assert Ok(tl2) = list.rest(tl)
-              bb([#(lo1, hi1), ..tl2], acc)
-            }
-            x, y if x <= hi1 && y > hi1 -> {
-              bb([#(lo1, hi2), ..tl], acc)
-            }
-            x, _ if x >= hi1 -> {
-              bb(tl, [#(lo1, hi1), ..acc])
-            }
-            _, _ -> bb(tl, acc)
-          }
-        }
-      }
-    }
-  }
 }
 
 pub fn day05b(lines: List(String)) {
@@ -103,3 +52,56 @@ pub fn day05b(lines: List(String)) {
   })
   int.to_string(list.fold(rv2, 0, fn(acc, x) { acc + x }))
 }
+
+fn h1(a, p, rv) {
+  case a {
+    [] -> rv
+    _ -> {
+      let assert Ok(hd) = list.first(a)
+      let assert Ok(tl) = list.rest(a)
+      let p2 = p
+      let rv1 = list.map(p2, fn(x) {
+        let assert Ok(x1) = list.first(x)
+        let assert Ok(xr) = list.rest(x)
+        let assert Ok(x2) = list.first(xr)
+        case hd {
+          y if y >= x1 && y <= x2 -> hd
+          _ -> 0
+        }
+      })
+      let r = list.filter(rv1, fn(x) { x > 0 })
+      h1(tl, p, list.flatten([rv,r]))
+    }
+  }
+}
+
+
+fn bb(lst, acc) {
+  case list.first(lst) {
+    Error(_) -> acc
+    Ok(#(lo1, hi1)) -> {
+      let assert Ok(tl) = list.rest(lst)
+      case list.first(tl) {
+        Error(_) -> {
+          [#(lo1, hi1), ..acc]
+        }
+        Ok(#(lo2, hi2)) -> {
+          case lo2, hi2 {
+            x, y if x <= hi1 && y <= hi1 -> {
+              let assert Ok(tl2) = list.rest(tl)
+              bb([#(lo1, hi1), ..tl2], acc)
+            }
+            x, y if x <= hi1 && y > hi1 -> {
+              bb([#(lo1, hi2), ..tl], acc)
+            }
+            x, _ if x >= hi1 -> {
+              bb(tl, [#(lo1, hi1), ..acc])
+            }
+            _, _ -> bb(tl, acc)
+          }
+        }
+      }
+    }
+  }
+}
+

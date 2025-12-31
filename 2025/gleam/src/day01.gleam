@@ -7,6 +7,7 @@ pub fn day01a(lines: List(String)) {
 }
 
 pub fn day01b(lines: List(String)) {
+  // wrong result
   int.to_string(bb(lines, 50, 0))
 }
 

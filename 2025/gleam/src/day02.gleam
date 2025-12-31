@@ -4,15 +4,13 @@ import gleam/regexp
 import gleam/string
 
 pub fn day02a(lines: List(String)) {
-  //echo lines
   let assert Ok(line) = list.first(lines)
   let parts = string.split(line, on: ",")
-  //echo parts
   int.to_string(a1(parts, 0))
 }
 
 pub fn day02b(_lines: List(String)) {
-  ""
+  todo
 }
 
 fn a1(lst: List(String), rv: Int) {

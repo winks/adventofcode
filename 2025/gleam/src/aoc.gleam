@@ -13,6 +13,7 @@ import day03
 import day04
 import day05
 import day06
+import day12
 import web
 
 pub fn main() {
@@ -30,6 +31,7 @@ pub fn main() {
     ["day05b", file_name] -> day05.day05b(read_lines_strip(file_name))
     ["day06a", file_name] -> day06.day06a(read_lines_nocrlf(file_name))
     ["day06b", file_name] -> day06.day06b(read_lines_nocrlf(file_name))
+    ["day12a", file_name] -> day12.day12a(read_lines_strip(file_name))
     ["web"] -> {
       web.run()
       ""

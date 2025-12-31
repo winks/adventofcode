@@ -29,4 +29,4 @@ Normal release build, stdout stripped as needed.
 | 9 | 0.44s | 2.94s | - | - |
 | 10 | 2.01s | 2.56s | - | - |
 | 11 | 0.06s | 0.05s | - | - |
-| 12 | 0.08s | . | - | . |
+| 12 | 0.08s | . | 0.11s | . |
